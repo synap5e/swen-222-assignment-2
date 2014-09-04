@@ -1,4 +1,4 @@
-package roomtest;
+package space;
 
 import java.awt.Canvas;
 
