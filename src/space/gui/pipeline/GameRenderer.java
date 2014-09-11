@@ -82,7 +82,7 @@ public class GameRenderer implements RenderComponent{
 		Vec2 playerPos = player.getPosition();
 		ViewableRoom currentRoom = world.getRoomAt(playerPos);
 
-		setCamera(new Vec3(playerPos.getX(), EYE_HEIGHT, playerPos.getY()), player.getLookDirection());
+		setCamera(new Vec3(playerPos.getX(), player.getEyeHeight(), playerPos.getY()), player.getLookDirection());
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);

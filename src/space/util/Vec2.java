@@ -35,4 +35,17 @@ public class Vec2 {
 	public String toString(){
 		return "Vec2(" + x + ", " + y + ")";
 	}
+
+	public Vec2 normalized() {
+		float len = this.len();
+		return new Vec2(x/len,y/len);
+	}
+
+	public float len() {
+		return (float) Math.sqrt(sqLen());
+	}
+
+	public float sqLen() {
+		return x * x + y * y;
+	}
 }

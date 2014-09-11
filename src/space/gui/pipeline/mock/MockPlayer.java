@@ -20,6 +20,11 @@ public class MockPlayer implements ViewablePlayer {
 		return getLook();
 	}
 
+	@Override
+	public float getEyeHeight() {
+		return (float) (8 - 2 * Math.pow(jumpTime*2 - 1, 2));
+	}
+
 
 
 	float xRotation = 300f;
@@ -40,6 +45,8 @@ public class MockPlayer implements ViewablePlayer {
 		return new Vec3(x_circ, y_circ, z_circ);
 	}
 
+	float jumpTime = 0;
+
 	public void update(int delta) {
 
 		int x = Mouse.getX();
@@ -57,7 +64,7 @@ public class MockPlayer implements ViewablePlayer {
 			if (xRotation <= 180) xRotation = 180.1f;
 		}
 
-		Vec3 moveDirection = getLook().mul(delta/100f);
+		Vec3 moveDirection = getLook();
 		Vec3 moveDelta = new Vec3(0, 0, 0);
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)){
@@ -72,13 +79,23 @@ public class MockPlayer implements ViewablePlayer {
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)){
 			moveDelta.subLocal(moveDirection);
 		}
+		if (moveDelta.sqLen() != 0){
+			moveDelta = moveDelta.normalized().mul(delta/75f);
+			pos.addLocal(new Vec2(moveDelta.getX(), moveDelta.getZ()));
+		}
 
-		pos.addLocal(new Vec2(moveDelta.getX(), moveDelta.getZ()));
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && jumpTime == 0){
+			jumpTime = 1;
+		}
+		if (jumpTime > 0){
+			jumpTime -= delta/500f;
+		} else {
+			jumpTime = 0;
+		}
+
+
 
 		lastx = x;
 		lasty = y;
 	}
-
-
-
 }

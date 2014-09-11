@@ -10,4 +10,6 @@ public interface ViewablePlayer extends ViewableObject{
 	 */
 	public Vec3 getLookDirection();
 
+	public float getEyeHeight();
+
 }
