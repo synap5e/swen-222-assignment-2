@@ -20,16 +20,18 @@ import space.util.Vec2;
 import space.util.Vec3;
 
 public class GameRenderer implements RenderComponent{
-	
-	private static final float PLAYER_EYE_HEIGHT = 5;
-	
+
+	private static final int WALL_HEIGHT = 10;
+	private static final float FIELD_OF_VIEW = 50.0f;
+	private static final float EYE_HEIGHT = 8;
+
 	private int height;
 	private int width;
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}
-	
+
 	public void init(){
 		glClearColor(0, 0, 0, 0);
 		glEnable(GL_DEPTH_TEST);
@@ -38,18 +40,18 @@ public class GameRenderer implements RenderComponent{
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
 	}
-	
+
 	private void setCamera(Vec3 eyepos, Vec3 look) {
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(	50.0f, (float)width/(float)height, 1f, 1000f);
+		GLU.gluPerspective(	FIELD_OF_VIEW, (float)width/(float)height, 1f, 1000f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		
-		
+
+
 		GLU.gluLookAt( 	eyepos.getX(), 					eyepos.getY(), 				eyepos.getZ(),
-						eyepos.getZ() + look.getX(), 	eyepos.getY()+look.getY(), 	eyepos.getZ()+look.getZ(),
+						eyepos.getX() + look.getX(), 	eyepos.getY()+look.getY(), 	eyepos.getZ()+look.getZ(),
 						0,  							1, 							0);
 	}
 	
@@ -79,9 +81,9 @@ public class GameRenderer implements RenderComponent{
 	public void renderTick(float timestep, ViewablePlayer player, ViewableWord world){
 		Vec2 playerPos = player.getPosition();
 		ViewableRoom currentRoom = world.getRoomAt(playerPos);
-		
-		setCamera(new Vec3(playerPos.getX(), PLAYER_EYE_HEIGHT, playerPos.getY()), player.getLookDirection());
-		
+
+		setCamera(new Vec3(playerPos.getX(), EYE_HEIGHT, playerPos.getY()), player.getLookDirection());
+
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glShadeModel(GL_FLAT);
@@ -92,12 +94,62 @@ public class GameRenderer implements RenderComponent{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glPushMatrix();
+
+		renderWalls(currentRoom);
+
+
 		
 		
 		glPopMatrix();
 	}
 
-	
+	private void renderWalls(ViewableRoom currentRoom) {
+		glBegin(GL_QUADS);
+		glColor3d(0.5, 0.5, 0.5);
+		for (ViewableWall r : currentRoom.getWalls()) {
+			float x1 = r.getStart().getX();
+			float x2 = r.getEnd().getX();
+
+			float z1 = r.getStart().getY();
+			float z2 = r.getEnd().getY();
+
+			// normal of a line segment (the wall)
+			Vec3 normal = new Vec3(1 * (z2 - z1), 0, -1 * (x2 - x1)).normalized();
+
+			glNormal3f(normal.getX(), normal.getY(), normal.getZ());
+
+			glVertex3d(x1, 0, z1);
+			glVertex3d(x1, WALL_HEIGHT, z1);
+			glVertex3d(x2, WALL_HEIGHT, z2);
+			glVertex3d(x2, 0, z2);
+		}
+		glEnd();
+
+
+		glDisable(GL_LIGHTING);
+		// floor
+		glColor3d(0.3, 0.3, 0.3);
+		glNormal3f(0,1,0);
+		glBegin(GL_TRIANGLE_FAN);
+		glVertex3f(0, 0, 0);
+		for (ViewableWall r : currentRoom.getWalls()) {
+			glVertex3d(r.getStart().getX(), 0, r.getStart().getY());
+			glVertex3d(r.getEnd().getX(), 0, r.getEnd().getY());
+		}
+		glEnd();
+
+		glColor3d(0.3, 0.3, 0.3);
+		glNormal3f(0,-1,0);
+		glBegin(GL_TRIANGLE_FAN);
+		glVertex3f(0, 10, 0);
+		for (ViewableWall r : currentRoom.getWalls()) {
+			glVertex3d(r.getStart().getX(), 10, r.getStart().getY());
+			glVertex3d(r.getEnd().getX(), 10, r.getEnd().getY());
+		}
+		glEnd();
+	}
+
+
 
 	@Override
 	public Canvas createCanvas() {
@@ -114,20 +166,21 @@ public class GameRenderer implements RenderComponent{
 		
 		Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
 		Display.create();
-		
+
 		GameRenderer r = new GameRenderer(windowWidth, windowHeight);
-		ViewablePlayer mockPlayer = new MockPlayer();
+		MockPlayer mockPlayer = new MockPlayer();
 		ViewableWord mockWorld = new MockWorld();
-		
-			
-		float last = getTime();
+
+
+		long last = getTime();
 		while (!Display.isCloseRequested()) {
-			float now = getTime();
-			int delta = (int)(now = last);
+			long now = getTime();
+			int delta = (int)(now - last);
 			last = now;
-			
+
+			mockPlayer.update(delta);
 			r.renderTick(delta, mockPlayer, mockWorld);
-			
+
 			Display.update();
 			Display.sync(60);
 
