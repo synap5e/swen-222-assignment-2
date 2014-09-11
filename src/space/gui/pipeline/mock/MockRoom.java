@@ -1,5 +1,6 @@
 package space.gui.pipeline.mock;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -11,16 +12,16 @@ import space.util.Vec2;
 public class MockRoom implements ViewableRoom {
 
 	private static Random random = new Random();
-	private static List<MockWall> giftWrap(List<Vec2> pts){
-		Vec2 pointOnHull = getLeftMost(pts);
-		Vec2 endpoint = null;
+	private static List<MockWall> giftWrap(List<Point2D.Float> pts){
+		Point2D.Float pointOnHull = getLeftMost(pts);
+		Point2D.Float endpoint = null;
 		//int i=0;
 
-		ArrayList<Vec2> hull = new ArrayList<Vec2>();
+		ArrayList<Point2D.Float> hull = new ArrayList<Point2D.Float>();
 		do{
 			hull.add(pointOnHull);
 			endpoint = pts.get(0);
-			for (Vec2 point : pts){
+			for (Point2D.Float point : pts){
 				if (endpoint == pointOnHull || pointLeftOfLine(point, pointOnHull, endpoint)){
 					endpoint = point;
 				}
@@ -32,21 +33,21 @@ public class MockRoom implements ViewableRoom {
 
 
 		ArrayList<MockWall> walls = new ArrayList<MockWall>();
-		Vec2 prev = hull.get(hull.size()-1);
-		for (Vec2 point : hull){
-			walls.add(new MockWall(prev, point));
+		Point2D.Float prev = hull.get(hull.size()-1);
+		for (Point2D.Float point : hull){
+			walls.add(new MockWall(new Vec2(prev.x, prev.y), new Vec2(point.x, point.y)));
 			prev = point;
 		}
 
 		return walls;
 	}
-	private static boolean pointLeftOfLine(Vec2 point, Vec2 lineStart, Vec2 lineEnd) {
-		return 1 == Math.signum((lineEnd.getX()-lineStart.getX())*(point.getY()-lineStart.getY()) - (lineEnd.getY()-lineStart.getY())*(point.getX()-lineStart.getX()));
+	private static boolean pointLeftOfLine(Point2D.Float point, Point2D.Float lineStart, Point2D.Float lineEnd) {
+		return 1 == Math.signum((lineEnd.x-lineStart.x)*(point.y-lineStart.y) - (lineEnd.y-lineStart.y)*(point.x-lineStart.x));
 	}
-	private static Vec2 getLeftMost(List<Vec2> pts) {
-		Vec2 l = pts.get(0);
-		for (Vec2 p : pts){
-			if (p.getX() < l.getY()) l=p;
+	private static Point2D.Float getLeftMost(List<Point2D.Float> pts) {
+		Point2D.Float l = pts.get(0);
+		for (Point2D.Float p : pts){
+			if (p.x < l.x) l=p;
 		}
 		return l;
 	}
@@ -55,9 +56,9 @@ public class MockRoom implements ViewableRoom {
 
 	private List<MockWall> walls;
 	public MockRoom() {
-		ArrayList<Vec2> points = new ArrayList<Vec2>(200);
-		for (int i=0;i<500;i++){
-			points.add(new Vec2((float)(0 + random.nextGaussian() * 5), (float)(0 + random.nextGaussian() * 5)));
+		ArrayList<Point2D.Float> points = new ArrayList<Point2D.Float>(200);
+		for (int i=0;i<100;i++){
+			points.add(new Point2D.Float((float)(0 + random.nextGaussian() * 10), (float)(0 + random.nextGaussian() * 10)));
 		}
 		walls = giftWrap(points);
 	}
