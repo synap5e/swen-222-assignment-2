@@ -4,7 +4,7 @@ public class Vec2 {
 
 	private float x;
 	private float y;
-	
+
 	public Vec2(float x, float y){
 		this.x = x;
 		this.y = y;
@@ -13,7 +13,7 @@ public class Vec2 {
 		this.x = v.x;
 		this.y = v.y;
 	}
-	
+
 	public float getX() {
 		return x;
 	}
@@ -25,5 +25,14 @@ public class Vec2 {
 	}
 	public void setY(float y) {
 		this.y = y;
+	}
+
+	public void addLocal(Vec2 rhs) {
+		this.x += rhs.x;
+		this.y += rhs.y;
+	}
+
+	public String toString(){
+		return "Vec2(" + x + ", " + y + ")";
 	}
 }
