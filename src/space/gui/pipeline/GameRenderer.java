@@ -12,14 +12,13 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 
-import space.RenderComponent;
 import space.gui.pipeline.ViewableRoom.LightMode;
 import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
 import space.util.Vec2;
 import space.util.Vec3;
 
-public class GameRenderer implements RenderComponent{
+public class GameRenderer {
 
 	private static final int WALL_HEIGHT = 10;
 	private static final float FIELD_OF_VIEW = 50.0f;
@@ -27,6 +26,7 @@ public class GameRenderer implements RenderComponent{
 
 	private int height;
 	private int width;
+	
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -150,19 +150,14 @@ public class GameRenderer implements RenderComponent{
 	}
 
 
-
-	@Override
-	public Canvas createCanvas() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setParent(Canvas c) throws LWJGLException {
+		Display.setParent(c);
+		Display.create();
 	}
-
 	
-	
-	
-	public static void main(String[] args) throws LWJGLException{
-		int windowWidth = 800;
-		int windowHeight = 600;
+	/*public static void main(String[] args) throws LWJGLException{
+		int windowWidth = 1800;
+		int windowHeight = 900;
 		
 		Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
 		Display.create();
@@ -191,4 +186,5 @@ public class GameRenderer implements RenderComponent{
 	public static long getTime() {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
+*/
 }
