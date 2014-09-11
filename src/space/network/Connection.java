@@ -22,8 +22,14 @@ public class Connection {
 		}
 	}
 	
-	public boolean hasMessage() throws IOException{
-		return incoming.available() > 0;
+	public boolean hasMessage(){
+		try {
+			return incoming.available() > 0;
+		} catch (IOException e) {
+			// TODO decide how to deal with exception
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public String readMessage(){
