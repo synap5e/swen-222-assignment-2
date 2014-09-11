@@ -85,7 +85,7 @@ public class ConnectionTests {
 	}
 	
 	@Test
-	public void testClientCanRecieveMessage() {
+	public void testSendingAndRecievingMessage() {
 		String testMessage = "test123";
 		serverside.sendMessage(testMessage);
 		assertTrue(clientside.hasMessage());
@@ -93,4 +93,5 @@ public class ConnectionTests {
 		assertEquals(testMessage, message);
 	}
 
+	//TODO: Write tests for when client/server disconnects unexpectedly
 }
