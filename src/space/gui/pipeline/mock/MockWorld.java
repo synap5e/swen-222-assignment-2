@@ -1,7 +1,7 @@
 package space.gui.pipeline.mock;
 
-import space.gui.pipeline.ViewableRoom;
-import space.gui.pipeline.ViewableWord;
+import space.gui.pipeline.viewable.ViewableRoom;
+import space.gui.pipeline.viewable.ViewableWord;
 import space.util.Vec2;
 
 public class MockWorld implements ViewableWord {

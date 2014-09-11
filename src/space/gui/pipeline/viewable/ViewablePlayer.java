@@ -1,4 +1,4 @@
-package space.gui.pipeline;
+package space.gui.pipeline.viewable;
 
 import space.util.Vec3;
 

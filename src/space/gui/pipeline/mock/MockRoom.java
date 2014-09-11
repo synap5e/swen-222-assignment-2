@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import space.gui.pipeline.ViewableRoom;
-import space.gui.pipeline.ViewableWall;
+import space.gui.pipeline.viewable.ViewableRoom;
+import space.gui.pipeline.viewable.ViewableWall;
 import space.util.Vec2;
 
 public class MockRoom implements ViewableRoom {

@@ -3,7 +3,7 @@ package space.gui.pipeline.mock;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import space.gui.pipeline.ViewablePlayer;
+import space.gui.pipeline.viewable.ViewablePlayer;
 import space.util.Vec2;
 import space.util.Vec3;
 

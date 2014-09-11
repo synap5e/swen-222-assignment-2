@@ -9,9 +9,9 @@ import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 
 import space.gui.pipeline.GameRenderer;
-import space.gui.pipeline.ViewableWord;
 import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewableWord;
 
 public class ComponentTest extends JFrame {
 	

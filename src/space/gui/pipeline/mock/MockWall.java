@@ -1,6 +1,6 @@
 package space.gui.pipeline.mock;
 
-import space.gui.pipeline.ViewableWall;
+import space.gui.pipeline.viewable.ViewableWall;
 import space.util.Vec2;
 
 public class MockWall implements ViewableWall{

@@ -12,9 +12,13 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 
-import space.gui.pipeline.ViewableRoom.LightMode;
 import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewablePlayer;
+import space.gui.pipeline.viewable.ViewableRoom;
+import space.gui.pipeline.viewable.ViewableWall;
+import space.gui.pipeline.viewable.ViewableWord;
+import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.util.Vec2;
 import space.util.Vec3;
 
