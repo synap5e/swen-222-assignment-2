@@ -6,10 +6,11 @@ import space.util.Vec2;
 
 public class MockWorld implements ViewableWord {
 
+	private ViewableRoom room = new MockRoom();
+
 	@Override
 	public ViewableRoom getRoomAt(Vec2 pos) {
-		// TODO Auto-generated method stub
-		return null;
+		return room;
 	}
 
 }
