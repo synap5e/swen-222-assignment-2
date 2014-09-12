@@ -3,6 +3,8 @@ package space.gui.pipeline;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Canvas;
+import java.io.File;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -19,6 +21,7 @@ import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWord;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
+import space.gui.pipeline.wavefront.WavefrontModel;
 import space.util.Vec2;
 import space.util.Vec3;
 
@@ -30,7 +33,8 @@ public class GameRenderer {
 
 	private int height;
 	private int width;
-	
+	private int test;
+
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -40,9 +44,15 @@ public class GameRenderer {
 		glClearColor(0, 0, 0, 0);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		glShadeModel(GL_FLAT);
+		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+		try {
+			this.test = new WavefrontModel(new File("./assets/models/bunny_new.obj")).createDisplayList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void setCamera(Vec3 eyepos, Vec3 look) {
@@ -90,7 +100,7 @@ public class GameRenderer {
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		glShadeModel(GL_FLAT);
+		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
 		setLight(currentRoom);
@@ -108,6 +118,7 @@ public class GameRenderer {
 	}
 
 	private void renderWalls(ViewableRoom currentRoom) {
+		glCallList(this.test);
 		glBegin(GL_QUADS);
 		glColor3d(0.5, 0.5, 0.5);
 		for (ViewableWall r : currentRoom.getWalls()) {
