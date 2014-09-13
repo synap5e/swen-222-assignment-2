@@ -64,5 +64,17 @@ public class Player implements Entity,ViewablePlayer{
 		this.points = points;
 	}
 
+	@Override
+	public float getAngle() {
+		// TODO do this properly
+		return 0;
+	}
+
+	@Override
+	public float getElevation() {
+		// TODO do this properly
+		return 0;
+	}
+
 	
 }

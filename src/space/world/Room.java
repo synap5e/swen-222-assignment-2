@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.util.Vec2;
@@ -15,6 +16,9 @@ public class Room implements ViewableRoom{
 	private int id;
 	private String description;
 	private Polygon roomShape;
+	private Set<Item> items = new HashSet<Item>();
+	private Set<Player> players = new HashSet<Player>();
+	//probably need to add something about room exits
 	
 	public Room(LightMode m, int i, String d, Polygon r){
 		mode = m;
@@ -30,7 +34,6 @@ public class Room implements ViewableRoom{
 		setUpPolygon(points);
 	}
 
-	
 	@Override
 	public Vec2 getCentre() {
 		float x = (float) roomShape.getBounds().getCenterX();
@@ -41,17 +44,52 @@ public class Room implements ViewableRoom{
 	@Override
 	public List<? extends ViewableWall> getWalls() {
 		List<Wall> walls = new ArrayList<Wall>();
-		//cant get points of polygon :(
-		return null;
+		Vec2 firstPoint = new Vec2(roomShape.xpoints[0],roomShape.ypoints[0]);
+		Vec2 previousPoint = firstPoint;
+		for(int i = 1; i < roomShape.npoints; i++){
+			Vec2 currentPoint = new Vec2(roomShape.xpoints[i],roomShape.ypoints[i]);
+			walls.add(new Wall(previousPoint,currentPoint));
+			previousPoint = currentPoint;
+		}
+		walls.add(new Wall(previousPoint,firstPoint));
+		return walls;
 	}
 	
-	public int getId() {
+	public boolean pointInRoom(Vec2 point){
+		return roomShape.contains(point.getX(), point.getY());
+	}
+	
+	public void putInRoom(Item e){
+		items.add(e);
+	}
+	
+	public void removeFromRoom(Item e){
+		items.remove(e);
+	}
+	
+	public void enterRoom(Player p){
+		players.add(p);
+	}
+	
+	public void leaveRoom(Player p){
+		players.remove(p);
+	}
+	public String getDescription() {
+		return description;
+	}
+
+	public int getID() {
 		return id;
 	}
 
 	@Override
 	public LightMode getLightMode() {
 		return mode;
+	}
+	
+	@Override
+	public List<? extends ViewableObject> getContainedObjects() {
+		return new ArrayList<Item>(items);
 	}
 	
 	private void setUpPolygon(List<Vec2> points){
@@ -80,4 +118,5 @@ public class Room implements ViewableRoom{
 		}
 
 	}
+	
 }

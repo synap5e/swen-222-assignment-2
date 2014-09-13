@@ -1,8 +1,9 @@
 package space.world;
 
+import space.gui.pipeline.viewable.ViewableObject;
 import space.util.Vec2;
 
-public abstract class Item implements Entity {
+public abstract class Item implements Entity,ViewableObject {
 	private Vec2 position;
 	private int id;
 	private String description;
