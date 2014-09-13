@@ -122,4 +122,9 @@ public class Vec3 {
 	public Vec3 negate() {
 		return new Vec3(-x, -y, -z);
 	}
+
+	@Override
+	public String toString() {
+		return "Vec3(" + x + ", " + y + ", " + z + ")";
+	}
 }

@@ -21,4 +21,6 @@ public interface ViewableRoom {
 	public Vec2 getCentre();
 
 	public List<? extends ViewableWall> getWalls();
+
+	public List<? extends ViewableObject> getContainedObjects();
 }
