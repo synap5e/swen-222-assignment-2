@@ -3,7 +3,11 @@ package space.gui.pipeline;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Canvas;
+import java.io.File;
+import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -12,13 +16,16 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 
+import space.gui.pipeline.mock.Bunny;
 import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWord;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
+import space.gui.pipeline.wavefront.WavefrontModel;
 import space.util.Vec2;
 import space.util.Vec3;
 
@@ -30,6 +37,9 @@ public class GameRenderer {
 
 	private int height;
 	private int width;
+	private int test;
+
+	private Map<Class<? extends ViewableObject>, Integer> models;
 	
 	public GameRenderer(int width, int height) {
 		this.width = width;
@@ -40,9 +50,21 @@ public class GameRenderer {
 		glClearColor(0, 0, 0, 0);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		glShadeModel(GL_FLAT);
+		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+		
+		loadModels();
+	}
+
+	private void loadModels() {
+		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
+		try {
+			models.put(Bunny.class, WavefrontModel.load(new File("./assets/models/bunny_new.obj"), new Vec3(0,0,0), new Vec3(0,180,0), 0.2f));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void setCamera(Vec3 eyepos, Vec3 look) {
@@ -90,7 +112,7 @@ public class GameRenderer {
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		glShadeModel(GL_FLAT);
+		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
 		setLight(currentRoom);
@@ -101,10 +123,42 @@ public class GameRenderer {
 
 		renderWalls(currentRoom);
 
-
 		
+		//glEnable(GL_NORMALIZE);
+		
+		for (ViewableObject vob : currentRoom.getContainedObjects()){
+			drawObject(vob);
+		}
+		
+		//glDisable(GL_NORMALIZE);
 		
 		glPopMatrix();
+	}
+
+	private void drawObject(ViewableObject vob) {
+		glPushMatrix();
+		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
+		glRotated(vob.getAngle(), 0, -1, 0);
+		
+		// TODO remove this when we have textures
+		getAssignedColor(vob);
+		
+		
+		glCallList(models.get(vob.getClass()));
+		glPopMatrix();
+	}
+
+	private HashMap<ViewableObject, Vec3> colors = new HashMap<ViewableObject, Vec3>();
+	private void getAssignedColor(ViewableObject vob) {
+		if (!colors.containsKey(vob)){
+			float r = (float) Math.random();
+			float b = (float) Math.random();
+			float g = (float) Math.random();
+			
+			colors.put(vob, new Vec3(r,g,b));
+		}
+		Vec3 c = colors.get(vob);
+		glColor3f(c.getX(), c.getY(), c.getZ());
 	}
 
 	private void renderWalls(ViewableRoom currentRoom) {
@@ -151,6 +205,7 @@ public class GameRenderer {
 			glVertex3d(r.getEnd().getX(), 10, r.getEnd().getY());
 		}
 		glEnd();
+		glEnable(GL_LIGHTING);
 	}
 
 

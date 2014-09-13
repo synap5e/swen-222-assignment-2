@@ -98,4 +98,19 @@ public class MockPlayer implements ViewablePlayer {
 		lastx = x;
 		lasty = y;
 	}
+
+	public Vec2 getFacing() {
+		return new Vec2(getLook().getX(), getLook().getZ());
+	}
+
+	@Override
+	public float getAngle() {
+		// TODO
+		return 0;
+	}
+
+	@Override
+	public float getElevation() {
+		return getEyeHeight()-6;
+	}
 }
