@@ -6,6 +6,8 @@ import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -16,6 +18,7 @@ import org.lwjgl.util.glu.GLU;
 
 import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -35,6 +38,8 @@ public class GameRenderer {
 	private int width;
 	private int test;
 
+	private Map<Class<? extends ViewableObject>, Integer> models;
+	
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -47,6 +52,12 @@ public class GameRenderer {
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+		
+		loadModels();
+	}
+
+	private void loadModels() {
+		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
 			this.test = new WavefrontModel(new File("./assets/models/bunny_new.obj")).createDisplayList();
 		} catch (IOException e) {
@@ -111,14 +122,45 @@ public class GameRenderer {
 
 		renderWalls(currentRoom);
 
-
 		
+		//glEnable(GL_NORMALIZE);
+		
+		for (ViewableObject vob : currentRoom.getContainedObjects()){
+			drawObject(vob);
+		}
+		
+		//glDisable(GL_NORMALIZE);
 		
 		glPopMatrix();
 	}
 
+	private void drawObject(ViewableObject vob) {
+		glPushMatrix();
+		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
+		glRotated(vob.getAngle(), 0, -1, 0);
+		
+		// TODO remove this when we have textures
+		getAssignedColor(vob);
+		
+		
+		glCallList(models.get(vob.getClass()));
+		glPopMatrix();
+	}
+
+	private HashMap<ViewableObject, Vec3> colors = new HashMap<ViewableObject, Vec3>();
+	private void getAssignedColor(ViewableObject vob) {
+		if (!colors.containsKey(vob)){
+			float r = (float) Math.random();
+			float b = (float) Math.random();
+			float g = (float) Math.random();
+			
+			colors.put(vob, new Vec3(r,g,b));
+		}
+		Vec3 c = colors.get(vob);
+		glColor3f(c.getX(), c.getY(), c.getZ());
+	}
+
 	private void renderWalls(ViewableRoom currentRoom) {
-		glCallList(this.test);
 		glBegin(GL_QUADS);
 		glColor3d(0.5, 0.5, 0.5);
 		for (ViewableWall r : currentRoom.getWalls()) {
@@ -162,6 +204,7 @@ public class GameRenderer {
 			glVertex3d(r.getEnd().getX(), 10, r.getEnd().getY());
 		}
 		glEnd();
+		glEnable(GL_LIGHTING);
 	}
 
 

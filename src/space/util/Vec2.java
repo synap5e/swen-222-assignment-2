@@ -48,4 +48,17 @@ public class Vec2 {
 	public float sqLen() {
 		return x * x + y * y;
 	}
+	
+	public Vec2 mul(float s) {
+		return new Vec2(x*s,y*s);
+	}
+	
+	public final static float dot(Vec2 a, Vec2 b) {
+		return a.x * b.x + a.y * b.y;
+	}
+	
+	public float angleTo(Vec2 rhs) {
+		return (float) Math.acos(dot(this.normalized(), rhs.normalized()) / (len() * rhs.len()));
+	}
+	
 }

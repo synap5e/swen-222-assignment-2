@@ -23,8 +23,16 @@ public class WavefrontModel {
 	private ArrayList<Vec3> vertices = new ArrayList<Vec3>();
 	private ArrayList<Vec3> normals = new ArrayList<Vec3>();
 	private ArrayList<Face> faces = new ArrayList<Face>();
+	
+	private float scale;
+	private Vec3 eulerRotation;
+	private Vec3 offset;
 
-	public WavefrontModel(File f) throws IOException {
+	private WavefrontModel(File f, Vec3 offset, Vec3 eulerRotation, float scale) throws IOException {
+		this.offset = offset;
+		this.eulerRotation = eulerRotation;
+		this.scale = scale;
+		
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		String line;
 		while ((line = br.readLine()) != null) {
@@ -80,7 +88,9 @@ public class WavefrontModel {
 	}
 
 	private void addVertex(String[] elems) {
-		vertices.add(parseVec3(elems));
+		Vec3 v = parseVec3(elems);
+		v.mulLocal(scale);
+		vertices.add(v);
 	}
 
 	private Vec3 parseVec3(String[] elems) {
@@ -91,15 +101,16 @@ public class WavefrontModel {
 					);
 	}
 
-	public int createDisplayList(){
+	private int createDisplayList(){
 		int displayList = glGenLists(1);
 		glNewList(displayList, GL_COMPILE);
 
-		float r = (float) Math.random();
-		float b = (float) Math.random();
-		float g = (float) Math.random();
-		glColor3f(r, g, b);
-
+		glTranslatef(offset.getX(), offset.getY(), offset.getZ());
+		
+		glRotatef(eulerRotation.getZ(), 0, 0, 1);
+		glRotatef(eulerRotation.getY(), 0, 1, 0);
+		glRotatef(eulerRotation.getX(), 1, 0, 0);
+		
 		glBegin(GL_TRIANGLES);
 		for (Face f : faces) {
 
@@ -123,15 +134,21 @@ public class WavefrontModel {
 				glNormal3f(n3.getX(), n3.getY(), n3.getZ());
 				glVertex3f(v3.getX(), v3.getY(), v3.getZ());
 			}
-
 		}
 		glEnd();
 
 		glEndList();
 
-		Util.checkGLError();
-
 		return displayList;
+	}
+
+	public static int load(File file) throws IOException {
+		return load(file, new Vec3(0,0,0), new Vec3(0,0,0), 1f);
+	}
+	
+	public static int load(File file, Vec3 offset, Vec3 eulerRotation, float scale) throws IOException {
+		WavefrontModel model = new WavefrontModel(file, offset, eulerRotation, scale);
+		return model.createDisplayList();
 	}
 
 }
