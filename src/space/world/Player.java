@@ -6,6 +6,7 @@ import java.util.Set;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.util.Vec2;
 import space.util.Vec3;
+import space.world.items.Item;
 
 public class Player implements Entity,ViewablePlayer{
 	private Set<Item> inventory = new HashSet<Item>(); //items the player is carrying
@@ -64,6 +65,9 @@ public class Player implements Entity,ViewablePlayer{
 		this.points = points;
 	}
 
+	public Set<Item> getInventory(){
+		return inventory;
+	}
 	@Override
 	public float getAngle() {
 		// TODO do this properly

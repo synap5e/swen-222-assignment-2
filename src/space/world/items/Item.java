@@ -1,7 +1,8 @@
-package space.world;
+package space.world.items;
 
 import space.gui.pipeline.viewable.ViewableObject;
 import space.util.Vec2;
+import space.world.Entity;
 
 public abstract class Item implements Entity,ViewableObject {
 	private Vec2 position;
@@ -30,6 +31,18 @@ public abstract class Item implements Entity,ViewableObject {
 		if(this instanceof Movable){
 			this.position = position;
 		}
+	}
+	
+	@Override
+	public float getAngle() {
+		// TODO do this properly
+		return 0;
+	}
+
+	@Override
+	public float getElevation() {
+		// TODO do this properly
+		return 0;
 	}
 
 

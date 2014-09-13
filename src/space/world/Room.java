@@ -2,14 +2,17 @@ package space.world;
 
 import java.awt.Polygon;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.util.Vec2;
+import space.world.items.Item;
 
 public class Room implements ViewableRoom{
 	private LightMode mode;
@@ -18,6 +21,7 @@ public class Room implements ViewableRoom{
 	private Polygon roomShape;
 	private Set<Item> items = new HashSet<Item>();
 	private Set<Player> players = new HashSet<Player>();
+	private Map<Room,Exit> exits = new HashMap<Room,Exit>();
 	//probably need to add something about room exits
 	
 	public Room(LightMode m, int i, String d, Polygon r){
@@ -59,12 +63,25 @@ public class Room implements ViewableRoom{
 		return roomShape.contains(point.getX(), point.getY());
 	}
 	
-	public void putInRoom(Item e){
-		items.add(e);
+	public void addExit(Exit e){
+		if(e.getRoom1().equals(this)){
+			exits.put(e.getRoom2(), e);
+		}
+		else if(e.getRoom2().equals(this) && !e.isOneWay()){
+			exits.put(e.getRoom1(), e);
+		}
 	}
 	
-	public void removeFromRoom(Item e){
-		items.remove(e);
+	public Exit getExitTo(Room other){
+		return exits.get(other);
+	}
+	
+	public void putInRoom(Item i){
+		items.add(i);
+	}
+	
+	public void removeFromRoom(Item i){
+		items.remove(i);
 	}
 	
 	public void enterRoom(Player p){
