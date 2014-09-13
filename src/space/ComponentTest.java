@@ -38,7 +38,7 @@ public class ComponentTest extends JFrame {
 		rcp.setParent(c);
 		
 		MockPlayer mockPlayer = new MockPlayer();
-		ViewableWord mockWorld = new MockWorld();
+		MockWorld mockWorld = new MockWorld();
 		
 		rcp.init();
 		
@@ -50,6 +50,7 @@ public class ComponentTest extends JFrame {
 
 			// do world update
 			mockPlayer.update(delta);
+			mockWorld.update(delta);
 			
 			// update renderer
 			rcp.renderTick(delta, mockPlayer, mockWorld);

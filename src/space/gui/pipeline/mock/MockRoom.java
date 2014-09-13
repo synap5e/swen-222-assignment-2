@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.util.Vec2;
@@ -55,12 +56,18 @@ public class MockRoom implements ViewableRoom {
 
 
 	private List<MockWall> walls;
+	private List<Bunny> objects;
 	public MockRoom() {
 		ArrayList<Point2D.Float> points = new ArrayList<Point2D.Float>(200);
 		for (int i=0;i<100;i++){
 			points.add(new Point2D.Float((float)(0 + random.nextGaussian() * 10), (float)(0 + random.nextGaussian() * 10)));
 		}
 		walls = giftWrap(points);
+		
+		objects = new ArrayList<Bunny>();
+		for (int i=0;i<10;i++){
+			objects.add(new Bunny(new Vec2((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
+		}
 	}
 
 	@Override
@@ -76,6 +83,16 @@ public class MockRoom implements ViewableRoom {
 	@Override
 	public List<? extends ViewableWall> getWalls() {
 		return walls;
+	}
+	@Override
+	public List<? extends ViewableObject> getContainedObjects() {
+		return objects;
+	}
+	
+	public void update(int delta) {
+		for (Bunny b : objects){
+			b.update(delta);
+		}
 	}
 
 }
