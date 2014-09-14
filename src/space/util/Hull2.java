@@ -10,12 +10,15 @@ public class Hull2 implements Iterable<Segment2>{
 	
 	/** This point will always be outside the hull */
 	private Vec2 outside = new Vec2(0,0);
+
+	private Vec2 centre;
 	
 	/** Construct the hull from the specified points, winding clockwise
 	 * @param points
 	 */
 	public Hull2(List<Vec2> points){
 		this.hullPoints = new ArrayList<Vec2>(points);
+		this.centre = new Vec2(0,0);
 		for (Vec2 p : points){
 			if (p.getX() <= outside.getX()){
 				outside.setX(p.getX()-1);
@@ -23,7 +26,9 @@ public class Hull2 implements Iterable<Segment2>{
 			if (p.getY() <= outside.getY()){
 				outside.setY(p.getY()-1);
 			}
+			centre.addLocal(p);
 		}
+		centre.divLocal(points.size());
 	}
 	
 	public boolean contains(Vec2 point){
@@ -61,5 +66,18 @@ public class Hull2 implements Iterable<Segment2>{
 	//either implement getBounds() method which returns a Rectangle 
 	//then I'll call getCenter() on the rectangle
 	//or implement getCenter() directly
+	
+	/** Gets the centre, defined by the average of all points on the hull
+	 * 
+	 * @return the centre of the hull
+	 */
+	public Vec2 getCentre(){
+		return this.centre;
+	}
+	
+	public String toString(){
+		String s = this.hullPoints.toString();
+		return "Hull2(" + s.substring(1, s.length()-1) + ")";
+	}
 	
 }
