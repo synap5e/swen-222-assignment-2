@@ -33,8 +33,15 @@ public class Hull2 implements Iterable<Segment2>{
 	
 	public boolean contains(Vec2 point){
 		// crossing number algorithm
+		
 		Segment2 ray = new Segment2(point, outside);
-		while (intersectsPointOnHull(ray)){
+		
+		// crossing number fails if the ray intersects one of the hull points
+		// if this happens we can correct it by randomly moving the end of the 
+		// ray - we try doing this 10 times and give up after this
+		// this should catch 99.999% of cases in the first few iterations
+		// but prevents the possibility of a deadlock
+		for (int i=0;i<10 && intersectsPointOnHull(ray); i++){
 			ray = new Segment2(point, outside.sub(new Vec2((float) Math.random()/10f, (float) Math.random()/10f)));
 		}
 		
