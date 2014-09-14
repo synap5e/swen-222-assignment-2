@@ -33,6 +33,17 @@ public class Hull2Tests {
 				));
 		
 	}
+	
+	@Test
+	public void getCentre(){
+		assertEquals(createHull(
+					-1,		 1,
+					 1,		 1,
+					 1,		-1,
+					-1,		-1
+				).getCentre(),
+				new Vec2(0, 0));
+	}
 
 	private boolean hullContains(Hull2 hull, float x, float y) {
 		return hull.contains(new Vec2(x, y));
