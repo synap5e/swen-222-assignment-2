@@ -2,6 +2,30 @@ package space.util;
 
 public class Vec2 {
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(x);
+		result = prime * result + Float.floatToIntBits(y);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Vec2 other = (Vec2) obj;
+		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
+			return false;
+		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
+			return false;
+		return true;
+	}
+
 	private float x;
 	private float y;
 
@@ -53,12 +77,28 @@ public class Vec2 {
 		return new Vec2(x*s,y*s);
 	}
 	
-	public final static float dot(Vec2 a, Vec2 b) {
-		return a.x * b.x + a.y * b.y;
+	public float angleTo(Vec2 rhs) {
+		return (float) Math.acos(this.normalized().dot(rhs.normalized()) / (len() * rhs.len()));
 	}
 	
-	public float angleTo(Vec2 rhs) {
-		return (float) Math.acos(dot(this.normalized(), rhs.normalized()) / (len() * rhs.len()));
+	public Vec2 sub(Vec2 rhs) {
+		return new Vec2(x-rhs.x, y-rhs.y);
+	}
+	
+	public float cross(Vec2 rhs) {
+		return this.x * rhs.y - this.y * rhs.x;
+	}
+	
+	public Vec2 div(float rhs) {
+		return new Vec2(x/rhs, y/rhs);
+	}
+	
+	public Vec2 add(Vec2 rhs) {
+		return new Vec2(x+rhs.x, y+rhs.y);
+	}
+	
+	public float dot(Vec2 rhs) {
+		return this.x * rhs.x + this.y * rhs.y;
 	}
 	
 }
