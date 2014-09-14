@@ -11,6 +11,8 @@ import java.util.Set;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
+import space.util.Hull2;
+import space.util.Segment2;
 import space.util.Vec2;
 import space.world.items.Item;
 
@@ -18,13 +20,13 @@ public class Room implements ViewableRoom{
 	private LightMode mode;
 	private int id;
 	private String description;
-	private Polygon roomShape;
+	private Hull2 roomShape;
 	private Set<Item> items = new HashSet<Item>();
 	private Set<Player> players = new HashSet<Player>();
 	private Map<Room,Exit> exits = new HashMap<Room,Exit>();
 	//probably need to add something about room exits
 	
-	public Room(LightMode m, int i, String d, Polygon r){
+	public Room(LightMode m, int i, String d, Hull2 r){
 		mode = m;
 		id = i;
 		description = d;
@@ -35,32 +37,28 @@ public class Room implements ViewableRoom{
 		mode = m;
 		id = i;
 		description = d;
-		setUpPolygon(points);
+		roomShape = new Hull2(points);
 	}
 
 	@Override
 	public Vec2 getCentre() {
-		float x = (float) roomShape.getBounds().getCenterX();
-		float y = (float) roomShape.getBounds().getCenterY();
-		return new Vec2(x,y);
+//		float x = (float) roomShape.getBounds().getCenterX();
+//		float y = (float) roomShape.getBounds().getCenterY();
+//		return new Vec2(x,y);
+		return null;
 	}
 
 	@Override
 	public List<? extends ViewableWall> getWalls() {
 		List<Wall> walls = new ArrayList<Wall>();
-		Vec2 firstPoint = new Vec2(roomShape.xpoints[0],roomShape.ypoints[0]);
-		Vec2 previousPoint = firstPoint;
-		for(int i = 1; i < roomShape.npoints; i++){
-			Vec2 currentPoint = new Vec2(roomShape.xpoints[i],roomShape.ypoints[i]);
-			walls.add(new Wall(previousPoint,currentPoint));
-			previousPoint = currentPoint;
+		for(Segment2 seg : roomShape){
+			walls.add(new Wall(seg));
 		}
-		walls.add(new Wall(previousPoint,firstPoint));
 		return walls;
 	}
 	
 	public boolean pointInRoom(Vec2 point){
-		return roomShape.contains(point.getX(), point.getY());
+		return roomShape.contains(point);
 	}
 	
 	public void addExit(Exit e){
@@ -109,29 +107,20 @@ public class Room implements ViewableRoom{
 		return new ArrayList<Item>(items);
 	}
 	
-	private void setUpPolygon(List<Vec2> points){
-		roomShape = new Polygon();
-		for(Vec2 p : points){
-			roomShape.addPoint((int)p.getX(), (int)p.getY());
-		}
-	}
-	
 	private class Wall implements ViewableWall{
-		private Vec2 start;
-		private Vec2 end;
+		private Segment2 lineSeg;
 		
-		public Wall(Vec2 s, Vec2 e){
-			start = s;
-			end = e;
+		public Wall(Segment2 ls){
+			lineSeg = ls;
 		}
 		@Override
 		public Vec2 getStart() {
-			return start;
+			return lineSeg.start;
 		}
 
 		@Override
 		public Vec2 getEnd() {
-			return end;
+			return lineSeg.end;
 		}
 
 	}

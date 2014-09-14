@@ -57,5 +57,9 @@ public class Hull2 implements Iterable<Segment2>{
 		}
 		return it.iterator();
 	}
+	//TODO need to get centre of the shape
+	//either implement getBounds() method which returns a Rectangle 
+	//then I'll call getCenter() on the rectangle
+	//or implement getCenter() directly
 	
 }
