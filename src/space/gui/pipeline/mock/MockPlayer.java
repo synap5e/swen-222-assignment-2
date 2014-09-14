@@ -71,10 +71,10 @@ public class MockPlayer implements ViewablePlayer {
 			moveDelta.addLocal(moveDirection);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)){
-			moveDelta.subLocal(Vec3.cross(moveDirection, new Vec3(0,1,0)));
+			moveDelta.subLocal(moveDirection.cross(new Vec3(0,1,0)));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)){
-			moveDelta.addLocal(Vec3.cross(moveDirection, new Vec3(0,1,0)));
+			moveDelta.addLocal(moveDirection.cross(new Vec3(0,1,0)));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)){
 			moveDelta.subLocal(moveDirection);
