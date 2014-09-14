@@ -101,4 +101,9 @@ public class Vec2 {
 		return this.x * rhs.x + this.y * rhs.y;
 	}
 	
+	public void divLocal(float rhs) {
+		this.x /= rhs;
+		this.y /= rhs;
+	}
+	
 }
