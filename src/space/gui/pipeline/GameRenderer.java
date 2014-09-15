@@ -31,7 +31,7 @@ import space.util.Vec3;
 
 public class GameRenderer {
 
-	private static final float FIELD_OF_VIEW = 50.0f;
+	private static final float VERTICAL_FIELD_OF_VIEW = 50.0f;
 
 	private int height;
 	private int width;
@@ -43,6 +43,8 @@ public class GameRenderer {
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
+		
+		System.out.println(getHorizontalFOV());
 	}
 
 	public void loadModels(ViewableWord world) {
@@ -65,14 +67,19 @@ public class GameRenderer {
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(	FIELD_OF_VIEW, (float)width/(float)height, 1f, 1000f);
+		GLU.gluPerspective(	VERTICAL_FIELD_OF_VIEW, (float)width/(float)height, 1f, 1000f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-
-
+		
 		GLU.gluLookAt( 	eyepos.getX(), 					eyepos.getY(), 				eyepos.getZ(),
 						eyepos.getX() + look.getX(), 	eyepos.getY()+look.getY(), 	eyepos.getZ()+look.getZ(),
 						0,  							1, 							0);
+	}
+	
+	public float getHorizontalFOV(){
+		float verticalPixels = (float) Math.tan( Math.toRadians(VERTICAL_FIELD_OF_VIEW) / 2f);
+		float horizontalPixels = ((float)width/(float)height) * verticalPixels;
+		return (float) Math.toDegrees(Math.atan( horizontalPixels ) * 2);
 	}
 	
 	private void setLight(ViewableRoom currentRoom) {

@@ -37,7 +37,10 @@ public class Vec2 {
 		this.x = v.x;
 		this.y = v.y;
 	}
-
+	public static Vec2 fromPolar(float theta, float r){
+		return new Vec2((float) (r * Math.cos(theta)), (float) (r * Math.sin(theta)));
+	}
+	
 	public float getX() {
 		return x;
 	}
@@ -104,6 +107,14 @@ public class Vec2 {
 	public void divLocal(float rhs) {
 		this.x /= rhs;
 		this.y /= rhs;
+	}
+	
+	public float getPolarAngle(){
+		return (float) Math.tanh(y/x);
+	}
+	
+	public boolean equals(Vec2 other, float epsilon) {
+		return Math.abs(x - other.x) < epsilon && Math.abs(y - other.y) < epsilon;
 	}
 	
 }
