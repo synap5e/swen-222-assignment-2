@@ -1,10 +1,12 @@
 package space;
 
 import java.awt.Canvas;
+
 import javax.swing.JFrame;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import space.gui.pipeline.GameRenderer;
@@ -58,6 +60,9 @@ public class ComponentTest extends JFrame {
 			server.join();
 		} catch (InterruptedException e) {
 		}
+		
+		Mouse.setGrabbed(true);
+		Mouse.setClipMouseCoordinatesToWindow(false);
 		
 		long last = getTime();
 		while (true) {
