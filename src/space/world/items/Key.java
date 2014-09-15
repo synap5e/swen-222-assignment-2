@@ -13,6 +13,11 @@ public class Key extends Item implements Movable {
 
 	public Exit getExit() {
 		return exit;
+	}
+
+	@Override
+	public boolean canMove() {
+		return true;
 	}	
 
 }

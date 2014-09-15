@@ -1,9 +1,12 @@
 package space.world;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWord;
 import space.util.Vec2;
 import space.world.items.*;
@@ -73,6 +76,11 @@ public class World implements ViewableWord{
 	
 	public void addEntity(Entity e){
 		entities.put(e.getID(), e);
+	}
+
+	@Override
+	public List<ViewableRoom> getViewableRooms() {
+		return new ArrayList<ViewableRoom>(rooms.values());
 	}
 	
 }

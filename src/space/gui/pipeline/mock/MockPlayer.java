@@ -113,4 +113,9 @@ public class MockPlayer implements ViewablePlayer {
 	public float getElevation() {
 		return getEyeHeight()-6;
 	}
+
+	@Override
+	public boolean canMove() {
+		return true;
+	}
 }

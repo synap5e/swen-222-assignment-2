@@ -33,14 +33,16 @@ public class ComponentTest extends JFrame {
 		c.setIgnoreRepaint(true);
 		c.setFocusable(true);
 		this.getContentPane().add(c);
+		
+		
+		MockPlayer mockPlayer = new MockPlayer();
+		MockWorld mockWorld = new MockWorld();
 
 		GameRenderer rcp = new GameRenderer(width, height);
 		rcp.setParent(c);
 		
-		MockPlayer mockPlayer = new MockPlayer();
-		MockWorld mockWorld = new MockWorld();
+		rcp.loadModels(mockWorld);
 		
-		rcp.init();
 		
 		long last = getTime();
 		while (true) {

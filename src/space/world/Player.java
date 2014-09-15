@@ -80,5 +80,10 @@ public class Player implements Entity,ViewablePlayer{
 		return 0;
 	}
 
+	@Override
+	public boolean canMove() {
+		return true;
+	}
+
 	
 }
