@@ -9,8 +9,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import space.gui.pipeline.GameRenderer;
-import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
+import space.math.Vector2D;
+import space.world.Player;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
@@ -26,7 +27,7 @@ public class Bootstrap {
 		MockWorld mockWorld = new MockWorld();
 
 		//Load Player
-		MockPlayer mockPlayer = new MockPlayer();
+		Player player = new Player(new Vector2D(0, 0), 4321);
 	
 		Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 		Display.create();
@@ -55,11 +56,11 @@ public class Bootstrap {
 			last = now;
 
 			// do world update
-			mockPlayer.update(delta);
+		//	player.update(delta);
 			mockWorld.update(delta);
 			
 			// update renderer
-			rcp.renderTick(delta, mockPlayer, mockWorld);
+			rcp.renderTick(delta, player, mockWorld);
 
 			// update gui
 			gui.update();
