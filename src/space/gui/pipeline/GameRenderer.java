@@ -31,33 +31,21 @@ import space.util.Vec3;
 
 public class GameRenderer {
 
-	private static final int WALL_HEIGHT = 10;
 	private static final float FIELD_OF_VIEW = 50.0f;
-	private static final float EYE_HEIGHT = 8;
 
 	private int height;
 	private int width;
 	private int test;
 
 	private Map<Class<? extends ViewableObject>, Integer> models;
+	private Map<ViewableRoom, Integer> roomModels;
 	
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}
 
-	public void init(){
-		glClearColor(0, 0, 0, 0);
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-		glShadeModel(GL_SMOOTH);
-		glEnable(GL_LIGHTING);
-		glEnable(GL_COLOR_MATERIAL);
-		
-		loadModels();
-	}
-
-	private void loadModels() {
+	public void loadModels(ViewableWord world) {
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
 			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vec3(0,0,0), new Vec3(0,180,0), 0.2f));
@@ -65,6 +53,12 @@ public class GameRenderer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		roomModels = new HashMap<>();
+		for (ViewableRoom room : world.getViewableRooms()){
+			roomModels.put(room, RoomModel.createDisplayList(room));
+		}
+		
 	}
 
 	private void setCamera(Vec3 eyepos, Vec3 look) {
@@ -105,26 +99,32 @@ public class GameRenderer {
 	}
 	
 	public void renderTick(float timestep, ViewablePlayer player, ViewableWord world){
+		if (models == null) throw new IllegalStateException("models have not yet been loaded");
+		
 		Vec2 playerPos = player.getPosition();
 		ViewableRoom currentRoom = world.getRoomAt(playerPos);
-
-		setCamera(new Vec3(playerPos.getX(), player.getEyeHeight(), playerPos.getY()), player.getLookDirection());
-
+		
+		glClearColor(0, 0, 0, 0);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+		glEnable(GL_CULL_FACE);
+	
+
+		setCamera(new Vec3(playerPos.getX(), player.getEyeHeight(), playerPos.getY()), player.getLookDirection());
 		setLight(currentRoom);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glPushMatrix();
 
-		renderWalls(currentRoom);
+		glCallList(roomModels.get(currentRoom));
 
-		
 		//glEnable(GL_NORMALIZE);
+		glEnable(GL_LIGHTING);
+		glShadeModel(GL_SMOOTH);
 		
 		for (ViewableObject vob : currentRoom.getContainedObjects()){
 			drawObject(vob);
@@ -159,53 +159,6 @@ public class GameRenderer {
 		}
 		Vec3 c = colors.get(vob);
 		glColor3f(c.getX(), c.getY(), c.getZ());
-	}
-
-	private void renderWalls(ViewableRoom currentRoom) {
-		glBegin(GL_QUADS);
-		glColor3d(0.5, 0.5, 0.5);
-		for (ViewableWall r : currentRoom.getWalls()) {
-			float x1 = r.getStart().getX();
-			float x2 = r.getEnd().getX();
-
-			float z1 = r.getStart().getY();
-			float z2 = r.getEnd().getY();
-
-			// normal of a line segment (the wall)
-			Vec3 normal = new Vec3(1 * (z2 - z1), 0, -1 * (x2 - x1)).normalized();
-
-			glNormal3f(normal.getX(), normal.getY(), normal.getZ());
-
-			glVertex3d(x1, 0, z1);
-			glVertex3d(x1, WALL_HEIGHT, z1);
-			glVertex3d(x2, WALL_HEIGHT, z2);
-			glVertex3d(x2, 0, z2);
-		}
-		glEnd();
-
-
-		glDisable(GL_LIGHTING);
-		// floor
-		glColor3d(0.3, 0.3, 0.3);
-		glNormal3f(0,1,0);
-		glBegin(GL_TRIANGLE_FAN);
-		glVertex3f(0, 0, 0);
-		for (ViewableWall r : currentRoom.getWalls()) {
-			glVertex3d(r.getStart().getX(), 0, r.getStart().getY());
-			glVertex3d(r.getEnd().getX(), 0, r.getEnd().getY());
-		}
-		glEnd();
-
-		glColor3d(0.3, 0.3, 0.3);
-		glNormal3f(0,-1,0);
-		glBegin(GL_TRIANGLE_FAN);
-		glVertex3f(0, 10, 0);
-		for (ViewableWall r : currentRoom.getWalls()) {
-			glVertex3d(r.getStart().getX(), 10, r.getStart().getY());
-			glVertex3d(r.getEnd().getX(), 10, r.getEnd().getY());
-		}
-		glEnd();
-		glEnable(GL_LIGHTING);
 	}
 
 
