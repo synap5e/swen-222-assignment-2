@@ -60,7 +60,7 @@ public class GameRenderer {
 	private void loadModels() {
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
-			models.put(Bunny.class, WavefrontModel.load(new File("./assets/models/bunny_new.obj"), new Vec3(0,0,0), new Vec3(0,180,0), 0.2f));
+			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vec3(0,0,0), new Vec3(0,180,0), 0.2f));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

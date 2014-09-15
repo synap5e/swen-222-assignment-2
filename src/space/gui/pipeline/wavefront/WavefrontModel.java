@@ -142,11 +142,11 @@ public class WavefrontModel {
 		return displayList;
 	}
 
-	public static int load(File file) throws IOException {
-		return load(file, new Vec3(0,0,0), new Vec3(0,0,0), 1f);
+	public static int loadDisplayList(File file) throws IOException {
+		return loadDisplayList(file, new Vec3(0,0,0), new Vec3(0,0,0), 1f);
 	}
 	
-	public static int load(File file, Vec3 offset, Vec3 eulerRotation, float scale) throws IOException {
+	public static int loadDisplayList(File file, Vec3 offset, Vec3 eulerRotation, float scale) throws IOException {
 		WavefrontModel model = new WavefrontModel(file, offset, eulerRotation, scale);
 		return model.createDisplayList();
 	}
