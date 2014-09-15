@@ -39,8 +39,8 @@ public class Vector2D {
 		this.y = y;
 	}
 	public Vector2D(Vector2D v){
-		this.x = v.x;
-		this.y = v.y;
+		this.x = v.getX();
+		this.y = v.getY();
 	}
 	public static Vector2D fromPolar(float theta, float r){
 		return new Vector2D((float) (r * Math.cos(theta)), (float) (r * Math.sin(theta)));
