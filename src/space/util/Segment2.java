@@ -15,7 +15,7 @@ public class Segment2 {
 	}
 
 	public boolean intersects(Segment2 other) {
-		if (start.equals(other.start) || end.equals(other.end)) return true;
+		if (start.equals(other.start, EPSILON) || end.equals(other.end, EPSILON)) return true;
 		
 		// this line defined as (p, p+r)
 		Vec2 p = start;
