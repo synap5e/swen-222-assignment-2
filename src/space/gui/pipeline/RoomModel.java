@@ -15,6 +15,10 @@ import static org.lwjgl.opengl.GL11.glNewList;
 import static org.lwjgl.opengl.GL11.glNormal3f;
 import static org.lwjgl.opengl.GL11.glVertex3d;
 import static org.lwjgl.opengl.GL11.glVertex3f;
+
+import java.util.Map;
+
+import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.util.Vec3;
@@ -23,7 +27,7 @@ public class RoomModel {
 	
 	private static final float WALL_HEIGHT = 10;
 	
-	public static int createDisplayList(ViewableRoom room){
+	public static int createDisplayList(ViewableRoom room, Map<Class<? extends ViewableObject>, Integer> models){
 		int displayList = glGenLists(1);
 		glNewList(displayList, GL_COMPILE);
 		
@@ -73,6 +77,16 @@ public class RoomModel {
 			glVertex3d(r.getStart().getX(), WALL_HEIGHT, r.getStart().getY());
 		}
 		glEnd();
+		
+		glEnable(GL_LIGHTING);
+		
+		
+		for (ViewableObject viewableObject : room.getContainedObjects()){
+			if (!viewableObject.canMove()){
+				GameRenderer.drawObject(viewableObject, models);
+			}
+		}
+		
 
 		glEndList();
 		

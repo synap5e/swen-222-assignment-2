@@ -56,7 +56,7 @@ public class GameRenderer {
 		
 		roomModels = new HashMap<>();
 		for (ViewableRoom room : world.getViewableRooms()){
-			roomModels.put(room, RoomModel.createDisplayList(room));
+			roomModels.put(room, RoomModel.createDisplayList(room, models));
 		}
 		
 	}
@@ -127,7 +127,9 @@ public class GameRenderer {
 		glShadeModel(GL_SMOOTH);
 		
 		for (ViewableObject vob : currentRoom.getContainedObjects()){
-			drawObject(vob);
+			if (vob.canMove()){
+				drawObject(vob, models);
+			}
 		}
 		
 		//glDisable(GL_NORMALIZE);
@@ -135,7 +137,7 @@ public class GameRenderer {
 		glPopMatrix();
 	}
 
-	private void drawObject(ViewableObject vob) {
+	public static void drawObject(ViewableObject vob, Map<Class<? extends ViewableObject>, Integer> models) {
 		glPushMatrix();
 		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
 		glRotated(vob.getAngle(), 0, -1, 0);
@@ -148,8 +150,8 @@ public class GameRenderer {
 		glPopMatrix();
 	}
 
-	private HashMap<ViewableObject, Vec3> colors = new HashMap<ViewableObject, Vec3>();
-	private void getAssignedColor(ViewableObject vob) {
+	private static HashMap<ViewableObject, Vec3> colors = new HashMap<ViewableObject, Vec3>();
+	private static void getAssignedColor(ViewableObject vob) {
 		if (!colors.containsKey(vob)){
 			float r = (float) Math.random();
 			float b = (float) Math.random();

@@ -13,5 +13,7 @@ public interface ViewableObject {
 	public float getAngle();
 
 	public float getElevation();
+	
+	public boolean canMove();
 
 }

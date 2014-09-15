@@ -69,4 +69,9 @@ public class Bunny implements ViewableObject {
 		return (float) (1 - 1 * Math.pow(jumpTime*2 - 1, 2));
 	}
 
+	@Override
+	public boolean canMove() {
+		return true;
+	}
+
 }
