@@ -6,7 +6,7 @@ import space.math.Segment2D;
 import space.math.Vector2D;
 import static org.junit.Assert.*;
 
-public class Segment2Test {
+public class Segment2DTests {
 
 	@Test
 	public void intersectionTrue(){

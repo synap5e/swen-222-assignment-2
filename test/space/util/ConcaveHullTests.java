@@ -8,7 +8,7 @@ import space.math.ConcaveHull;
 import space.math.Vector2D;
 import static org.junit.Assert.*;
 
-public class Hull2Tests {
+public class ConcaveHullTests {
 
 	@Test
 	public void containsTrue(){

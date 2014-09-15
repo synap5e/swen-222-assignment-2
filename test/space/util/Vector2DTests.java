@@ -5,7 +5,7 @@ import org.junit.Test;
 import space.math.Vector2D;
 import static org.junit.Assert.*;
 
-public class Vec2Test {
+public class Vector2DTests {
 	
 	private static final float EPSILON = 1f;
 	
