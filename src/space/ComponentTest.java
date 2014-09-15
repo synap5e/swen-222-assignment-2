@@ -16,6 +16,11 @@ import space.network.Client;
 import space.network.Server;
 import space.world.Player;
 
+/**
+ * 
+ * @author Simon Pinfold, James Greenwood-Thessman
+ *
+ */
 public class ComponentTest extends JFrame {
 	
 	public static void main(String[] args) throws LWJGLException{

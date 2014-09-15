@@ -5,6 +5,11 @@ import org.lwjgl.input.Keyboard;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.math.Vector2D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class Bunny implements ViewableObject {
 
 	private Vector2D pos;

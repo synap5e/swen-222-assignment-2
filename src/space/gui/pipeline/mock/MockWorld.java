@@ -4,10 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import space.gui.pipeline.viewable.ViewableRoom;
-import space.gui.pipeline.viewable.ViewableWord;
+import space.gui.pipeline.viewable.ViewableWorld;
 import space.math.Vector2D;
 
-public class MockWorld implements ViewableWord {
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
+public class MockWorld implements ViewableWorld {
 
 	private MockRoom room = new MockRoom();
 

@@ -13,6 +13,11 @@ import org.lwjgl.opengl.Util;
 
 import space.math.Vector3D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class WavefrontModel {
 
 	private static class Face {

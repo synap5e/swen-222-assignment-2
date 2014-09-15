@@ -10,6 +10,11 @@ import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Vector2D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class MockRoom implements ViewableRoom {
 
 	private static Random random = new Random();

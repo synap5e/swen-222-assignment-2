@@ -2,6 +2,11 @@ package space.gui.pipeline.viewable;
 
 import space.math.Vector2D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public interface ViewableObject {
 	
 	public Vector2D getPosition();

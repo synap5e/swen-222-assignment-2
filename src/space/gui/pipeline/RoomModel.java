@@ -23,6 +23,11 @@ import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Vector3D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class RoomModel {
 	
 	private static final float WALL_HEIGHT = 10;

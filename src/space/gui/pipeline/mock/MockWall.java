@@ -3,6 +3,11 @@ package space.gui.pipeline.mock;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Vector2D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class MockWall implements ViewableWall{
 
 	private Vector2D v2;

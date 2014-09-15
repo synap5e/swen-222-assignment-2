@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 
 import space.gui.pipeline.viewable.ViewableRoom;
-import space.gui.pipeline.viewable.ViewableWord;
+import space.gui.pipeline.viewable.ViewableWorld;
 import space.math.Vector2D;
 import space.world.items.*;
 
-public class World implements ViewableWord{
+public class World implements ViewableWorld{
 	private Map<Integer,Entity> entities = new HashMap<Integer,Entity>();
 	private Map<Integer,Room> rooms = new HashMap<Integer,Room>();
 	

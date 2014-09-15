@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class ConcaveHull implements Iterable<Segment2D>{
 	
 	private List<Vector2D> hullPoints;
