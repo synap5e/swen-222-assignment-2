@@ -42,7 +42,7 @@ public class Player implements Entity,ViewablePlayer{
 		return (float) ((EYE_HEIGHT+JUMP_HEIGHT) - JUMP_HEIGHT * Math.pow(jumpTime*2 - 1, 2));
 	}
 
-	private void moveLook(Vector2D mouseDelta) {
+	public void moveLook(Vector2D mouseDelta) {
 		this.xRotation += mouseDelta.getY()/8f;
 		this.yRotation += mouseDelta.getX()/8f;
 

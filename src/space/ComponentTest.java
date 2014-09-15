@@ -1,7 +1,6 @@
 package space;
 
 import java.awt.Canvas;
-
 import javax.swing.JFrame;
 
 import org.lwjgl.LWJGLException;
@@ -9,9 +8,11 @@ import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 
 import space.gui.pipeline.GameRenderer;
-import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
-import space.gui.pipeline.viewable.ViewableWord;
+import space.math.Vector2D;
+import space.network.Client;
+import space.network.Server;
+import space.world.Player;
 
 public class ComponentTest extends JFrame {
 	
@@ -21,7 +22,7 @@ public class ComponentTest extends JFrame {
 	
 	private void create() throws LWJGLException {
 		int width = 1800;
-		int height = 900;
+		int height = 900;	
 		
 		this.setSize(width, height);
 		this.setVisible(true);
@@ -35,7 +36,7 @@ public class ComponentTest extends JFrame {
 		this.getContentPane().add(c);
 		
 		
-		MockPlayer mockPlayer = new MockPlayer();
+		Player mockPlayer = new Player(new Vector2D(0, 0), 4321);
 		MockWorld mockWorld = new MockWorld();
 
 		GameRenderer rcp = new GameRenderer(width, height);
@@ -43,6 +44,20 @@ public class ComponentTest extends JFrame {
 		
 		rcp.loadModels(mockWorld);
 		
+		//Start a server so a client can be created
+		Thread server = new Thread(new Runnable(){
+			@Override
+			public void run() {
+				new Server("localhost", 1234);
+			}
+		});
+		server.start();
+		
+		Client client = new Client("localhost", 1234, mockWorld, mockPlayer);
+		try {
+			server.join();
+		} catch (InterruptedException e) {
+		}
 		
 		long last = getTime();
 		while (true) {
@@ -51,8 +66,7 @@ public class ComponentTest extends JFrame {
 			last = now;
 
 			// do world update
-			mockPlayer.update(delta);
-			mockWorld.update(delta);
+			client.update(delta);
 			
 			// update renderer
 			rcp.renderTick(delta, mockPlayer, mockWorld);
