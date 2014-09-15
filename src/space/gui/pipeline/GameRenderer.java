@@ -17,7 +17,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 
 import space.gui.pipeline.mock.Bunny;
-import space.gui.pipeline.mock.MockPlayer;
 import space.gui.pipeline.mock.MockWorld;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
