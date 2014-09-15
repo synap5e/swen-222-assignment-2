@@ -16,5 +16,5 @@ Roles
  - Assigned to: Maria
 4. Client-Server Architecture. Covers all setup and communication between the server and all clients.
  - Assigned to: James
-5. Data storage. Covers loading and saving of game world files in an XML format.
+5. Data storage. Covers loading and saving of game world files in an Json format.
  - Assigned to: Shweta
