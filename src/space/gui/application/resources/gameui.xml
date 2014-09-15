@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE themes PUBLIC "-//www.matthiasmann.de//TWL-Theme//EN" "http://hg.l33tlabs.org/twl/raw-file/tip/src/de/matthiasmann/twl/theme/theme.dtd">
+<themes>
+    <images file="item-background-highlight.png">
+        <area name="-item.background.highlight" xywh="*"/>
+    </images>
+
+    <images file="item-background.png" format="RGBA">
+        <select name="item.background">
+            <alias ref="-item.background.highlight" if="armed ^ selected"/>
+            <area xywh="*"/>
+        </select>
+    </images>
+
+    <images file="menu-background-highlight.png" format="RGBA">
+        <area name="-menu.background.highlight" xywh="*"/>
+    </images>
+
+    <images file="menu-background.png" format="RGBA">
+        <select name="menu.background">
+            <alias ref="-menu.background.highlight" if="armed ^ selected"/>
+            <area xywh="*"/>
+        </select>
+    </images>
+
+    <images file="item-placeholder.png" format="RGBA">
+        <area name="-item-placeholder-0" xywh="0,32,32,32"/>
+
+        <animation name="-item-placeholder-anim" timeSource="hover">
+            <frame ref="-item-placeholder-0" duration="100"/>
+            <frames count="11" offsetx="32" duration="100" xywh="32,32,32,32"/>
+        </animation>
+
+        <select name="button.item-placeholder.overlay" center="true">
+            <alias ref="-item-placeholder-anim" if="hover | pressed"/>
+            <alias ref="-item-placeholder-0"/>
+        </select>
+    </images>
+
+    <images file="pause.png" format="RGBA">
+        <area name="button.pause.overlay" center="true" xywh="*"/>
+    </images>
+
+    <images file="menu.png" format="RGBA">
+        <area name="-menu-0" xywh="0,0,36,57"/>
+
+        <animation name="-menu-anim" timeSource="hover">
+            <frame ref="-menu-0" duration="100"/>
+            <frames count="13" offsetx="36" duration="100" xywh="36,0,36,57"/>
+        </animation>
+
+        <select name="button.menu.overlay" center="true">
+            <alias ref="-menu-anim" if="hover | pressed"/>
+            <alias ref="-menu-0"/>
+        </select>
+    </images>
+
+    <images file="simple.png" format="RGBA">
+        <area name="-borderG" border="3" xywh="60,0,9,9" splitx="L3,R3" splity="T3,B3"/>
+        <area name="white" xywh="23,3,1,1"/>
+    </images>
+
+    <images file="icon-gold-star-small.png">
+        <area name="-gold-star" xywh="1,2,32,32"/>
+        <select name="gold-star">
+            <alias ref="-gold-star" if="hover"/>
+            <alias ref="-gold-star" tint="#7F7F7F"/>
+        </select>
+        <alias name="radialpopupmenu.background" ref="white" tint="#803F3F3F"/>
+    </images>
+
+    <fontDef name="normal" filename="font/font.fnt" color="white">
+        <fontParam if="error" color="red"/>
+        <fontParam if="disabled" color="gray"/>
+        <fontParam if="textSelection" color="blue"/>
+    </fontDef>
+
+    <inputMapDef name="-defaultInputMap">
+        <action name="selectAll">ctrl A</action>
+        <action name="cut">ctrl X</action>
+        <action name="copy">ctrl C</action>
+        <action name="paste">ctrl V</action>
+    </inputMapDef>
+
+    <theme name="-defaults">
+        <param name="background"><image>none</image></param>
+        <param name="overlay"><image>none</image></param>
+        <param name="font"><font>normal</font></param>
+        <param name="textAlignment"><enum type="alignment">left</enum></param>
+        <param name="minWidth"><int>0</int></param>
+        <param name="minHeight"><int>0</int></param>
+        <param name="maxWidth"><int>0</int></param>
+        <param name="maxHeight"><int>0</int></param>
+        <param name="inputMap"><inputMap>-defaultInputMap</inputMap></param>
+    </theme>
+
+    <theme name="button" ref="-defaults" allowWildcard="true">
+        <param name="border">
+            <border>background.border</border>
+        </param>
+        <param name="textAlignment">
+            <enum type="alignment">center</enum>
+        </param>
+    </theme>
+
+    <theme name="menu-button" ref="button" allowWildcard="true">
+        <param name="">
+            <image>menu.*</image>
+        </param>
+        <param name="border">
+            <border>background.border</border>
+        </param>
+    </theme>
+
+    <theme name="item-button" ref="button" allowWildcard="true">
+        <param name="">
+            <image>item.*</image>
+        </param>
+        <param name="border">
+            <border>background.border</border>
+        </param>
+    </theme>
+
+    <theme name="label" ref="-defaults" allowWildcard="true">
+    </theme>
+
+    <theme name="tooltipwindow" ref="-defaults">
+        <param name="background">
+            <image>-borderG</image>
+        </param>
+        <param name="border">
+            <border>background.border</border>
+        </param>
+        <param name="fadeInTime">
+            <int>0</int>
+        </param>
+        <theme name="label" ref="label">
+            <param name="font">
+                <fontDef filename="font/font.fnt" color="black"/>
+            </param>
+        </theme>
+    </theme>
+
+    <theme name="radialpopupmenu" ref="-defaults">
+        <theme name="star" ref="-defaults">
+            <param name="background"><image>gold-star</image></param>
+        </theme>
+        <param name="background"><image>radialpopupmenu.background</image></param>
+        <param name="buttonRadius"><int>16</int></param>
+        <param name="radius"><int>55</int></param>
+        <param name="border"><border>5</border></param>
+     </theme>
+    
+    <theme name="headsupdisplay" ref="-defaults">
+        
+        <theme name="item-placeholder" ref="item-button">
+            <param name=""><image>button.item-placeholder.*</image></param>
+            <param name="border"><border>background.border</border></param>
+            <param name="tooltip"><string>Placeholder text</string></param>
+        </theme>
+
+        <theme name="pause" ref="menu-button">
+            <param name=""><image>button.pause.*</image></param>
+            <param name="border"><border>background.border</border></param>
+            <param name="tooltip"><string>Pause the game</string></param>
+        </theme>
+
+        <theme name="menu" ref="menu-button">
+            <param name=""><image>button.menu.*</image></param>
+            <param name="border"><border>background.border</border></param>
+            <param name="tooltip"><string>menu !!</string></param>
+        </theme>
+
+        <theme name="fpscounter" ref="label"/>
+
+        <theme name="" ref="*"/>
+    </theme>
+</themes>
