@@ -4,19 +4,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import space.gui.pipeline.viewable.ViewablePlayer;
-import space.util.Vec2;
-import space.util.Vec3;
+import space.math.Vector2D;
+import space.math.Vector3D;
 import space.world.items.Item;
 
 public class Player implements Entity,ViewablePlayer{
 	private Set<Item> inventory = new HashSet<Item>(); //items the player is carrying
-	private Vec2 position;
-	private Vec3 lookDir; 
+	private Vector2D position;
+	private Vector3D lookDir; 
 	private float eyeHeight;
 	private int id;
 	private int points;
 	
-	public Player(Vec2 pos,int i){
+	public Player(Vector2D pos,int i){
 		position = pos;
 		id = i;
 	}
@@ -29,20 +29,20 @@ public class Player implements Entity,ViewablePlayer{
 		inventory.remove(i);
 	}
 	@Override
-	public Vec2 getPosition() {
+	public Vector2D getPosition() {
 		return position;
 	}
 	
-	public void setPosition(Vec2 position) {
+	public void setPosition(Vector2D position) {
 		this.position = position;
 	}
 	
 	@Override
-	public Vec3 getLookDirection() {
+	public Vector3D getLookDirection() {
 		return lookDir;
 	}
 	
-	public void setLookDirection(Vec3 lookDir) {
+	public void setLookDirection(Vector3D lookDir) {
 		this.lookDir = lookDir;
 	}
 	

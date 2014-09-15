@@ -1,6 +1,6 @@
-package space.util;
+package space.math;
 
-public class Vec2 {
+public class Vector2D {
 
 	@Override
 	public int hashCode() {
@@ -18,7 +18,7 @@ public class Vec2 {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Vec2 other = (Vec2) obj;
+		Vector2D other = (Vector2D) obj;
 		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
 			return false;
 		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
@@ -29,16 +29,16 @@ public class Vec2 {
 	private float x;
 	private float y;
 
-	public Vec2(float x, float y){
+	public Vector2D(float x, float y){
 		this.x = x;
 		this.y = y;
 	}
-	public Vec2(Vec2 v){
+	public Vector2D(Vector2D v){
 		this.x = v.x;
 		this.y = v.y;
 	}
-	public static Vec2 fromPolar(float theta, float r){
-		return new Vec2((float) (r * Math.cos(theta)), (float) (r * Math.sin(theta)));
+	public static Vector2D fromPolar(float theta, float r){
+		return new Vector2D((float) (r * Math.cos(theta)), (float) (r * Math.sin(theta)));
 	}
 	
 	public float getX() {
@@ -54,7 +54,7 @@ public class Vec2 {
 		this.y = y;
 	}
 
-	public void addLocal(Vec2 rhs) {
+	public void addLocal(Vector2D rhs) {
 		this.x += rhs.x;
 		this.y += rhs.y;
 	}
@@ -63,9 +63,9 @@ public class Vec2 {
 		return "Vec2(" + x + ", " + y + ")";
 	}
 
-	public Vec2 normalized() {
+	public Vector2D normalized() {
 		float len = this.len();
-		return new Vec2(x/len,y/len);
+		return new Vector2D(x/len,y/len);
 	}
 
 	public float len() {
@@ -76,31 +76,31 @@ public class Vec2 {
 		return x * x + y * y;
 	}
 	
-	public Vec2 mul(float s) {
-		return new Vec2(x*s,y*s);
+	public Vector2D mul(float s) {
+		return new Vector2D(x*s,y*s);
 	}
 	
-	public float angleTo(Vec2 rhs) {
+	public float angleTo(Vector2D rhs) {
 		return (float) Math.acos(this.normalized().dot(rhs.normalized()) / (len() * rhs.len()));
 	}
 	
-	public Vec2 sub(Vec2 rhs) {
-		return new Vec2(x-rhs.x, y-rhs.y);
+	public Vector2D sub(Vector2D rhs) {
+		return new Vector2D(x-rhs.x, y-rhs.y);
 	}
 	
-	public float cross(Vec2 rhs) {
+	public float cross(Vector2D rhs) {
 		return this.x * rhs.y - this.y * rhs.x;
 	}
 	
-	public Vec2 div(float rhs) {
-		return new Vec2(x/rhs, y/rhs);
+	public Vector2D div(float rhs) {
+		return new Vector2D(x/rhs, y/rhs);
 	}
 	
-	public Vec2 add(Vec2 rhs) {
-		return new Vec2(x+rhs.x, y+rhs.y);
+	public Vector2D add(Vector2D rhs) {
+		return new Vector2D(x+rhs.x, y+rhs.y);
 	}
 	
-	public float dot(Vec2 rhs) {
+	public float dot(Vector2D rhs) {
 		return this.x * rhs.x + this.y * rhs.y;
 	}
 	
@@ -113,7 +113,7 @@ public class Vec2 {
 		return (float) Math.tanh(y/x);
 	}
 	
-	public boolean equals(Vec2 other, float epsilon) {
+	public boolean equals(Vector2D other, float epsilon) {
 		return Math.abs(x - other.x) < epsilon && Math.abs(y - other.y) < epsilon;
 	}
 	

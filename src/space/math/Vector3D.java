@@ -1,17 +1,17 @@
-package space.util;
+package space.math;
 
-public class Vec3 {
+public class Vector3D {
 
 	private float x;
 	private float y;
 	private float z;
 
-	public Vec3(float x, float y, float z){
+	public Vector3D(float x, float y, float z){
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
-	public Vec3(Vec3 v){
+	public Vector3D(Vector3D v){
 		this.x = v.x;
 		this.y = v.y;
 		this.z = v.z;
@@ -53,7 +53,7 @@ public class Vec3 {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Vec3 other = (Vec3) obj;
+		Vector3D other = (Vector3D) obj;
 		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
 			return false;
 		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
@@ -63,17 +63,17 @@ public class Vec3 {
 		return true;
 	}
 
-	public float dot(Vec3 rhs) {
+	public float dot(Vector3D rhs) {
 		return this.x * rhs.x + this.y * rhs.y + this.z * rhs.z;
 	}
 
-	public Vec3 cross(Vec3 rhs) {
-		return new Vec3(this.y * rhs.z - this.z * rhs.y, this.z * rhs.x - this.x * rhs.z, this.x * rhs.y - this.y * rhs.x);
+	public Vector3D cross(Vector3D rhs) {
+		return new Vector3D(this.y * rhs.z - this.z * rhs.y, this.z * rhs.x - this.x * rhs.z, this.x * rhs.y - this.y * rhs.x);
 	}
 
-	public Vec3 normalized() {
+	public Vector3D normalized() {
 		float len = this.len();
-		return new Vec3(x/len,y/len,z/len);
+		return new Vector3D(x/len,y/len,z/len);
 	}
 
 	public float len() {
@@ -84,40 +84,40 @@ public class Vec3 {
 		return x * x + y * y + z * z;
 	}
 
-	public Vec3 addLocal(Vec3 argVec) {
+	public Vector3D addLocal(Vector3D argVec) {
 		x += argVec.x;
 		y += argVec.y;
 		z += argVec.z;
 		return this;
 	}
 
-	public Vec3 add(Vec3 argVec) {
-		return new Vec3(x + argVec.x, y + argVec.y, z + argVec.z);
+	public Vector3D add(Vector3D argVec) {
+		return new Vector3D(x + argVec.x, y + argVec.y, z + argVec.z);
 	}
 
-	public Vec3 subLocal(Vec3 argVec) {
+	public Vector3D subLocal(Vector3D argVec) {
 		x -= argVec.x;
 		y -= argVec.y;
 		z -= argVec.z;
 		return this;
 	}
 
-	public Vec3 sub(Vec3 argVec) {
-		return new Vec3(x - argVec.x, y - argVec.y, z - argVec.z);
+	public Vector3D sub(Vector3D argVec) {
+		return new Vector3D(x - argVec.x, y - argVec.y, z - argVec.z);
 	}
 
-	public Vec3 mulLocal(float argScalar) {
+	public Vector3D mulLocal(float argScalar) {
 		x *= argScalar;
 		y *= argScalar;
 		z *= argScalar;
 		return this;
 	}
 
-	public Vec3 mul(float argScalar) {
-		return new Vec3(x * argScalar, y * argScalar, z * argScalar);
+	public Vector3D mul(float argScalar) {
+		return new Vector3D(x * argScalar, y * argScalar, z * argScalar);
 	}
-	public Vec3 negate() {
-		return new Vec3(-x, -y, -z);
+	public Vector3D negate() {
+		return new Vector3D(-x, -y, -z);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package space.gui.pipeline.viewable;
 
-import space.util.Vec3;
+import space.math.Vector3D;
 
 public interface ViewablePlayer extends ViewableObject{
 	
@@ -8,7 +8,7 @@ public interface ViewablePlayer extends ViewableObject{
 	 * 
 	 * @return the direction the player is looking
 	 */
-	public Vec3 getLookDirection();
+	public Vector3D getLookDirection();
 
 	public float getEyeHeight();
 

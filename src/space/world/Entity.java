@@ -1,8 +1,8 @@
 package space.world;
 
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public interface Entity {
-	public Vec2 getPosition();
+	public Vector2D getPosition();
 	public int getID();
 }

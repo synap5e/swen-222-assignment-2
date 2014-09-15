@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.Util;
 
-import space.util.Vec3;
+import space.math.Vector3D;
 
 public class WavefrontModel {
 
@@ -20,15 +20,15 @@ public class WavefrontModel {
 		int n1, n2, n3;
 	}
 
-	private ArrayList<Vec3> vertices = new ArrayList<Vec3>();
-	private ArrayList<Vec3> normals = new ArrayList<Vec3>();
+	private ArrayList<Vector3D> vertices = new ArrayList<Vector3D>();
+	private ArrayList<Vector3D> normals = new ArrayList<Vector3D>();
 	private ArrayList<Face> faces = new ArrayList<Face>();
 	
 	private float scale;
-	private Vec3 eulerRotation;
-	private Vec3 offset;
+	private Vector3D eulerRotation;
+	private Vector3D offset;
 
-	private WavefrontModel(File f, Vec3 offset, Vec3 eulerRotation, float scale) throws IOException {
+	private WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale) throws IOException {
 		this.offset = offset;
 		this.eulerRotation = eulerRotation;
 		this.scale = scale;
@@ -88,13 +88,13 @@ public class WavefrontModel {
 	}
 
 	private void addVertex(String[] elems) {
-		Vec3 v = parseVec3(elems);
+		Vector3D v = parseVec3(elems);
 		v.mulLocal(scale);
 		vertices.add(v);
 	}
 
-	private Vec3 parseVec3(String[] elems) {
-		return new 	Vec3(
+	private Vector3D parseVec3(String[] elems) {
+		return new 	Vector3D(
 						Float.parseFloat(elems[1]),
 						Float.parseFloat(elems[2]),
 						Float.parseFloat(elems[3])
@@ -115,22 +115,22 @@ public class WavefrontModel {
 		for (Face f : faces) {
 
 			{
-				Vec3 n1 = normals.get(f.n1 - 1);
-				Vec3 v1 = vertices.get(f.v1 - 1);
+				Vector3D n1 = normals.get(f.n1 - 1);
+				Vector3D v1 = vertices.get(f.v1 - 1);
 				glNormal3f(n1.getX(), n1.getY(), n1.getZ());
 				glVertex3f(v1.getX(), v1.getY(), v1.getZ());
 			}
 
 			{
-				Vec3 n2 = normals.get(f.n2 - 1);
-				Vec3 v2 = vertices.get(f.v2 - 1);
+				Vector3D n2 = normals.get(f.n2 - 1);
+				Vector3D v2 = vertices.get(f.v2 - 1);
 				glNormal3f(n2.getX(), n2.getY(), n2.getZ());
 				glVertex3f(v2.getX(), v2.getY(), v2.getZ());
 			}
 
 			{
-				Vec3 n3 = normals.get(f.n3 - 1);
-				Vec3 v3 = vertices.get(f.v3 - 1);
+				Vector3D n3 = normals.get(f.n3 - 1);
+				Vector3D v3 = vertices.get(f.v3 - 1);
 				glNormal3f(n3.getX(), n3.getY(), n3.getZ());
 				glVertex3f(v3.getX(), v3.getY(), v3.getZ());
 			}
@@ -143,10 +143,10 @@ public class WavefrontModel {
 	}
 
 	public static int loadDisplayList(File file) throws IOException {
-		return loadDisplayList(file, new Vec3(0,0,0), new Vec3(0,0,0), 1f);
+		return loadDisplayList(file, new Vector3D(0,0,0), new Vector3D(0,0,0), 1f);
 	}
 	
-	public static int loadDisplayList(File file, Vec3 offset, Vec3 eulerRotation, float scale) throws IOException {
+	public static int loadDisplayList(File file, Vector3D offset, Vector3D eulerRotation, float scale) throws IOException {
 		WavefrontModel model = new WavefrontModel(file, offset, eulerRotation, scale);
 		return model.createDisplayList();
 	}

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWord;
-import space.util.Vec2;
+import space.math.Vector2D;
 import space.world.items.*;
 
 public class World implements ViewableWord{
@@ -27,7 +27,7 @@ public class World implements ViewableWord{
 		}
 	}
 	
-	public void movePlayer(Player p, Vec2 newPosition){//probably need to do something on invalid moves...
+	public void movePlayer(Player p, Vector2D newPosition){//probably need to do something on invalid moves...
 		Room prevRoom = getRoomAt(p.getPosition());
 		Room newRoom = getRoomAt(newPosition);
 		if(prevRoom.equals(newRoom)){
@@ -53,7 +53,7 @@ public class World implements ViewableWord{
 	}
 	
 	@Override
-	public Room getRoomAt(Vec2 pos) {
+	public Room getRoomAt(Vector2D pos) {
 		for(Room r : rooms.values()){
 			if(r.pointInRoom(pos)){
 				return r;

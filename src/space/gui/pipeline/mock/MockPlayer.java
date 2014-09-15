@@ -4,19 +4,19 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import space.gui.pipeline.viewable.ViewablePlayer;
-import space.util.Vec2;
-import space.util.Vec3;
+import space.math.Vector2D;
+import space.math.Vector3D;
 
 public class MockPlayer implements ViewablePlayer {
 
-	private Vec2 pos = new Vec2(0,0);
+	private Vector2D pos = new Vector2D(0,0);
 
-	public Vec2 getPosition() {
+	public Vector2D getPosition() {
 		return pos;
 	}
 
 	@Override
-	public Vec3 getLookDirection() {
+	public Vector3D getLookDirection() {
 		return getLook();
 	}
 
@@ -38,11 +38,11 @@ public class MockPlayer implements ViewablePlayer {
 	private static float DEGREES_TO_RADIANS(float degrees){
 		return (float) ((degrees) * (Math.PI / 180.0));
 	}
-	private Vec3 getLook(){
+	private Vector3D getLook(){
 		float x_circ = (float) (Math.cos(DEGREES_TO_RADIANS(yRotation)) * Math.sin(DEGREES_TO_RADIANS(xRotation)));
 		float y_circ = (float) (  										  Math.cos(DEGREES_TO_RADIANS(xRotation)));
 		float z_circ = (float) (Math.sin(DEGREES_TO_RADIANS(yRotation)) * Math.sin(DEGREES_TO_RADIANS(xRotation)));
-		return new Vec3(x_circ, y_circ, z_circ);
+		return new Vector3D(x_circ, y_circ, z_circ);
 	}
 
 	float jumpTime = 0;
@@ -57,28 +57,28 @@ public class MockPlayer implements ViewablePlayer {
 		Mouse.setClipMouseCoordinatesToWindow(false);
 
 		if (lastx != -1){
-			Vec2 mouseDelta = new Vec2(x-lastx,y-lasty);
+			Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
 			this.moveLook(mouseDelta);
 		}
 
-		Vec3 moveDirection = this.getLook();
-		Vec3 moveDelta = new Vec3(0, 0, 0);
+		Vector3D moveDirection = this.getLook();
+		Vector3D moveDelta = new Vector3D(0, 0, 0);
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)){
 			moveDelta.addLocal(moveDirection);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)){
-			moveDelta.subLocal(moveDirection.cross(new Vec3(0,1,0)));
+			moveDelta.subLocal(moveDirection.cross(new Vector3D(0,1,0)));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)){
-			moveDelta.addLocal(moveDirection.cross(new Vec3(0,1,0)));
+			moveDelta.addLocal(moveDirection.cross(new Vector3D(0,1,0)));
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)){
 			moveDelta.subLocal(moveDirection);
 		}
 		if (moveDelta.sqLen() != 0){
 			moveDelta = moveDelta.normalized().mul(delta/75f);
-			pos.addLocal(new Vec2(moveDelta.getX(), moveDelta.getZ()));
+			pos.addLocal(new Vector2D(moveDelta.getX(), moveDelta.getZ()));
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && jumpTime == 0){
@@ -94,7 +94,7 @@ public class MockPlayer implements ViewablePlayer {
 		lasty = y;
 	}
 
-	private void moveLook(Vec2 mouseDelta) {
+	private void moveLook(Vector2D mouseDelta) {
 		this.xRotation += mouseDelta.getY()/8f;
 		this.yRotation += mouseDelta.getX()/8f;
 
@@ -102,8 +102,8 @@ public class MockPlayer implements ViewablePlayer {
 		if (xRotation <= 180) xRotation = 180.1f;
 	}
 
-	public Vec2 getFacing() {
-		return new Vec2(getLook().getX(), getLook().getZ());
+	public Vector2D getFacing() {
+		return new Vector2D(getLook().getX(), getLook().getZ());
 	}
 
 	@Override

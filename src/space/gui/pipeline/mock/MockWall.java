@@ -1,25 +1,25 @@
 package space.gui.pipeline.mock;
 
 import space.gui.pipeline.viewable.ViewableWall;
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public class MockWall implements ViewableWall{
 
-	private Vec2 v2;
-	private Vec2 v1;
+	private Vector2D v2;
+	private Vector2D v1;
 
-	public MockWall(Vec2 v1, Vec2 v2) {
+	public MockWall(Vector2D v1, Vector2D v2) {
 		this.v1 = v1;
 		this.v2 = v2;
 	}
 
 	@Override
-	public Vec2 getStart() {
+	public Vector2D getStart() {
 		return v1;
 	}
 
 	@Override
-	public Vec2 getEnd() {
+	public Vector2D getEnd() {
 		return v2;
 	}
 

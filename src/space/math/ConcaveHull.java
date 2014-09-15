@@ -1,25 +1,25 @@
-package space.util;
+package space.math;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Hull2 implements Iterable<Segment2>{
+public class ConcaveHull implements Iterable<Segment2D>{
 	
-	private List<Vec2> hullPoints;
+	private List<Vector2D> hullPoints;
 	
 	/** This point will always be outside the hull */
-	private Vec2 outside = new Vec2(0,0);
+	private Vector2D outside = new Vector2D(0,0);
 
-	private Vec2 centre;
+	private Vector2D centre;
 	
 	/** Construct the hull from the specified points, winding clockwise
 	 * @param points
 	 */
-	public Hull2(List<Vec2> points){
-		this.hullPoints = new ArrayList<Vec2>(points);
-		this.centre = new Vec2(0,0);
-		for (Vec2 p : points){
+	public ConcaveHull(List<Vector2D> points){
+		this.hullPoints = new ArrayList<Vector2D>(points);
+		this.centre = new Vector2D(0,0);
+		for (Vector2D p : points){
 			if (p.getX() <= outside.getX()){
 				outside.setX(p.getX()-1);
 			}
@@ -31,10 +31,10 @@ public class Hull2 implements Iterable<Segment2>{
 		centre.divLocal(points.size());
 	}
 	
-	public boolean contains(Vec2 point){
+	public boolean contains(Vector2D point){
 		// crossing number algorithm
 		
-		Segment2 ray = new Segment2(point, outside);
+		Segment2D ray = new Segment2D(point, outside);
 		
 		// crossing number fails if the ray intersects one of the hull points
 		// if this happens we can correct it by randomly moving the end of the 
@@ -42,29 +42,29 @@ public class Hull2 implements Iterable<Segment2>{
 		// this should catch 99.999% of cases in the first few iterations
 		// but prevents the possibility of a deadlock
 		for (int i=0;i<10 && intersectsPointOnHull(ray); i++){
-			ray = new Segment2(point, outside.sub(new Vec2((float) Math.random()/10f, (float) Math.random()/10f)));
+			ray = new Segment2D(point, outside.sub(new Vector2D((float) Math.random()/10f, (float) Math.random()/10f)));
 		}
 		
 		int intersections = 0;
-		for (Segment2 edge : this){
+		for (Segment2D edge : this){
 			if (ray.intersects(edge)) ++intersections;
 		}
 		return intersections % 2 == 1;
 	}
 
-	private boolean intersectsPointOnHull(Segment2 ray) {
-		for (Vec2 pointOnHull : hullPoints){
+	private boolean intersectsPointOnHull(Segment2D ray) {
+		for (Vector2D pointOnHull : hullPoints){
 			if (ray.onLine(pointOnHull)) return true;
 		}
 		return false;
 	}
 
 	@Override
-	public Iterator<Segment2> iterator() {
-		ArrayList<Segment2> it = new ArrayList<Segment2>();
-		Vec2 prev = hullPoints.get(hullPoints.size()-1);
-		for (Vec2 point : hullPoints){
-			it.add(new Segment2(prev, point));
+	public Iterator<Segment2D> iterator() {
+		ArrayList<Segment2D> it = new ArrayList<Segment2D>();
+		Vector2D prev = hullPoints.get(hullPoints.size()-1);
+		for (Vector2D point : hullPoints){
+			it.add(new Segment2D(prev, point));
 			prev = point;
 		}
 		return it.iterator();
@@ -78,7 +78,7 @@ public class Hull2 implements Iterable<Segment2>{
 	 * 
 	 * @return the centre of the hull
 	 */
-	public Vec2 getCentre(){
+	public Vector2D getCentre(){
 		return this.centre;
 	}
 	

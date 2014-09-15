@@ -21,7 +21,7 @@ import java.util.Map;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
-import space.util.Vec3;
+import space.math.Vector3D;
 
 public class RoomModel {
 	
@@ -42,7 +42,7 @@ public class RoomModel {
 			float z2 = r.getEnd().getY();
 
 			// normal of a line segment (the wall)
-			Vec3 normal = new Vec3(1 * (z2 - z1), 0, -1 * (x2 - x1)).normalized();
+			Vector3D normal = new Vector3D(1 * (z2 - z1), 0, -1 * (x2 - x1)).normalized();
 
 			glNormal3f(normal.getX(), normal.getY(), normal.getZ());
 

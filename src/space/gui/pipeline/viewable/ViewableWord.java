@@ -2,7 +2,7 @@ package space.gui.pipeline.viewable;
 
 import java.util.List;
 
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public interface ViewableWord {
 
@@ -11,7 +11,7 @@ public interface ViewableWord {
 	 * @param pos the position
 	 * @return the room at the position
 	 */
-	public ViewableRoom getRoomAt(Vec2 pos);
+	public ViewableRoom getRoomAt(Vector2D pos);
 
 	/** Gets a list of all viewable rooms in the world
 	 * 

@@ -1,12 +1,12 @@
 package space.world.items;
 
-import space.util.Vec2;
+import space.math.Vector2D;
 import space.world.Exit;
 
 public class Key extends Item implements Movable {
 	private Exit exit; //the exit it opens
 	
-	public Key(Vec2 pos, int i, String d, Exit e) {
+	public Key(Vector2D pos, int i, String d, Exit e) {
 		super(pos, i, d);
 		exit = e;
 	}

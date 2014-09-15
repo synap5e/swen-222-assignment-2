@@ -8,7 +8,7 @@ import java.util.Random;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public class MockRoom implements ViewableRoom {
 
@@ -36,7 +36,7 @@ public class MockRoom implements ViewableRoom {
 		ArrayList<MockWall> walls = new ArrayList<MockWall>();
 		Point2D.Float prev = hull.get(hull.size()-1);
 		for (Point2D.Float point : hull){
-			walls.add(new MockWall(new Vec2(prev.x, prev.y), new Vec2(point.x, point.y)));
+			walls.add(new MockWall(new Vector2D(prev.x, prev.y), new Vector2D(point.x, point.y)));
 			prev = point;
 		}
 
@@ -66,7 +66,7 @@ public class MockRoom implements ViewableRoom {
 		
 		objects = new ArrayList<Bunny>();
 		for (int i=0;i<10;i++){
-			objects.add(new Bunny(new Vec2((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
+			objects.add(new Bunny(new Vector2D((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
 		}
 	}
 
@@ -76,8 +76,8 @@ public class MockRoom implements ViewableRoom {
 	}
 
 	@Override
-	public Vec2 getCentre() {
-		return new Vec2(0,0);
+	public Vector2D getCentre() {
+		return new Vector2D(0,0);
 	}
 
 	@Override

@@ -1,10 +1,10 @@
 package space.gui.pipeline.viewable;
 
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public interface ViewableObject {
 	
-	public Vec2 getPosition();
+	public Vector2D getPosition();
 	
 	/** Gets the objects rotation around the y axis in radions
 	 * 

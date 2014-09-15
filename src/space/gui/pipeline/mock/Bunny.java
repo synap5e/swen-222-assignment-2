@@ -3,11 +3,11 @@ package space.gui.pipeline.mock;
 import org.lwjgl.input.Keyboard;
 
 import space.gui.pipeline.viewable.ViewableObject;
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public class Bunny implements ViewableObject {
 
-	private Vec2 pos;
+	private Vector2D pos;
 	
 	// units per second
 	public float angle;
@@ -15,7 +15,7 @@ public class Bunny implements ViewableObject {
 
 	private float jumpTime;
 
-	public Bunny(Vec2 pos) {
+	public Bunny(Vector2D pos) {
 		this.pos = pos;
 		
 		angle = (float) (Math.random() * Math.PI*2);
@@ -31,7 +31,7 @@ public class Bunny implements ViewableObject {
 	}*/
 
 	@Override
-	public Vec2 getPosition() {
+	public Vector2D getPosition() {
 		return pos;
 	}
 	
@@ -55,8 +55,8 @@ public class Bunny implements ViewableObject {
 		}*/
 	}
 
-	public Vec2 getFacing() {
-		return new Vec2((float)Math.cos(angle), (float) Math.sin(angle));
+	public Vector2D getFacing() {
+		return new Vector2D((float)Math.cos(angle), (float) Math.sin(angle));
 	}
 
 	@Override

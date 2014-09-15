@@ -2,7 +2,7 @@ package space.gui.pipeline.viewable;
 
 import java.util.List;
 
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public interface ViewableRoom {
 
@@ -18,7 +18,7 @@ public interface ViewableRoom {
 	 *
 	 * @return the center of the room
 	 */
-	public Vec2 getCentre();
+	public Vector2D getCentre();
 
 	public List<? extends ViewableWall> getWalls();
 

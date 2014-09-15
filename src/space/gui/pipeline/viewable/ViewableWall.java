@@ -1,10 +1,10 @@
 package space.gui.pipeline.viewable;
 
-import space.util.Vec2;
+import space.math.Vector2D;
 
 public interface ViewableWall {
 
-	public Vec2 getStart();
+	public Vector2D getStart();
 
-	public Vec2 getEnd();
+	public Vector2D getEnd();
 }

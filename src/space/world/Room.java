@@ -11,37 +11,37 @@ import java.util.Set;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
-import space.util.Hull2;
-import space.util.Segment2;
-import space.util.Vec2;
+import space.math.ConcaveHull;
+import space.math.Segment2D;
+import space.math.Vector2D;
 import space.world.items.Item;
 
 public class Room implements ViewableRoom{
 	private LightMode mode;
 	private int id;
 	private String description;
-	private Hull2 roomShape;
+	private ConcaveHull roomShape;
 	private Set<Item> items = new HashSet<Item>();
 	private Set<Player> players = new HashSet<Player>();
 	private Map<Room,Exit> exits = new HashMap<Room,Exit>();
 	//probably need to add something about room exits
 	
-	public Room(LightMode m, int i, String d, Hull2 r){
+	public Room(LightMode m, int i, String d, ConcaveHull r){
 		mode = m;
 		id = i;
 		description = d;
 		roomShape = r;
 	}
 	
-	public Room(LightMode m, int i, String d, List<Vec2> points){
+	public Room(LightMode m, int i, String d, List<Vector2D> points){
 		mode = m;
 		id = i;
 		description = d;
-		roomShape = new Hull2(points);
+		roomShape = new ConcaveHull(points);
 	}
 
 	@Override
-	public Vec2 getCentre() {
+	public Vector2D getCentre() {
 //		float x = (float) roomShape.getBounds().getCenterX();
 //		float y = (float) roomShape.getBounds().getCenterY();
 //		return new Vec2(x,y);
@@ -51,13 +51,13 @@ public class Room implements ViewableRoom{
 	@Override
 	public List<? extends ViewableWall> getWalls() {
 		List<Wall> walls = new ArrayList<Wall>();
-		for(Segment2 seg : roomShape){
+		for(Segment2D seg : roomShape){
 			walls.add(new Wall(seg));
 		}
 		return walls;
 	}
 	
-	public boolean pointInRoom(Vec2 point){
+	public boolean pointInRoom(Vector2D point){
 		return roomShape.contains(point);
 	}
 	
@@ -108,18 +108,18 @@ public class Room implements ViewableRoom{
 	}
 	
 	private class Wall implements ViewableWall{
-		private Segment2 lineSeg;
+		private Segment2D lineSeg;
 		
-		public Wall(Segment2 ls){
+		public Wall(Segment2D ls){
 			lineSeg = ls;
 		}
 		@Override
-		public Vec2 getStart() {
+		public Vector2D getStart() {
 			return lineSeg.start;
 		}
 
 		@Override
-		public Vec2 getEnd() {
+		public Vector2D getEnd() {
 			return lineSeg.end;
 		}
 

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import space.math.ConcaveHull;
+import space.math.Vector2D;
 import static org.junit.Assert.*;
 
 public class Hull2Tests {
@@ -42,21 +44,21 @@ public class Hull2Tests {
 					 1,		-1,
 					-1,		-1
 				).getCentre(),
-				new Vec2(0, 0));
+				new Vector2D(0, 0));
 	}
 
-	private boolean hullContains(Hull2 hull, float x, float y) {
-		return hull.contains(new Vec2(x, y));
+	private boolean hullContains(ConcaveHull hull, float x, float y) {
+		return hull.contains(new Vector2D(x, y));
 	}
 
-	private Hull2 createHull(float... v) {
+	private ConcaveHull createHull(float... v) {
 		assertTrue("Require an even number of coordinates to create a hull", v.length%2==0);
 		
-		ArrayList<Vec2> winding = new ArrayList<>();
+		ArrayList<Vector2D> winding = new ArrayList<>();
 		for (int i=0;i<v.length/2;i++){
-			winding.add(new Vec2(v[i*2], v[i*2+1]));
+			winding.add(new Vector2D(v[i*2], v[i*2+1]));
 		}
-		return new Hull2(winding);
+		return new ConcaveHull(winding);
 	}
 	
 }

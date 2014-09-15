@@ -1,29 +1,29 @@
-package space.util;
+package space.math;
 
 
-public class Segment2 {
+public class Segment2D {
 
-	public final Vec2 start;
-	public final Vec2 end;
+	public final Vector2D start;
+	public final Vector2D end;
 	
 	/** tolerance for floating point errors */
 	private final static float EPSILON = 0.01f;
 	
-	public Segment2(Vec2 v1, Vec2 v2) {
+	public Segment2D(Vector2D v1, Vector2D v2) {
 		this.start = v1;
 		this.end = v2;
 	}
 
-	public boolean intersects(Segment2 other) {
+	public boolean intersects(Segment2D other) {
 		if (start.equals(other.start, EPSILON) || end.equals(other.end, EPSILON)) return true;
 		
 		// this line defined as (p, p+r)
-		Vec2 p = start;
-		Vec2 r = end.sub(start);
+		Vector2D p = start;
+		Vector2D r = end.sub(start);
 		
 		// other line defined as (q, q+s)
-		Vec2 q = other.start;
-		Vec2 s = other.end.sub(other.start);
+		Vector2D q = other.start;
+		Vector2D s = other.end.sub(other.start);
 
 		// lines intersect if t and u exist in 0...1 for  p + t*r = q + u*s
 	
@@ -31,14 +31,14 @@ public class Segment2 {
 		// u = (q - p) x r / (r x s)
 		
 		float rCrossS = r.cross(s);
-		Vec2 qSubP = q.sub(p);
+		Vector2D qSubP = q.sub(p);
 		float t = qSubP.cross(s) / rCrossS;
 		float u = qSubP.cross(r) / rCrossS;
 		
 		return 0 <= t && t <= 1 && 0 <= u && u <= 1;
 	}
 	
-	public boolean onLine(Vec2 point){
+	public boolean onLine(Vector2D point){
 		float x1 = start.getX();
 		float y1 = start.getY();
 		
@@ -89,7 +89,7 @@ public class Segment2 {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Segment2 other = (Segment2) obj;
+		Segment2D other = (Segment2D) obj;
 		if (end == null) {
 			if (other.end != null)
 				return false;

@@ -26,8 +26,8 @@ import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWord;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.gui.pipeline.wavefront.WavefrontModel;
-import space.util.Vec2;
-import space.util.Vec3;
+import space.math.Vector2D;
+import space.math.Vector3D;
 
 public class GameRenderer {
 
@@ -50,7 +50,7 @@ public class GameRenderer {
 	public void loadModels(ViewableWord world) {
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
-			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vec3(0,0,0), new Vec3(0,180,0), 0.2f));
+			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vector3D(0,0,0), new Vector3D(0,180,0), 0.2f));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,7 +63,7 @@ public class GameRenderer {
 		
 	}
 
-	private void setCamera(Vec3 eyepos, Vec3 look) {
+	private void setCamera(Vector3D eyepos, Vector3D look) {
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -108,7 +108,7 @@ public class GameRenderer {
 	public void renderTick(float timestep, ViewablePlayer player, ViewableWord world){
 		if (models == null) throw new IllegalStateException("models have not yet been loaded");
 		
-		Vec2 playerPos = player.getPosition();
+		Vector2D playerPos = player.getPosition();
 		ViewableRoom currentRoom = world.getRoomAt(playerPos);
 		
 		glClearColor(0, 0, 0, 0);
@@ -120,7 +120,7 @@ public class GameRenderer {
 		glEnable(GL_CULL_FACE);
 	
 
-		setCamera(new Vec3(playerPos.getX(), player.getEyeHeight(), playerPos.getY()), player.getLookDirection());
+		setCamera(new Vector3D(playerPos.getX(), player.getEyeHeight(), playerPos.getY()), player.getLookDirection());
 		setLight(currentRoom);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -157,16 +157,16 @@ public class GameRenderer {
 		glPopMatrix();
 	}
 
-	private static HashMap<ViewableObject, Vec3> colors = new HashMap<ViewableObject, Vec3>();
+	private static HashMap<ViewableObject, Vector3D> colors = new HashMap<ViewableObject, Vector3D>();
 	private static void getAssignedColor(ViewableObject vob) {
 		if (!colors.containsKey(vob)){
 			float r = (float) Math.random();
 			float b = (float) Math.random();
 			float g = (float) Math.random();
 			
-			colors.put(vob, new Vec3(r,g,b));
+			colors.put(vob, new Vector3D(r,g,b));
 		}
-		Vec3 c = colors.get(vob);
+		Vector3D c = colors.get(vob);
 		glColor3f(c.getX(), c.getY(), c.getZ());
 	}
 
