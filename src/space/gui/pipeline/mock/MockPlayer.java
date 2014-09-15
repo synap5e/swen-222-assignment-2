@@ -57,14 +57,11 @@ public class MockPlayer implements ViewablePlayer {
 		Mouse.setClipMouseCoordinatesToWindow(false);
 
 		if (lastx != -1){
-			yRotation += (x-lastx)/8.0;
-			xRotation += (y-lasty)/8.0;
-
-			if (xRotation >= 360) xRotation = 359.9f;
-			if (xRotation <= 180) xRotation = 180.1f;
+			Vec2 mouseDelta = new Vec2(x-lastx,y-lasty);
+			this.moveLook(mouseDelta);
 		}
 
-		Vec3 moveDirection = getLook();
+		Vec3 moveDirection = this.getLook();
 		Vec3 moveDelta = new Vec3(0, 0, 0);
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)){
@@ -93,10 +90,16 @@ public class MockPlayer implements ViewablePlayer {
 			jumpTime = 0;
 		}
 
-
-
 		lastx = x;
 		lasty = y;
+	}
+
+	private void moveLook(Vec2 mouseDelta) {
+		this.xRotation += mouseDelta.getX();
+		this.yRotation += mouseDelta.getY();
+
+		if (xRotation >= 360) xRotation = 359.9f;
+		if (xRotation <= 180) xRotation = 180.1f;
 	}
 
 	public Vec2 getFacing() {
