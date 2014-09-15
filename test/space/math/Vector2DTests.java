@@ -1,4 +1,4 @@
-package space.util;
+package space.math;
 
 import org.junit.Test;
 
