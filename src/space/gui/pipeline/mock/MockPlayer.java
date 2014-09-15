@@ -95,8 +95,8 @@ public class MockPlayer implements ViewablePlayer {
 	}
 
 	private void moveLook(Vec2 mouseDelta) {
-		this.xRotation += mouseDelta.getX();
-		this.yRotation += mouseDelta.getY();
+		this.xRotation += mouseDelta.getY()/8f;
+		this.yRotation += mouseDelta.getX()/8f;
 
 		if (xRotation >= 360) xRotation = 359.9f;
 		if (xRotation <= 180) xRotation = 180.1f;
