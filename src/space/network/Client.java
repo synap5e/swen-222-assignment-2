@@ -19,6 +19,14 @@ public class Client {
 	
 	private Player localPlayer;
 	
+	/**
+	 * The last x coordinate for the mouse
+	 */
+	private int lastx = -1;
+	/**
+	 * The last y coordinate for the mouse
+	 */
+	private int lasty = -1;
 	
 	public Client(String host, int port, MockWorld world, Player localPlayer){
 		this.world = world;
@@ -34,11 +42,20 @@ public class Client {
 		
 	}
 	
-	private int lastx = -1;
-	private int lasty = -1;
+	public Player getLocalPlayer(){
+		return localPlayer;
+	}
+	
+	public World getWorld(){
+		return null; //TODO Return the world object, once it is of the correct type.
+	}
 
 	public void update(int delta) {
-
+		world.update(delta);
+		updatePlayer(delta);
+	}
+	
+	private void updatePlayer(int delta){
 		int x = Mouse.getX();
 		int y = Mouse.getY();
 
@@ -51,6 +68,27 @@ public class Client {
 			localPlayer.moveLook(mouseDelta);
 		}
 
+		applyWalk(delta);
+		
+		//TODO reimplement jumping when methods exist
+		/*float jumpTime = localPlayer.getJumpTime();
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && localPlayer.getJumpTime() == 0){
+			localPlayer.setJumpTime(1);
+			jumpTime = 1;
+		}
+		if (jumpTime > 0){
+			localPlayer.setJumpTime(1);
+			jumpTime -= delta/500f;
+		} else {
+			jumpTime = 0;
+		}*/
+
+		lastx = x;
+		lasty = y;
+	}
+	
+	private void applyWalk(int delta){
 		Vector3D moveDirection = localPlayer.getLookDirection();
 		Vector3D moveDelta = new Vector3D(0, 0, 0);
 
@@ -72,29 +110,5 @@ public class Client {
 			//TODO: Change to use a translate method
 			localPlayer.setPosition(localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ())));
 		}
-		//TODO reimplement jumping when methods exist
-		/*float jumpTime = localPlayer.getJumpTime();
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && localPlayer.getJumpTime() == 0){
-			localPlayer.setJumpTime(1);
-			jumpTime = 1;
-		}
-		if (jumpTime > 0){
-			localPlayer.setJumpTime(1);
-			jumpTime -= delta/500f;
-		} else {
-			jumpTime = 0;
-		}*/
-
-		lastx = x;
-		lasty = y;
-	}
-	
-	public Player getLocalPlayer(){
-		return localPlayer;
-	}
-	
-	public World getWorld(){
-		return null; //TODO Return the world object, once it is of the correct type.
 	}
 }
