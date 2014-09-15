@@ -1,5 +1,10 @@
 package space.math;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class Vector2D {
 
 	@Override

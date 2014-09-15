@@ -4,6 +4,11 @@ import java.util.List;
 
 import space.math.Vector2D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public interface ViewableRoom {
 
 	public enum LightMode{ BASIC_LIGHT };

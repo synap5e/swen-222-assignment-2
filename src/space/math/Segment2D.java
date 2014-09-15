@@ -1,6 +1,10 @@
 package space.math;
 
-
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class Segment2D {
 
 	public final Vector2D start;

@@ -22,12 +22,17 @@ import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
-import space.gui.pipeline.viewable.ViewableWord;
+import space.gui.pipeline.viewable.ViewableWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.gui.pipeline.wavefront.WavefrontModel;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
 public class GameRenderer {
 
 	private static final float VERTICAL_FIELD_OF_VIEW = 50.0f;
@@ -46,7 +51,7 @@ public class GameRenderer {
 		System.out.println(getHorizontalFOV());
 	}
 
-	public void loadModels(ViewableWord world) {
+	public void loadModels(ViewableWorld world) {
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
 			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vector3D(0,0,0), new Vector3D(0,180,0), 0.2f));
@@ -104,7 +109,7 @@ public class GameRenderer {
 		glLight(GL_LIGHT0, GL_AMBIENT, ambient);
 	}
 	
-	public void renderTick(float timestep, ViewablePlayer player, ViewableWord world){
+	public void renderTick(float timestep, ViewablePlayer player, ViewableWorld world){
 		if (models == null) throw new IllegalStateException("models have not yet been loaded");
 		
 		Vector2D playerPos = player.getPosition();

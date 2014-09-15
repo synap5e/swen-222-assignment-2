@@ -4,7 +4,12 @@ import java.util.List;
 
 import space.math.Vector2D;
 
-public interface ViewableWord {
+/**
+ * 
+ * @author Simon Pinfold
+ *
+ */
+public interface ViewableWorld {
 
 	/** Gets the room at a given location, or null if there is no room at that position
 	 * 
