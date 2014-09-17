@@ -17,4 +17,6 @@ public interface ViewablePlayer extends ViewableObject{
 
 	public float getEyeHeight();
 
+	public boolean isTorchOn();
+
 }

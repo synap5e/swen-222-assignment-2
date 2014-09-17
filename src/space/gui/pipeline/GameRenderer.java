@@ -27,6 +27,7 @@ import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.gui.pipeline.wavefront.WavefrontModel;
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.world.Player;
 
 /**
  * 
@@ -39,7 +40,6 @@ public class GameRenderer {
 
 	private int height;
 	private int width;
-	private int test;
 
 	private Map<Class<? extends ViewableObject>, Integer> models;
 	private Map<ViewableRoom, Integer> roomModels;
@@ -49,6 +49,7 @@ public class GameRenderer {
 		this.height = height;
 		
 		System.out.println(getHorizontalFOV());
+		
 	}
 
 	public void loadModels(ViewableWorld world) {
@@ -66,7 +67,6 @@ public class GameRenderer {
 		for (ViewableRoom room : world.getViewableRooms()){
 			roomModels.put(room, RoomModel.createDisplayList(room, models));
 		}
-		
 	}
 
 	private void setCamera(Vector3D eyepos, Vector3D look) {
@@ -88,7 +88,7 @@ public class GameRenderer {
 		return (float) Math.toDegrees(Math.atan( horizontalPixels ) * 2);
 	}
 	
-	private void setLight(ViewableRoom currentRoom) {
+	private void setLight(ViewablePlayer player, ViewableRoom currentRoom) {
 		FloatBuffer zeroBuff = BufferUtils.createFloatBuffer(4);
 		zeroBuff.put(new float[] {0,0,0, 1f });
 		zeroBuff.flip();  
@@ -110,7 +110,47 @@ public class GameRenderer {
 		glLight(GL_LIGHT0, GL_POSITION, position);
 		glLight(GL_LIGHT0, GL_DIFFUSE, diffuse);
 		glLight(GL_LIGHT0, GL_AMBIENT, ambient);
+		
+		if (currentRoom.getLightMode() == LightMode.BASIC_LIGHT){
+			glEnable(GL_LIGHT0);
+		} else if (currentRoom.getLightMode() == LightMode.DARK){
+			glDisable(GL_LIGHT0);
+		}
+		
+		Vector3D dir = player.getLookDirection().normalized();
+		Vector2D pos = player.getPosition();
+		
+		FloatBuffer spotlightPosition = BufferUtils.createFloatBuffer(4);
+		spotlightPosition.put(new float[] { pos.getX(), player.getEyeHeight(), pos.getY(), 1 });
+		spotlightPosition.flip();
+		
+		FloatBuffer spotlightDirection = BufferUtils.createFloatBuffer(4);
+		spotlightDirection.put(new float[] { dir.getX(),dir.getY(),dir.getZ(), 0 });
+		spotlightDirection.flip();
+		
+		FloatBuffer spotlightIntensity = BufferUtils.createFloatBuffer(4);
+		spotlightIntensity.put(new float[] { 10,10,10, 1 });
+		spotlightIntensity.flip();
+	  
+		
+		glLight(GL_LIGHT1, GL_POSITION, position);
+		glLight(GL_LIGHT1, GL_DIFFUSE, spotlightIntensity);
+		glLight(GL_LIGHT1, GL_SPECULAR, spotlightIntensity);
+		glLight(GL_LIGHT1, GL_POSITION, spotlightPosition);
+		glLight(GL_LIGHT1, GL_AMBIENT, zeroBuff);
+		glLightf(GL_LIGHT1,GL_SPOT_CUTOFF,90.0f);
+		glLight(GL_LIGHT1, GL_SPOT_DIRECTION, spotlightDirection);
+		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 100f);
+	
+		if (player.isTorchOn()){
+			glEnable(GL_LIGHT1);
+		} else {
+			glDisable(GL_LIGHT1);
+		}
+		
+		
 	}
+	
 	
 	public void renderTick(float timestep, ViewablePlayer player, ViewableWorld world){
 		if (models == null) throw new IllegalStateException("models have not yet been loaded");
@@ -128,7 +168,7 @@ public class GameRenderer {
 		glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); 
 
 		setCamera(new Vector3D(playerPos.getX(), player.getEyeHeight(), playerPos.getY()), player.getLookDirection());
-		setLight(currentRoom);
+		setLight(player, currentRoom);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -143,6 +183,7 @@ public class GameRenderer {
 				drawObject(vob, models);
 			}
 		}
+		
 		
 		//glDisable(GL_NORMALIZE);
 		
