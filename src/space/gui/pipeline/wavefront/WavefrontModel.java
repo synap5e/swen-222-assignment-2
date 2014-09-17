@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.Util;
 
+import space.gui.pipeline.Material;
 import space.math.Vector3D;
 
 /**
@@ -32,11 +33,13 @@ public class WavefrontModel {
 	private float scale;
 	private Vector3D eulerRotation;
 	private Vector3D offset;
+	private Material mat;
 
-	private WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale) throws IOException {
+	private WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale, Material mat) throws IOException {
 		this.offset = offset;
 		this.eulerRotation = eulerRotation;
 		this.scale = scale;
+		this.mat = mat;
 		
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		String line;
@@ -116,6 +119,8 @@ public class WavefrontModel {
 		glRotatef(eulerRotation.getY(), 0, 1, 0);
 		glRotatef(eulerRotation.getX(), 1, 0, 0);
 		
+		mat.apply();
+		
 		glBegin(GL_TRIANGLES);
 		for (Face f : faces) {
 
@@ -148,11 +153,11 @@ public class WavefrontModel {
 	}
 
 	public static int loadDisplayList(File file) throws IOException {
-		return loadDisplayList(file, new Vector3D(0,0,0), new Vector3D(0,0,0), 1f);
+		return loadDisplayList(file, new Vector3D(0,0,0), new Vector3D(0,0,0), 1f, Material.black_plastic);
 	}
 	
-	public static int loadDisplayList(File file, Vector3D offset, Vector3D eulerRotation, float scale) throws IOException {
-		WavefrontModel model = new WavefrontModel(file, offset, eulerRotation, scale);
+	public static int loadDisplayList(File file, Vector3D offset, Vector3D eulerRotation, float scale, Material mat) throws IOException {
+		WavefrontModel model = new WavefrontModel(file, offset, eulerRotation, scale, mat);
 		return model.createDisplayList();
 	}
 

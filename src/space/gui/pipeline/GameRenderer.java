@@ -52,9 +52,11 @@ public class GameRenderer {
 	}
 
 	public void loadModels(ViewableWorld world) {
+		glEnable(GL_COLOR_MATERIAL);
+
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
-			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vector3D(0,0,0), new Vector3D(0,180,0), 0.2f));
+			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vector3D(0,0,0), new Vector3D(0,180,0), 0.2f, Material.obsidian));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
