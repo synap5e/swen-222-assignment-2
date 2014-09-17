@@ -70,7 +70,7 @@ public class MockRoom implements ViewableRoom {
 		walls = giftWrap(points);
 		
 		objects = new ArrayList<Bunny>();
-		for (int i=0;i<10;i++){
+		for (int i=0;i<2;i++){
 			objects.add(new Bunny(new Vector2D((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
 		}
 	}
