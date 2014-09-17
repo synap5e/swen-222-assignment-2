@@ -152,88 +152,19 @@ public class RoomModel {
 		glEnd();
 		
 		
-		// TODO: to make specular work on the floor it needs to be tessellated.
-		// This method just draws a 100x100 tesselated square on the floor.
-		// instead it should only go to the walls
 		//glBindTexture(GL_TEXTURE_2D, floorTexture);
 		ceilingMaterial.apply();
 		glNormal3f(0,1,0);
 		glBegin(GL_QUADS);
-		//floor
-		for (float xt = -50;xt<50;xt+=TEXTURE_TESSELLATION_MULTIPLE){
-			for (float yt = -50;yt<50;yt+=TEXTURE_TESSELLATION_MULTIPLE){
-				
-				for (float x=0;x<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;x++){
-					for (float y=0;y<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;y++){
-						glTexCoord2f(tex_step*x, tex_step*(y+1));
-						glVertex3f(xt+TESSELLATION_SIZE*x, 0, yt+TESSELLATION_SIZE*(y+1));
-						
-						glTexCoord2f(tex_step*(x+1), tex_step*(y+1));
-						glVertex3f(xt+TESSELLATION_SIZE*(x+1), 0, yt+TESSELLATION_SIZE*(y+1));
-						
-						glTexCoord2f(tex_step*(x+1), tex_step*y);
-						glVertex3f(xt+TESSELLATION_SIZE*(x+1), 0, yt+TESSELLATION_SIZE*y);
-						
-						glTexCoord2f(tex_step*x, tex_step*y);
-						glVertex3f(xt+TESSELLATION_SIZE*x, 0, yt+TESSELLATION_SIZE*y);
-					}
-				}
-			}
-		}
+		renderYPlane(room, 0, true);
+		glEnd();
 		
-		
-		// ceiling
-		//glBindTexture(GL_TEXTURE_2D, ceilingTexture);
-	//	Material.simple.apply();
 		ceilingMaterial.apply();
 		glNormal3f(0,-1,0);
-		for (float xt = -50;xt<50;xt+=TEXTURE_TESSELLATION_MULTIPLE){
-			for (float yt = -50;yt<50;yt+=TEXTURE_TESSELLATION_MULTIPLE){
-				
-				for (float x=0;x<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;x++){
-					for (float y=0;y<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;y++){
-						glTexCoord2f(tex_step*x, tex_step*y);
-						glVertex3f(xt+TESSELLATION_SIZE*x, WALL_HEIGHT, yt+TESSELLATION_SIZE*y);
-						
-						glTexCoord2f(tex_step*(x+1), tex_step*y);
-						glVertex3f(xt+TESSELLATION_SIZE*(x+1), WALL_HEIGHT, yt+TESSELLATION_SIZE*y);
-						
-						glTexCoord2f(tex_step*(x+1), tex_step*(y+1));
-						glVertex3f(xt+TESSELLATION_SIZE*(x+1), WALL_HEIGHT, yt+TESSELLATION_SIZE*(y+1));
-						
-						glTexCoord2f(tex_step*x, tex_step*(y+1));
-						glVertex3f(xt+TESSELLATION_SIZE*x, WALL_HEIGHT, yt+TESSELLATION_SIZE*(y+1));
-					}
-				}
-			}
-		}
-		glEnd();	
+		glBegin(GL_QUADS);
+		renderYPlane(room, WALL_HEIGHT, false);
+		glEnd();
 		
-	/*	// floor
-		glColor3d(0.3, 0.3, 0.3);
-		glNormal3f(0,1,0);
-		glBegin(GL_TRIANGLE_FAN);
-		glVertex3f(0, 0, 0);
-		for (ViewableWall r : room.getWalls()) {
-			glVertex3d(r.getStart().getX(), 0, r.getStart().getY());
-			glVertex3d(r.getEnd().getX(), 0, r.getEnd().getY());
-		}
-		glEnd();*/
-/*
-		glDisable(GL_TEXTURE_2D);
-		glEnable(GL_COLOR_MATERIAL);
-		// ceiling
-		Material.simple.apply();
-		glColor3d(0.3, 0.3, 0.3);
-		glNormal3f(0,-1,0);
-		glBegin(GL_TRIANGLE_FAN);
-		glVertex3f(0, WALL_HEIGHT, 0);
-		for (ViewableWall r : room.getWalls()) {
-			// reverse winding (end -> start) to the backface is above
-			glVertex3d(r.getEnd().getX(), WALL_HEIGHT, r.getEnd().getY());
-			glVertex3d(r.getStart().getX(), WALL_HEIGHT, r.getStart().getY());
-		}
-		glEnd();*/
 		
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_COLOR_MATERIAL);
@@ -247,6 +178,67 @@ public class RoomModel {
 		glEndList();
 		
 		return displayList;
+	}
+
+	private static void renderYPlane(ViewableRoom room, float yVal, boolean windClockwise) {
+		float texStep = 1/TEXTURE_TESSELLATION_MULTIPLE;
+		for (float xt = -50;xt<50;xt+=TEXTURE_TESSELLATION_MULTIPLE){
+			for (float yt = -50;yt<50;yt+=TEXTURE_TESSELLATION_MULTIPLE){
+				for (float x=0;x<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;x++){
+					for (float y=0;y<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;y++){
+						// yo dawg, I heard you like for loops...
+						
+						if (!inRoom(room, 	
+									xt+TESSELLATION_SIZE*x, yt+TESSELLATION_SIZE*y,
+									TESSELLATION_SIZE, 		TESSELLATION_SIZE)){
+							continue;
+						}
+						
+						renderYPlaneQuad(windClockwise, yVal, texStep, xt, yt, x, y);
+					}
+				}
+			}
+		}
+	}
+
+	private static void renderYPlaneQuad(boolean windClockwise, float yVal, float texStep, float xt, float yt, float x, float y) {
+		// if windClockwise ==  true then we loop through the switch statement forwards, this creates a clockwise winding
+		// if windClockwise == false then instead we loop backwards from 3 to 0 and run the switch statements in reverse order
+		for (int i=windClockwise ? 0 : 3;windClockwise ? i<4 : i >= 0; i+= windClockwise ? 1 : -1){
+			switch(i){
+			case 0:
+				glTexCoord2f(texStep*x, texStep*(y+1));
+				glVertex3f(xt+TESSELLATION_SIZE*x, yVal, yt+TESSELLATION_SIZE*(y+1));
+				break;
+			case 1:
+				glTexCoord2f(texStep*(x+1), texStep*(y+1));
+				glVertex3f(xt+TESSELLATION_SIZE*(x+1), yVal, yt+TESSELLATION_SIZE*(y+1));
+				break;
+			case 2:
+				glTexCoord2f(texStep*(x+1), texStep*y);
+				glVertex3f(xt+TESSELLATION_SIZE*(x+1), yVal, yt+TESSELLATION_SIZE*y);
+				break;
+			case 3:
+				glTexCoord2f(texStep*x, texStep*y);
+				glVertex3f(xt+TESSELLATION_SIZE*x, yVal, yt+TESSELLATION_SIZE*y);
+				break;
+			}
+		}
+	}
+
+	private static boolean inRoom(ViewableRoom room, float x, float y, float w, float h) {
+		return inRoom(room,
+						new Vector2D(x, 	y),
+						new Vector2D(x+w,	y),
+						new Vector2D(x+w, 	y+h),
+						new Vector2D(x, 	y+h));
+	}
+
+	private static boolean inRoom(ViewableRoom room, Vector2D... points) {
+		for (Vector2D point : points){
+			if (room.contains(point)) return true;
+		}
+		return false;
 	}
 
 }
