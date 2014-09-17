@@ -89,23 +89,24 @@ public class GameRenderer {
 	}
 	
 	private void setLight(ViewableRoom currentRoom) {
+		FloatBuffer zeroBuff = BufferUtils.createFloatBuffer(4);
+		zeroBuff.put(new float[] {0,0,0, 1f });
+		zeroBuff.flip();  
+		
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, zeroBuff);
 		
 		FloatBuffer ambient = BufferUtils.createFloatBuffer(4);
-		ambient.put(new float[] { 0.2f, 0.2f, 0.2f, 1f, });
+		ambient.put(new float[] { 0.4f, 0.4f, 0.4f, 1f });
 		ambient.flip();    
 
 		FloatBuffer diffuse = BufferUtils.createFloatBuffer(4);
-		diffuse.put(new float[] { 0.7f, 0.7f, 0.7f, 1f, });
+		diffuse.put(new float[] { 0.8f, 0.8f, 0.8f, 1f });
 		diffuse.flip();   
 		
 		FloatBuffer position = BufferUtils.createFloatBuffer(4);
-		position.put(new float[] { 0f, 10f, 0f, 1f, });
+		position.put(new float[] { 0f, 9, 0f, 1f });
 		position.flip();    
 
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
-//		glLightModel(GL_LIGHT_MODEL_AMBIENT, ambient);
-		
 		glLight(GL_LIGHT0, GL_POSITION, position);
 		glLight(GL_LIGHT0, GL_DIFFUSE, diffuse);
 		glLight(GL_LIGHT0, GL_AMBIENT, ambient);
@@ -122,9 +123,9 @@ public class GameRenderer {
 		glDepthFunc(GL_LEQUAL);
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHTING);
-		glEnable(GL_COLOR_MATERIAL);
+		//glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_CULL_FACE);
-	
+		glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); 
 
 		setCamera(new Vector3D(playerPos.getX(), player.getEyeHeight(), playerPos.getY()), player.getLookDirection());
 		setLight(currentRoom);
@@ -136,8 +137,6 @@ public class GameRenderer {
 		glCallList(roomModels.get(currentRoom));
 
 		//glEnable(GL_NORMALIZE);
-		glEnable(GL_LIGHTING);
-		glShadeModel(GL_SMOOTH);
 		
 		for (ViewableObject vob : currentRoom.getContainedObjects()){
 			if (vob.canMove()){
