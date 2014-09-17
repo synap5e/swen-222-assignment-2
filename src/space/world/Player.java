@@ -96,5 +96,11 @@ public class Player implements Entity,ViewablePlayer{
 	public Set<Item> getInventory(){
 		return inventory;
 	}
+
+	@Override
+	public boolean isTorchOn() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }
