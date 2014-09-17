@@ -7,6 +7,6 @@ cp twl/TWL.jar $compiledir/lib/
 cd $compiledir/src
 javac -cp "../lib/*" `find -name *.java`
 RESULT=$?
-#/usr/bin/rm $compiledir -R
+/usr/bin/rm $compiledir -R
 [ $RESULT -ne 0 ] && echo "Compile failed - disallowing commit" && exit 1
 echo "Compile succeeded - allowing commit" && exit 0
