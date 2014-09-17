@@ -28,4 +28,6 @@ public interface ViewableRoom {
 	public List<? extends ViewableWall> getWalls();
 
 	public List<? extends ViewableObject> getContainedObjects();
+
+	public boolean contains(Vector2D point);
 }

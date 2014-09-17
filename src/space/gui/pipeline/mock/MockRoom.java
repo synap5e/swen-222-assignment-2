@@ -116,5 +116,9 @@ public class MockRoom implements ViewableRoom {
 			b.update(delta);
 		}
 	}
+	@Override
+	public boolean contains(Vector2D point) {
+		return hull.contains(point);
+	}
 
 }

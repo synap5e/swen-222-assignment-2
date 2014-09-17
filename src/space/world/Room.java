@@ -124,5 +124,10 @@ public class Room implements ViewableRoom{
 		}
 
 	}
+
+	@Override
+	public boolean contains(Vector2D point) {
+		return roomShape.contains(point);
+	}
 	
 }
