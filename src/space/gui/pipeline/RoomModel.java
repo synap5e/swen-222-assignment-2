@@ -5,10 +5,12 @@ import static org.lwjgl.opengl.GL11.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 
+import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -93,6 +95,9 @@ public class RoomModel {
 		glBegin(GL_QUADS);
 		float tex_step = 1/TEXTURE_TESSELLATION_MULTIPLE;
 		for (ViewableWall r : room.getWalls()) {
+			
+			List<? extends ViewableDoor> doors = r.getDoors();
+			
 			float x1 = r.getStart().getX();
 			float x2 = r.getEnd().getX();
 
@@ -116,6 +121,7 @@ public class RoomModel {
 
 			float left_tex = 1;
 			for (int l=0;l<Math.ceil(lengthTesselations);l++){
+				
 				Vector2D end = start.add(delta);
 
 				if (l+1>lengthTesselations){
@@ -157,7 +163,7 @@ public class RoomModel {
 			}
 		}
 		glEnd();
-
+		
 
 		//glBindTexture(GL_TEXTURE_2D, floorTexture);
 		ceilingMaterial.apply();

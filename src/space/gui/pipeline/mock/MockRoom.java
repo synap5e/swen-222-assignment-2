@@ -1,6 +1,7 @@
 package space.gui.pipeline.mock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,12 +108,10 @@ public class MockRoom implements ViewableRoom {
 			return lineSeg.end;
 		}
 		@Override
-		public Map<Float, ? extends ViewableDoor> getDoors() {
-			HashMap<Float, ViewableDoor> hm = new HashMap<>();
-			hm.put(1f, new ViewableDoor() {
+		public List<? extends ViewableDoor> getDoors() {
+			return Arrays.asList(new ViewableDoor() {
 				
 			});
-			return hm;
 		}
 
 	}

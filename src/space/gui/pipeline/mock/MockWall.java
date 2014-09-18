@@ -1,5 +1,6 @@
 package space.gui.pipeline.mock;
 
+import java.util.List;
 import java.util.Map;
 
 import space.gui.pipeline.viewable.ViewableDoor;
@@ -32,7 +33,7 @@ public class MockWall implements ViewableWall{
 	}
 
 	@Override
-	public Map<Float, ? extends ViewableDoor> getDoors() {
+	public List<? extends ViewableDoor> getDoors() {
 		// TODO Auto-generated method stub
 		return null;
 	}

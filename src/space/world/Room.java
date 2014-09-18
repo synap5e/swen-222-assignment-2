@@ -106,7 +106,7 @@ public class Room implements ViewableRoom{
 			return lineSeg.end;
 		}
 		@Override
-		public Map<Float, ? extends ViewableDoor> getDoors() {
+		public List<? extends ViewableDoor> getDoors() {
 			// TODO Auto-generated method stub
 			return null;
 		}
