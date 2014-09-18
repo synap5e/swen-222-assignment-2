@@ -1,9 +1,12 @@
 package space.gui.pipeline.mock;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -102,6 +105,14 @@ public class MockRoom implements ViewableRoom {
 		@Override
 		public Vector2D getEnd() {
 			return lineSeg.end;
+		}
+		@Override
+		public Map<Float, ? extends ViewableDoor> getDoors() {
+			HashMap<Float, ViewableDoor> hm = new HashMap<>();
+			hm.put(1f, new ViewableDoor() {
+				
+			});
+			return hm;
 		}
 
 	}
