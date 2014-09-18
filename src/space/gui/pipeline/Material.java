@@ -198,6 +198,7 @@ public class Material {
 		
 		glMaterial(GL_FRONT, GL_SPECULAR, specular);
 		
+		assert (shininess <= 1);
 		glMaterialf(GL_FRONT, GL_SHININESS, shininess * 128.0f);
 	}
 

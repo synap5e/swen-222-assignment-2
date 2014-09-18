@@ -45,13 +45,13 @@ public class RoomModel {
 				new Vector3D(0.2f, 0.2f, 0.2f),
 				new Vector3D(1, 1, 1),
 				new Vector3D(0.3f, 0.3f, 0.3f),
-				40f
+				0.5f
 		);
 		ceilingMaterial = new Material(
 				new Vector3D(0.4f, 0.4f, 0.4f),
 				new Vector3D(1, 1, 1),
 				new Vector3D(0.3f, 0.3f, 0.3f),
-				40f
+				0.5f
 		);
 		
 		try {
