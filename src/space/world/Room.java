@@ -1,6 +1,5 @@
 package space.world;
 
-import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,17 +13,14 @@ import space.gui.pipeline.viewable.ViewableWall;
 import space.math.ConcaveHull;
 import space.math.Segment2D;
 import space.math.Vector2D;
-import space.world.items.Item;
 
 public class Room implements ViewableRoom{
 	private LightMode mode;
 	private int id;
 	private String description;
 	private ConcaveHull roomShape;
-	private Set<Item> items = new HashSet<Item>();
-	private Set<Player> players = new HashSet<Player>();
+	private Set<Entity> entities = new HashSet<Entity>();
 	private Map<Room,Exit> exits = new HashMap<Room,Exit>();
-	//probably need to add something about room exits
 	
 	public Room(LightMode m, int i, String d, ConcaveHull r){
 		mode = m;
@@ -42,10 +38,7 @@ public class Room implements ViewableRoom{
 
 	@Override
 	public Vector2D getCentre() {
-//		float x = (float) roomShape.getBounds().getCenterX();
-//		float y = (float) roomShape.getBounds().getCenterY();
-//		return new Vec2(x,y);
-		return null;
+		return roomShape.getCentre();
 	}
 
 	@Override
@@ -74,21 +67,14 @@ public class Room implements ViewableRoom{
 		return exits.get(other);
 	}
 	
-	public void putInRoom(Item i){
-		items.add(i);
+	public void putInRoom(Entity e){
+		entities.add(e);
 	}
 	
-	public void removeFromRoom(Item i){
-		items.remove(i);
+	public void removeFromRoom(Entity e){
+		entities.remove(e);
 	}
 	
-	public void enterRoom(Player p){
-		players.add(p);
-	}
-	
-	public void leaveRoom(Player p){
-		players.remove(p);
-	}
 	public String getDescription() {
 		return description;
 	}
@@ -104,7 +90,7 @@ public class Room implements ViewableRoom{
 	
 	@Override
 	public List<? extends ViewableObject> getContainedObjects() {
-		return new ArrayList<Item>(items);
+		return new ArrayList<Entity>(entities);
 	}
 	
 	private class Wall implements ViewableWall{

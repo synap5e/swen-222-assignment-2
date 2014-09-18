@@ -9,7 +9,6 @@ import java.util.Set;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWorld;
 import space.math.Vector2D;
-import space.world.items.*;
 
 public class World implements ViewableWorld{
 	private Map<Integer,Entity> entities = new HashMap<Integer,Entity>();
@@ -36,17 +35,17 @@ public class World implements ViewableWorld{
 			Exit exit = prevRoom.getExitTo(newRoom);
 			if(exit != null){
 				if(exit.isLocked()){//player needs a key that opens the exit
-					for(Item i : p.getInventory()){
+					for(Pickup i : p.getInventory()){
 						if(i instanceof Key && ((Key) i).getExit().equals(exit)){
 							p.setPosition(newPosition);
-							prevRoom.leaveRoom(p);
-							newRoom.enterRoom(p);
+							prevRoom.removeFromRoom(p);
+							newRoom.putInRoom(p);
 						}
 					}
 				}else{//not locked,player can proceed to go to other room
 					p.setPosition(newPosition);
-					prevRoom.leaveRoom(p);
-					newRoom.enterRoom(p);
+					prevRoom.removeFromRoom(p);
+					newRoom.putInRoom(p);
 				}
 			}
 		}

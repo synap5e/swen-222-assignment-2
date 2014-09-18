@@ -6,12 +6,8 @@ import java.util.Set;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.math.Vector2D;
 import space.math.Vector3D;
-import space.world.items.Item;
 
-public class Player implements Entity,ViewablePlayer{
-	private Set<Item> inventory = new HashSet<Item>(); //items the player is carrying
-	private Vector2D position;
-	private int id;
+public class Player extends Character implements ViewablePlayer{
 	private int points;
 	private static final float EYE_HEIGHT = 6;
 	private static final float JUMP_HEIGHT = 2;
@@ -21,10 +17,10 @@ public class Player implements Entity,ViewablePlayer{
 	private float xRotation = 90;
 	private float yRotation = 100;
 
-	public Vector2D getPosition() {
-		return position;
+	public Player(Vector2D pos,int i){
+		super(pos,i);
 	}
-
+	
 	private static float DEGREES_TO_RADIANS(float degrees){
 		return (float) ((degrees) * (Math.PI / 180.0));
 	}
@@ -64,27 +60,6 @@ public class Player implements Entity,ViewablePlayer{
 	public boolean canMove() {
 		return true;
 	}
-
-	public Player(Vector2D pos,int i){
-		position = pos;
-		id = i;
-	}
-	
-	public void carryItem(Item i){
-		inventory.add(i);
-	}
-
-	public void dropItem(Item i){
-		inventory.remove(i);
-	}
-	
-	public void setPosition(Vector2D position) {
-		this.position = position;
-	}
-
-	public int getID() {
-		return id;
-	}
 	
 	public int getPoints() {
 		return points;
@@ -93,8 +68,15 @@ public class Player implements Entity,ViewablePlayer{
 		this.points = points;
 	}
 
-	public Set<Item> getInventory(){
-		return inventory;
+	@Override
+	public boolean canClip() {
+		return false;
+	}
+
+	@Override
+	public void update(float f) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
