@@ -1,0 +1,13 @@
+#!/bin/sh
+
+git stash -u --keep-index
+echo "Running hooks"
+echo "------------ check-compile.sh ------------"
+./check-compile.sh
+RESULT=$?
+echo "------------------------------------------"
+git reset --hard && git stash apply --index -q && echo "applied stash@{0}:" && git stash show stash@{0} && git stash drop
+[ $RESULT -ne 0 ] && exit 1
+exit 0
+
+ 

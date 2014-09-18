@@ -11,7 +11,7 @@ import space.math.Vector2D;
  */
 public interface ViewableRoom {
 
-	public enum LightMode{ BASIC_LIGHT };
+	public enum LightMode{ BASIC_LIGHT, DARK };
 
 	/** Gets the lighting mode for a room. Currently this can only return BASIC_LIGHT
 	 *
@@ -28,4 +28,6 @@ public interface ViewableRoom {
 	public List<? extends ViewableWall> getWalls();
 
 	public List<? extends ViewableObject> getContainedObjects();
+
+	public boolean contains(Vector2D point);
 }
