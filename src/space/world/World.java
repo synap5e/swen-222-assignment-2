@@ -54,7 +54,7 @@ public class World implements ViewableWorld{
 	@Override
 	public Room getRoomAt(Vector2D pos) {
 		for(Room r : rooms.values()){
-			if(r.pointInRoom(pos)){
+			if(r.contains(pos)){
 				return r;
 			}
 		}

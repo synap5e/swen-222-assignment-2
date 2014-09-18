@@ -6,7 +6,7 @@ import space.math.Vector2D;
 public abstract class Entity implements ViewableObject{
 	private Vector2D position;
 	private int id;
-	private int elevation;
+	private float elevation;
 	private String description;
 	
 	public Entity(Vector2D pos, int i,String d){
@@ -22,10 +22,13 @@ public abstract class Entity implements ViewableObject{
 		return id;
 	}
 	
-//	public int getElevation(){
-//		return elevation;
-//	}
+	public float getElevation(){
+		return elevation;
+	}
 	
+	public String getDescription() {
+		return description;
+	}
 	public void setPosition(Vector2D pos){
 		position = pos;
 	}

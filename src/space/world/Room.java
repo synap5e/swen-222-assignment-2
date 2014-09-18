@@ -50,10 +50,6 @@ public class Room implements ViewableRoom{
 		return walls;
 	}
 	
-	public boolean pointInRoom(Vector2D point){
-		return roomShape.contains(point);
-	}
-	
 	public void addExit(Exit e){
 		if(e.getRoom1().equals(this)){
 			exits.put(e.getRoom2(), e);
