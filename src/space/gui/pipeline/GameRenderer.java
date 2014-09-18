@@ -42,8 +42,7 @@ public class GameRenderer {
 	private int width;
 
 	private Map<Class<? extends ViewableObject>, Integer> models;
-	private Map<ViewableRoom, Integer> roomModels;
-	
+	private Map<ViewableRoom, RoomModel> roomModels;
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -62,11 +61,13 @@ public class GameRenderer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		
 		roomModels = new HashMap<>();
 		for (ViewableRoom room : world.getViewableRooms()){
-			roomModels.put(room, RoomModel.createDisplayList(room, models));
+			roomModels.put(room, new RoomModel(room, models));
 		}
+
 	}
 
 	private void setCamera(Vector3D eyepos, Vector3D look) {
@@ -174,7 +175,8 @@ public class GameRenderer {
 		
 		glPushMatrix();
 
-		glCallList(roomModels.get(currentRoom));
+		roomModels.get(currentRoom).render();
+
 
 		//glEnable(GL_NORMALIZE);
 		
