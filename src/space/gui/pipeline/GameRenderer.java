@@ -57,7 +57,7 @@ public class GameRenderer {
 
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
-			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/bunny_new.obj"), new Vector3D(0,0,0), new Vector3D(0,180,0), 0.2f, Material.obsidian));
+			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.2f, Material.bronze));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -96,11 +96,11 @@ public class GameRenderer {
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, zeroBuff);
 		
 		FloatBuffer ambient = BufferUtils.createFloatBuffer(4);
-		ambient.put(new float[] { 0.4f, 0.4f, 0.4f, 1f });
+		ambient.put(new float[] { 0.5f, 0.5f, 0.5f, 1f });
 		ambient.flip();    
 
 		FloatBuffer diffuse = BufferUtils.createFloatBuffer(4);
-		diffuse.put(new float[] { 0.8f, 0.8f, 0.8f, 1f });
+		diffuse.put(new float[] { 1.5f, 1.5f, 1.5f, 1f });
 		diffuse.flip();   
 		
 		FloatBuffer position = BufferUtils.createFloatBuffer(4);
@@ -210,7 +210,8 @@ public class GameRenderer {
 			float b = (float) Math.random();
 			float g = (float) Math.random();
 			
-			colors.put(vob, new Vector3D(r,g,b));
+			//colors.put(vob, new Vector3D(r,g,b));
+			colors.put(vob, new Vector3D(0.2f,0.22f,0.3f));
 		}
 		Vector3D c = colors.get(vob);
 		glColor3f(c.getX(), c.getY(), c.getZ());
