@@ -280,8 +280,10 @@ public class RoomModel {
 
 	private static void renderYPlane(ViewableRoom room, float yVal, boolean windClockwise) {
 		float texStep = 1/TEXTURE_TESSELLATION_MULTIPLE;
-		for (float xt = -50;xt<50;xt+=TEXTURE_TESSELLATION_MULTIPLE){
-			for (float yt = -50;yt<50;yt+=TEXTURE_TESSELLATION_MULTIPLE){
+		Vector2D tl = room.getAABBTopLeft();
+		Vector2D br = room.getAABBBottomRight();
+		for (float xt = tl.getX();xt<br.getX();xt+=TEXTURE_TESSELLATION_MULTIPLE){
+			for (float yt = tl.getY();yt<br.getY();yt+=TEXTURE_TESSELLATION_MULTIPLE){
 				for (float x=0;x<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;x++){
 					for (float y=0;y<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;y++){
 						// yo dawg, I heard you like for loops...

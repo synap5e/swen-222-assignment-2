@@ -13,6 +13,8 @@ import space.math.Vector2D;
 
 public class MockRoom1 extends MockRoom{
 
+	
+	
 	public MockRoom1() {
 		ArrayList<Vector2D> points = new ArrayList<Vector2D>(200);
 		
@@ -77,7 +79,7 @@ public class MockRoom1 extends MockRoom{
 
 					@Override
 					public ViewableRoom getRoom2() {
-						return null;
+						return MockRoom.room2;
 					}
 					
 				},
@@ -100,7 +102,7 @@ public class MockRoom1 extends MockRoom{
 
 					@Override
 					public ViewableRoom getRoom2() {
-						return null;
+						return MockRoom1.room2;
 					}
 					
 					
@@ -222,6 +224,16 @@ public class MockRoom1 extends MockRoom{
 		} else { //(state == 4 || state == 5){
 			return 0;
 		}
+	}
+
+	@Override
+	public Vector2D getAABBTopLeft() {
+		return hull.getAABBTopLeft();
+	}
+
+	@Override
+	public Vector2D getAABBBottomRight() {
+		return hull.getAABBBottomRight();
 	}
 	
 }

@@ -124,4 +124,15 @@ public class Room implements ViewableRoom{
 		return null;
 	}
 	
+	
+	@Override
+	public Vector2D getAABBTopLeft() {
+		return roomShape.getAABBTopLeft();
+	}
+
+	@Override
+	public Vector2D getAABBBottomRight() {
+		return roomShape.getAABBBottomRight();
+	}
+	
 }

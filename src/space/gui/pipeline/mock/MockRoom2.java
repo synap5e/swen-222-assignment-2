@@ -61,18 +61,14 @@ public class MockRoom2 extends MockRoom{
 
 	}
 	
-	private float getDoorPercent(float f) {
-		float doord = doorTime + f*6;
-		int state = (int)(doord) % 6;
-		if (state == 0){
-			return doord % 1.0f;
-		} if (state == 1 || state == 2){
-			return 1;
-		} if (state == 3){
-			return 1-doord % 1.0f;
-		} else { //(state == 4 || state == 5){
-			return 0;
-		}
+	@Override
+	public Vector2D getAABBTopLeft() {
+		return hull.getAABBTopLeft();
+	}
+
+	@Override
+	public Vector2D getAABBBottomRight() {
+		return hull.getAABBBottomRight();
 	}
 	
 }

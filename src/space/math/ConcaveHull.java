@@ -16,6 +16,8 @@ public class ConcaveHull implements Iterable<Segment2D>{
 	/** This point will always be outside the hull */
 	private Vector2D outside = new Vector2D(0,0);
 
+	private Vector2D topLeft;
+	private Vector2D bottomRight;
 	private Vector2D centre;
 	
 	/** Construct the hull from the specified points, winding clockwise
@@ -24,6 +26,8 @@ public class ConcaveHull implements Iterable<Segment2D>{
 	public ConcaveHull(List<Vector2D> points){
 		this.hullPoints = new ArrayList<Vector2D>(points);
 		this.centre = new Vector2D(0,0);
+		topLeft = new Vector2D(points.get(0));
+		bottomRight = new Vector2D(points.get(0));
 		for (Vector2D p : points){
 			if (p.getX() <= outside.getX()){
 				outside.setX(p.getX()-1);
@@ -31,6 +35,22 @@ public class ConcaveHull implements Iterable<Segment2D>{
 			if (p.getY() <= outside.getY()){
 				outside.setY(p.getY()-1);
 			}
+			
+			if (topLeft.getX() > p.getX()){
+				topLeft.setX(p.getX());
+			}
+			if (topLeft.getY() > p.getY()){
+				topLeft.setY(p.getY());
+			}
+			if (bottomRight.getX() < p.getX()){
+				bottomRight.setX(p.getX());
+			}
+			if (bottomRight.getY() < p.getY()){
+				bottomRight.setY(p.getY());
+			}
+			
+			
+			
 			centre.addLocal(p);
 		}
 		centre.divLocal(points.size());
@@ -90,6 +110,14 @@ public class ConcaveHull implements Iterable<Segment2D>{
 	public String toString(){
 		String s = this.hullPoints.toString();
 		return "Hull2(" + s.substring(1, s.length()-1) + ")";
+	}
+
+	public Vector2D getAABBTopLeft() {
+		return topLeft;
+	}
+
+	public Vector2D getAABBBottomRight() {
+		return bottomRight;
 	}
 	
 }

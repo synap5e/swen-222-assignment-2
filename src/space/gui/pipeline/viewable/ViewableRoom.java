@@ -38,4 +38,12 @@ public interface ViewableRoom {
 	 * 
 	 * @return
 	 */
+	public Vector2D getAABBTopLeft();
+	
+	/** Get the bottom right corner of this hull's axis
+	 * aligned bounding box
+	 * 
+	 * @return
+	 */
+	public Vector2D getAABBBottomRight();
 }

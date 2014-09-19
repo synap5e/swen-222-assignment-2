@@ -188,7 +188,19 @@ public class GameRenderer {
 		}
 		
 		for (ViewableRoom room : roomsToRender){
-			if (room != null) roomModels.get(room).render();
+			if (room != null){
+				if (room == currentRoom){
+					glPushMatrix();
+					// lift the current room up a tiny bit to
+					// fix occasional lighting artifacts caused
+					// by other rooms' floors clipping the current room
+					glTranslatef(0, 0.01f, 0);
+					roomModels.get(room).render();
+					glPopMatrix();
+				} else {
+					roomModels.get(room).render();
+				}
+			}
 		}
 
 		//glEnable(GL_NORMALIZE);
