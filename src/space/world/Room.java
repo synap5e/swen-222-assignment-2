@@ -117,5 +117,11 @@ public class Room implements ViewableRoom{
 	public boolean contains(Vector2D point) {
 		return roomShape.contains(point);
 	}
+
+	@Override
+	public List<? extends ViewableDoor> getAllDoors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

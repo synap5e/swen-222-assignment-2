@@ -12,4 +12,16 @@ public interface ViewableDoor {
 	 */
 	public float getOpenPercent();
 
+	/** Can be null if the door does not lead to another room
+	 * 
+	 * @return
+	 */
+	public ViewableRoom getRoom1();
+	
+	/** Can be null if the door does not lead to another room
+	 * 
+	 * @return
+	 */
+	public ViewableRoom getRoom2();
+
 }

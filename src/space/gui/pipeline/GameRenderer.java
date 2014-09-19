@@ -6,8 +6,11 @@ import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -105,7 +108,7 @@ public class GameRenderer {
 		diffuse.flip();   
 		
 		FloatBuffer position = BufferUtils.createFloatBuffer(4);
-		position.put(new float[] { 0f, 9, 0f, 1f });
+		position.put(new float[] { currentRoom.getCentre().getX(), 9, currentRoom.getCentre().getY(), 1f });
 		position.flip();
 
 		glLight(GL_LIGHT0, GL_POSITION, position);
@@ -175,7 +178,18 @@ public class GameRenderer {
 
 		glPushMatrix();
 
-		roomModels.get(currentRoom).render();
+		Set<ViewableRoom> roomsToRender = new HashSet<>();
+		roomsToRender.add(currentRoom);
+		for (ViewableDoor door : currentRoom.getAllDoors()){
+			if (door.getOpenPercent() > 0){
+				roomsToRender.add(door.getRoom1());
+				roomsToRender.add(door.getRoom2());
+			}
+		}
+		
+		for (ViewableRoom room : roomsToRender){
+			if (room != null) roomModels.get(room).render();
+		}
 
 		//glEnable(GL_NORMALIZE);
 

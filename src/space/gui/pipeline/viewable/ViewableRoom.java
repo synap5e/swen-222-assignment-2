@@ -30,4 +30,12 @@ public interface ViewableRoom {
 	public List<? extends ViewableObject> getContainedObjects();
 
 	public boolean contains(Vector2D point);
+
+	public List<? extends ViewableDoor> getAllDoors();
+
+	/** Get the top left corner of this hull's axis
+	 * aligned bounding box
+	 * 
+	 * @return
+	 */
 }
