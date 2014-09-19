@@ -121,6 +121,9 @@ public class WavefrontModel {
 		
 		mat.apply();
 		
+		// TODO: use a given texture
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_COLOR_MATERIAL);
 		glBegin(GL_TRIANGLES);
 		for (Face f : faces) {
 
