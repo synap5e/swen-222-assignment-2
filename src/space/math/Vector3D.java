@@ -124,6 +124,10 @@ public class Vector3D {
 	public Vector3D negate() {
 		return new Vector3D(-x, -y, -z);
 	}
+	
+	public float angleTo(Vector3D other){
+		return (float) Math.acos(dot(other) / (len() * other.len()));
+	}
 
 	@Override
 	public String toString() {
