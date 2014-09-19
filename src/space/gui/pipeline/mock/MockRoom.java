@@ -23,7 +23,7 @@ import space.math.Vector2D;
 public class MockRoom implements ViewableRoom {
 
 	private static Random random = new Random();
-	private static ConcaveHull giftWrap(List<Vector2D> pts){
+	/*private static ConcaveHull giftWrap(List<Vector2D> pts){
 		Vector2D pointOnHull = getLeftMost(pts);
 		Vector2D endpoint = null;
 		//int i=0;
@@ -55,17 +55,21 @@ public class MockRoom implements ViewableRoom {
 		}
 		return l;
 	}
+*/
 
 
 	private List<Robot> objects;
 	private ConcaveHull hull;
 	public MockRoom() {
 		ArrayList<Vector2D> points = new ArrayList<Vector2D>(200);
-		for (int i=0;i<100;i++){
-			points.add(new Vector2D((float)(0 + random.nextGaussian() * 10), (float)(0 + random.nextGaussian() * 10)));
-		}
-		hull = giftWrap(points);
 		
+		
+			points.add(new Vector2D(-10,  20));
+			points.add(new Vector2D( 30,  30));
+			points.add(new Vector2D( 30, 0));
+			points.add(new Vector2D(-30, -30));
+		
+		hull = new ConcaveHull(points);
 		
 		objects = new ArrayList<Robot>();
 		for (int i=0;i<2;i++){
@@ -109,9 +113,90 @@ public class MockRoom implements ViewableRoom {
 		}
 		@Override
 		public List<? extends ViewableDoor> getDoors() {
-			return Arrays.asList(new ViewableDoor() {
-				
-			});
+			if (lineSeg.start.equals(new Vector2D(30, 0))){
+				return Arrays.asList(new ViewableDoor() {
+	
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(0, -15);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return getDoorPercent(0.5f);
+					}
+					
+				},
+				new ViewableDoor() {
+					
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(-15, -15-7.5f);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return getDoorPercent(0.2f);
+					}
+					
+				});
+			} else if (lineSeg.start.equals(new Vector2D(-10, 20))){
+				return Arrays.asList(new ViewableDoor() {
+
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(-6.1194305f, 20.970146f);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return getDoorPercent(1);
+					}
+					
+				});
+			} else if (lineSeg.start.equals(new Vector2D(-30, -30))){
+				return Arrays.asList(new ViewableDoor() {
+
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(-28.514435f, -26.286095f);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return getDoorPercent(0);
+					}
+					
+				},
+				new ViewableDoor() {
+
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(-25.543304f, -18.858284f);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return getDoorPercent(0.7f);
+					}
+					
+				},
+				new ViewableDoor() {
+
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(-12.173228f, 14.566872f);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return getDoorPercent(0.9f);
+					}
+
+				});
+			} else {
+				return Arrays.asList();
+			}
 		}
 
 	}
@@ -121,11 +206,28 @@ public class MockRoom implements ViewableRoom {
 		return objects;
 	}
 	
+	float doorTime = 0;
 	public void update(int delta) {
 		for (Robot b : objects){
 			b.update(delta);
 		}
+		doorTime += delta/1000f;
 	}
+	
+	private float getDoorPercent(float f) {
+		float doord = doorTime + f*6;
+		int state = (int)(doord) % 6;
+		if (state == 0){
+			return doord % 1.0f;
+		} if (state == 1 || state == 2){
+			return 1;
+		} if (state == 3){
+			return 1-doord % 1.0f;
+		} else { //(state == 4 || state == 5){
+			return 0;
+		}
+	}
+	
 	@Override
 	public boolean contains(Vector2D point) {
 		return hull.contains(point);

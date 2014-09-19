@@ -45,8 +45,6 @@ public class GameRenderer {
 	private Map<Class<? extends ViewableObject>, Integer> models;
 	private Map<ViewableRoom, RoomModel> roomModels;
 
-	private DoorModel test;
-
 	public GameRenderer(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -56,7 +54,6 @@ public class GameRenderer {
 	}
 
 	public void loadModels(ViewableWorld world) {
-		glEnable(GL_COLOR_MATERIAL);
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
 			models.put(Robot.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.23f, Material.bronze));
@@ -64,14 +61,13 @@ public class GameRenderer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		RoomModel.loadModels();
 
 		roomModels = new HashMap<>();
 		for (ViewableRoom room : world.getViewableRooms()){
 			roomModels.put(room, new RoomModel(room, models));
 		}
-
-		this.test = new DoorModel(new ViewableDoor() {
-		});
 	}
 
 	private void setCamera(Vector3D eyepos, Vector3D look) {
@@ -181,8 +177,6 @@ public class GameRenderer {
 
 		roomModels.get(currentRoom).render();
 
-
-		this.test.render();
 		//glEnable(GL_NORMALIZE);
 
 		for (ViewableObject vob : currentRoom.getContainedObjects()){
@@ -218,7 +212,7 @@ public class GameRenderer {
 			float g = (float) Math.random();
 			
 			//colors.put(vob, new Vector3D(r,g,b));
-			colors.put(vob, new Vector3D(0.2f,0.22f,0.3f));
+			colors.put(vob, new Vector3D(0.35f,0.3f,0.15f));
 		}
 		Vector3D c = colors.get(vob);
 		glColor3f(c.getX(), c.getY(), c.getZ());

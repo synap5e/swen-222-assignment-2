@@ -82,7 +82,7 @@ public class Player extends Character implements ViewablePlayer{
 	@Override
 	public boolean isTorchOn() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 }
