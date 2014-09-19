@@ -10,7 +10,7 @@ import space.math.Vector2D;
  * @author Simon Pinfold
  *
  */
-public class Bunny implements ViewableObject {
+public class Robot implements ViewableObject {
 
 	private Vector2D pos;
 	
@@ -20,7 +20,7 @@ public class Bunny implements ViewableObject {
 
 	private float jumpTime;
 
-	public Bunny(Vector2D pos) {
+	public Robot(Vector2D pos) {
 		this.pos = pos;
 		
 		angle = (float) (Math.random() * Math.PI*2);

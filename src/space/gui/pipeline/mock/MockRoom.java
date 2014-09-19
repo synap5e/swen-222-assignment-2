@@ -57,8 +57,7 @@ public class MockRoom implements ViewableRoom {
 	}
 
 
-
-	private List<Bunny> objects;
+	private List<Robot> objects;
 	private ConcaveHull hull;
 	public MockRoom() {
 		ArrayList<Vector2D> points = new ArrayList<Vector2D>(200);
@@ -67,9 +66,10 @@ public class MockRoom implements ViewableRoom {
 		}
 		hull = giftWrap(points);
 		
-		objects = new ArrayList<Bunny>();
+		
+		objects = new ArrayList<Robot>();
 		for (int i=0;i<2;i++){
-			objects.add(new Bunny(new Vector2D((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
+			objects.add(new Robot(new Vector2D((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
 		}
 	}
 
@@ -122,7 +122,7 @@ public class MockRoom implements ViewableRoom {
 	}
 	
 	public void update(int delta) {
-		for (Bunny b : objects){
+		for (Robot b : objects){
 			b.update(delta);
 		}
 	}

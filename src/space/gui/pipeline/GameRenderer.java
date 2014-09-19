@@ -16,7 +16,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 
-import space.gui.pipeline.mock.Bunny;
+import space.gui.pipeline.mock.Robot;
 import space.gui.pipeline.mock.MockWorld;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
@@ -57,10 +57,9 @@ public class GameRenderer {
 
 	public void loadModels(ViewableWorld world) {
 		glEnable(GL_COLOR_MATERIAL);
-
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
-			models.put(Bunny.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.2f, Material.bronze));
+			models.put(Robot.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.23f, Material.bronze));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
