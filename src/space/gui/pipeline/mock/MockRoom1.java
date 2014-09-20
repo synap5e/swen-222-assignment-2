@@ -92,7 +92,7 @@ public class MockRoom1 extends MockRoom{
 
 					@Override
 					public float getOpenPercent() {
-						return getDoorPercent(0.2f);
+						return 0;//getDoorPercent(0.2f);
 					}
 					
 					@Override
@@ -212,7 +212,7 @@ public class MockRoom1 extends MockRoom{
 
 	}
 	
-	private float getDoorPercent(float f) {
+	float getDoorPercent(float f) {
 		float doord = doorTime + f*6;
 		int state = (int)(doord) % 6;
 		if (state == 0){

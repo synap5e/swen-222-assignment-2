@@ -121,33 +121,37 @@ public class GameRenderer {
 			glDisable(GL_LIGHT0);
 		}
 
-		Vector3D dir = player.getLookDirection().normalized();
-		Vector2D pos = player.getPosition();
-
-		FloatBuffer spotlightPosition = BufferUtils.createFloatBuffer(4);
-		spotlightPosition.put(new float[] { pos.getX(), player.getEyeHeight(), pos.getY(), 1 });
-		spotlightPosition.flip();
-
-		FloatBuffer spotlightDirection = BufferUtils.createFloatBuffer(4);
-		spotlightDirection.put(new float[] { dir.getX(),dir.getY(),dir.getZ(), 0 });
-		spotlightDirection.flip();
-
-		FloatBuffer spotlightIntensity = BufferUtils.createFloatBuffer(4);
-		spotlightIntensity.put(new float[] { 10,10,10, 1 });
-		spotlightIntensity.flip();
-
-
-		glLight(GL_LIGHT1, GL_POSITION, position);
-		glLight(GL_LIGHT1, GL_DIFFUSE, spotlightIntensity);
-		glLight(GL_LIGHT1, GL_SPECULAR, spotlightIntensity);
-		glLight(GL_LIGHT1, GL_POSITION, spotlightPosition);
-		glLight(GL_LIGHT1, GL_AMBIENT, zeroBuff);
-		glLightf(GL_LIGHT1,GL_SPOT_CUTOFF,90.0f);
-		glLight(GL_LIGHT1, GL_SPOT_DIRECTION, spotlightDirection);
-		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 100f);
-
-		if (player.isTorchOn()){
-			glEnable(GL_LIGHT1);
+		if (player != null){
+			Vector3D dir = player.getLookDirection().normalized();
+			Vector2D pos = player.getPosition();
+	
+			FloatBuffer spotlightPosition = BufferUtils.createFloatBuffer(4);
+			spotlightPosition.put(new float[] { pos.getX(), player.getEyeHeight(), pos.getY(), 1 });
+			spotlightPosition.flip();
+	
+			FloatBuffer spotlightDirection = BufferUtils.createFloatBuffer(4);
+			spotlightDirection.put(new float[] { dir.getX(),dir.getY(),dir.getZ(), 0 });
+			spotlightDirection.flip();
+	
+			FloatBuffer spotlightIntensity = BufferUtils.createFloatBuffer(4);
+			spotlightIntensity.put(new float[] { 10,10,10, 1 });
+			spotlightIntensity.flip();
+	
+	
+			glLight(GL_LIGHT1, GL_POSITION, position);
+			glLight(GL_LIGHT1, GL_DIFFUSE, spotlightIntensity);
+			glLight(GL_LIGHT1, GL_SPECULAR, spotlightIntensity);
+			glLight(GL_LIGHT1, GL_POSITION, spotlightPosition);
+			glLight(GL_LIGHT1, GL_AMBIENT, zeroBuff);
+			glLightf(GL_LIGHT1,GL_SPOT_CUTOFF,90.0f);
+			glLight(GL_LIGHT1, GL_SPOT_DIRECTION, spotlightDirection);
+			glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 100f);
+	
+			if (player.isTorchOn()){
+				glEnable(GL_LIGHT1);
+			} else {
+				glDisable(GL_LIGHT1);
+			}
 		} else {
 			glDisable(GL_LIGHT1);
 		}
@@ -187,32 +191,23 @@ public class GameRenderer {
 			}
 		}
 		
+		
 		for (ViewableRoom room : roomsToRender){
 			if (room != null){
-				if (room == currentRoom){
-					glPushMatrix();
-					// lift the current room up a tiny bit to
-					// fix occasional lighting artifacts caused
-					// by other rooms' floors clipping the current room
-					glTranslatef(0, 0.01f, 0);
-					roomModels.get(room).render();
-					glPopMatrix();
-				} else {
+				if (room != currentRoom){
+					setLight(null, room);
 					roomModels.get(room).render();
 				}
 			}
 		}
-
-		//glEnable(GL_NORMALIZE);
-
+		
+		setLight(player, currentRoom);
+		roomModels.get(currentRoom).render();
 		for (ViewableObject vob : currentRoom.getContainedObjects()){
 			if (vob.canMove()){
 				drawObject(vob, models);
 			}
 		}
-
-
-		//glDisable(GL_NORMALIZE);
 
 		glPopMatrix();
 	}

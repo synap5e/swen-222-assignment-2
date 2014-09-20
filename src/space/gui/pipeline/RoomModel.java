@@ -37,6 +37,7 @@ public class RoomModel {
 	public void render() {
 		glCallList(this.displayList);
 		
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		// doors are nonstationary so need to be rendered dynamically
 		for (Entry<ViewableDoor, Float> e : doorRotations.entrySet()) {
 			ViewableDoor door = e.getKey();
@@ -49,6 +50,7 @@ public class RoomModel {
 			glPopMatrix();
 			
 		}
+		glPopAttrib();
 	}
 
 
@@ -106,6 +108,8 @@ public class RoomModel {
 
 	private int createDisplayList(ViewableRoom room, Map<Class<? extends ViewableObject>, Integer> models){
 		int displayList = glGenLists(1);
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		
 		glNewList(displayList, GL_COMPILE);
 
 		wallMaterial.apply();
@@ -178,7 +182,7 @@ public class RoomModel {
 			glPopMatrix();
 		}
 
-
+		glPopAttrib();
 		glEndList();
 
 		return displayList;
@@ -357,7 +361,7 @@ public class RoomModel {
 		s.setNormals(GL_SMOOTH);
 		glEnable(GL_COLOR_MATERIAL);
 		glPushMatrix();
-		glTranslatef(-DOOR_WIDTH/2, DOOR_HEIGHT, 0);
+		glTranslatef(-DOOR_WIDTH/2, DOOR_HEIGHT, -0.05f);
 		s.draw(0.25f, 10, 10);
 		glTranslatef(0, -DOOR_HEIGHT, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -365,7 +369,7 @@ public class RoomModel {
 		glPopMatrix();
 		
 		glPushMatrix();
-		glTranslatef(DOOR_WIDTH/2, DOOR_HEIGHT, 0);
+		glTranslatef(DOOR_WIDTH/2, DOOR_HEIGHT, -0.05f);
 		s.draw(0.25f, 10, 10);
 		glTranslatef(0, -DOOR_HEIGHT, 0);
 		glRotatef(-90, 1, 0, 0);
@@ -373,7 +377,7 @@ public class RoomModel {
 		glPopMatrix();
 		
 		glPushMatrix();
-		glTranslatef(DOOR_WIDTH/2, DOOR_HEIGHT, 0);
+		glTranslatef(DOOR_WIDTH/2, DOOR_HEIGHT, -0.05f);
 		glRotatef(-90, 0, 1, 0);
 		c.draw(0.25f, 0.25f, DOOR_WIDTH, 10, 10);
 		glPopMatrix();
@@ -385,45 +389,16 @@ public class RoomModel {
 	private static int createDoorDisplayList() {
 		int doorDisplayList = glGenLists(1);
 		glNewList(doorDisplayList, GL_COMPILE);
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-		glBindTexture(GL_TEXTURE_2D, doorTexture);
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_COLOR_MATERIAL);
-		//glColor3f(0.3f, 0.3f, 0.32f);
+		glBindTexture(GL_TEXTURE_2D, doorTexture);
+		
 		Material.chrome.apply();
-		
-		
 
 		glBegin(GL_QUADS);
 		glNormal3f(0, 0, -1);
-		float xTexStep = TESSELLATION_SIZE/DOOR_WIDTH;
-		float yTexStep = TESSELLATION_SIZE/DOOR_HEIGHT;
-		
-		System.out.println(xTexStep);
-		
-		float xTex = 1;
-		/*for (float x=-DOOR_WIDTH/2;x<DOOR_WIDTH/2;x+=TESSELLATION_SIZE){
-			float yTex = 1;
-			for (float y=0;y<DOOR_HEIGHT;y+=TESSELLATION_SIZE){
-				
-				glTexCoord2f(xTex, yTex+yTexStep);
-				glVertex3f(x, y+TESSELLATION_SIZE, 0.1f);
-				
-				glTexCoord2f(xTex+xTexStep, yTex);
-				glVertex3f(x+TESSELLATION_SIZE, y+TESSELLATION_SIZE, 0.1f);
-				
-				glTexCoord2f(xTex+xTexStep, yTex);
-				glVertex3f(x+TESSELLATION_SIZE, y, 0.1f);
-				
-				glTexCoord2f(xTex, yTex);
-				glVertex3f(x, y, 0.1f);
-				
-				
-				yTex-=yTexStep;
-			}
-			xTex-=xTexStep;
-		}*/
-		
 		glTexCoord2f(1,	0);
 		glVertex3f(-DOOR_WIDTH/2, DOOR_HEIGHT, 0.1f);
 		
@@ -439,6 +414,7 @@ public class RoomModel {
 		
 		glEnd();
 		
+		glPopAttrib();
 		glEndList();
 		return doorDisplayList;
 	}

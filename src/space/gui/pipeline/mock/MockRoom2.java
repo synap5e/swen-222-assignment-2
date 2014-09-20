@@ -56,7 +56,57 @@ public class MockRoom2 extends MockRoom{
 		@Override
 		public List<? extends ViewableDoor> getDoors() {
 			final MockRoom rthis = MockRoom2.this;
-			return Arrays.asList();
+			if (lineSeg.start.equals(new Vector2D(-30, -30))){
+				return Arrays.asList(new ViewableDoor() {
+	
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(0, -15);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return ((MockRoom1)MockRoom.room1).getDoorPercent(0.5f);
+					}
+
+					@Override
+					public ViewableRoom getRoom1() {
+						return rthis;
+					}
+
+					@Override
+					public ViewableRoom getRoom2() {
+						return MockRoom.room1;
+					}
+					
+				},
+				new ViewableDoor() {
+					
+					@Override
+					public Vector2D getLocation() {
+						return new Vector2D(-15, -15-7.5f);
+					}
+
+					@Override
+					public float getOpenPercent() {
+						return 0;//((MockRoom1)MockRoom.room1).getDoorPercent(0.2f);
+					}
+					
+					@Override
+					public ViewableRoom getRoom1() {
+						return rthis;
+					}
+
+					@Override
+					public ViewableRoom getRoom2() {
+						return MockRoom1.room1;
+					}
+					
+					
+				});
+			} else {
+				return Arrays.asList();
+			}
 		}
 
 	}
