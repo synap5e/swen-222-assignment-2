@@ -51,20 +51,9 @@ public class ComponentTest extends JFrame {
 		
 		rcp.loadModels(mockWorld);
 		
-		//Start a server so a client can be created
-		Thread server = new Thread(new Runnable(){
-			@Override
-			public void run() {
-				new Server("localhost", 1234);
-			}
-		});
-		server.start();
-		
+		//Start a server so a client can connect to it
+		new Server("localhost", 1234);
 		Client client = new Client("localhost", 1234, mockWorld, mockPlayer);
-		try {
-			server.join();
-		} catch (InterruptedException e) {
-		}
 		
 		Mouse.setGrabbed(true);
 		Mouse.setClipMouseCoordinatesToWindow(false);
