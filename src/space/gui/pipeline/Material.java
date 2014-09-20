@@ -15,9 +15,9 @@ import org.lwjgl.BufferUtils;
 import space.math.Vector3D;
 
 public class Material {
-	
+
 	// materials defined at http://devernay.free.fr/cours/opengl/materials.html
-	
+
 	public static Material emerald = new Material(
 			new Vector3D(0.0215f, 0.1745f, 0.0215f),
 			new Vector3D(0.07568f, 0.61424f, 0.07568f),
@@ -168,8 +168,8 @@ public class Material {
 			new Vector3D(0, 0, 0),
 			0
 	);
-	
-	
+
+
 	private float shininess;
 	private FloatBuffer ambient;
 	private FloatBuffer diffuse;
@@ -178,26 +178,26 @@ public class Material {
 	public Material(Vector3D ambientV, Vector3D diffuseV, Vector3D specularV, float shininess){
 		this.ambient = BufferUtils.createFloatBuffer(4);
 		ambient.put(new float[] { ambientV.getX(), ambientV.getY(), ambientV.getZ(), 1f});
-		ambient.flip();  
-	
+		ambient.flip();
+
 		this.diffuse = BufferUtils.createFloatBuffer(4);
 		diffuse.put(new float[] { diffuseV.getX(), diffuseV.getY(), diffuseV.getZ(), 1f});
-		diffuse.flip();  
-		
+		diffuse.flip();
+
 		this.specular = BufferUtils.createFloatBuffer(4);
 		specular.put(new float[] { specularV.getX(), specularV.getY(), specularV.getZ(), 1f});
-		specular.flip();  
-		
+		specular.flip();
+
 		this.shininess = shininess;
 	}
-	
+
 	public void apply(){
 		glMaterial(GL_FRONT, GL_AMBIENT, ambient);
-	
+
 		glMaterial(GL_FRONT, GL_DIFFUSE, diffuse);
-		
+
 		glMaterial(GL_FRONT, GL_SPECULAR, specular);
-		
+
 		assert (shininess <= 1);
 		glMaterialf(GL_FRONT, GL_SHININESS, shininess * 128.0f);
 	}

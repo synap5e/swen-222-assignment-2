@@ -115,7 +115,7 @@ public class Vector2D {
 	}
 	
 	public float getPolarAngle(){
-		return (float) Math.tanh(y/x);
+		return (float) Math.atan2(y, x);
 	}
 	
 	public boolean equals(Vector2D other, float epsilon) {

@@ -14,20 +14,24 @@ import space.math.Vector2D;
  */
 public class MockWorld implements ViewableWorld {
 
-	private MockRoom room = new MockRoom();
+	//private MockRoom room = new MockRoom.room1;
 
 	@Override
 	public ViewableRoom getRoomAt(Vector2D pos) {
-		return room;
+		if (MockRoom.room2.contains(pos)){
+			return MockRoom.room2;
+		}
+		return MockRoom.room1;
 	}
 
 	public void update(int delta) {
-		room.update(delta);
+		MockRoom.room1.update(delta);
+		MockRoom.room2.update(delta);
 	}
 
 	@Override
 	public List<? extends ViewableRoom> getViewableRooms() {
-		return Arrays.asList(room);
+		return Arrays.asList(MockRoom.room1, MockRoom.room2);
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -104,12 +105,34 @@ public class Room implements ViewableRoom{
 		public Vector2D getEnd() {
 			return lineSeg.end;
 		}
+		@Override
+		public List<? extends ViewableDoor> getDoors() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
 	}
 
 	@Override
 	public boolean contains(Vector2D point) {
 		return roomShape.contains(point);
+	}
+
+	@Override
+	public List<? extends ViewableDoor> getAllDoors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	@Override
+	public Vector2D getAABBTopLeft() {
+		return roomShape.getAABBTopLeft();
+	}
+
+	@Override
+	public Vector2D getAABBBottomRight() {
+		return roomShape.getAABBBottomRight();
 	}
 	
 }

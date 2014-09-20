@@ -112,7 +112,8 @@ public class WavefrontModel {
 	private int createDisplayList(){
 		int displayList = glGenLists(1);
 		glNewList(displayList, GL_COMPILE);
-
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		
 		glTranslatef(offset.getX(), offset.getY(), offset.getZ());
 		
 		glRotatef(eulerRotation.getZ(), 0, 0, 1);
@@ -121,6 +122,9 @@ public class WavefrontModel {
 		
 		mat.apply();
 		
+		// TODO: use a given texture
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_COLOR_MATERIAL);
 		glBegin(GL_TRIANGLES);
 		for (Face f : faces) {
 
@@ -147,6 +151,7 @@ public class WavefrontModel {
 		}
 		glEnd();
 
+		glPopAttrib();
 		glEndList();
 
 		return displayList;
