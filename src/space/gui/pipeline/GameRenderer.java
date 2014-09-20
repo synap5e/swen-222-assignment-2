@@ -104,7 +104,7 @@ public class GameRenderer {
 		ambient.flip();    
 
 		FloatBuffer diffuse = BufferUtils.createFloatBuffer(4);
-		diffuse.put(new float[] { 1.5f, 1.5f, 1.5f, 1f });
+		diffuse.put(new float[] { 0.7f, 0.7f, 0.7f, 1f });
 		diffuse.flip();   
 		
 		FloatBuffer position = BufferUtils.createFloatBuffer(4);

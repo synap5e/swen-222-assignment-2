@@ -35,9 +35,10 @@ public class RoomModel {
 		this.displayList = createDisplayList(room, models);
 	}
 	public void render() {
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glCallList(this.displayList);
 		
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		
 		// doors are nonstationary so need to be rendered dynamically
 		for (Entry<ViewableDoor, Float> e : doorRotations.entrySet()) {
 			ViewableDoor door = e.getKey();
@@ -108,9 +109,8 @@ public class RoomModel {
 
 	private int createDisplayList(ViewableRoom room, Map<Class<? extends ViewableObject>, Integer> models){
 		int displayList = glGenLists(1);
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		
 		glNewList(displayList, GL_COMPILE);
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 		wallMaterial.apply();
 		//Material.simple.apply(); //silver.apply();
