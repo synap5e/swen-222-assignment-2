@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
@@ -133,6 +134,12 @@ public class Room implements ViewableRoom{
 	@Override
 	public Vector2D getAABBBottomRight() {
 		return roomShape.getAABBBottomRight();
+	}
+
+	@Override
+	public List<? extends ViewableBeam> getBeams() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

@@ -4,17 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.ConcaveHull;
 import space.math.Segment2D;
 import space.math.Vector2D;
+import space.math.Vector3D;
 
 public class MockRoom1 extends MockRoom{
 
 	
 	
+	protected float lf = 5;
+	protected Vector2D pos = new Vector2D(0, 0);
+
 	public MockRoom1() {
 		ArrayList<Vector2D> points = new ArrayList<Vector2D>(200);
 		
@@ -29,6 +34,16 @@ public class MockRoom1 extends MockRoom{
 		objects = new ArrayList<Robot>();
 		for (int i=0;i<20;i++){
 			objects.add(new Robot(new Vector2D((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
+		}
+	}
+	
+	@Override
+	public void update(int delta) {
+		super.update(delta);
+		lf -= delta/500f;
+		if (lf < -3){
+			pos = getContainedObjects().get(0).getPosition().sub(new Vector2D(0, 0));
+			lf = 2;
 		}
 	}
 	
@@ -234,6 +249,42 @@ public class MockRoom1 extends MockRoom{
 	@Override
 	public Vector2D getAABBBottomRight() {
 		return hull.getAABBBottomRight();
+	}
+
+	@Override
+	public List<? extends ViewableBeam> getBeams() {
+		return Arrays.asList(new ViewableBeam() {
+			
+			@Override
+			public Vector2D getPosition() {
+				return pos ;
+			}
+			
+			@Override
+			public float getElevation() {
+				return 5;
+			}
+			
+			@Override
+			public float getAngle() {
+				return 45;
+			}
+			
+			@Override
+			public boolean canMove() {
+				return true;
+			}
+			
+			@Override
+			public Vector3D getBeamDirection() {
+				return new Vector3D(-1, 0.2f, 1).normalized();
+			}
+
+			@Override
+			public float getRemainingLife() {
+				return lf ;
+			}
+		});
 	}
 	
 }

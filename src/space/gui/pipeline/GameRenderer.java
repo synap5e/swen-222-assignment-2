@@ -17,10 +17,12 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 
 import space.gui.pipeline.mock.Robot;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
@@ -207,6 +209,26 @@ public class GameRenderer {
 			if (vob.canMove()){
 				drawObject(vob, models);
 			}
+		}
+		
+		glDisable(GL_LIGHTING);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		for (ViewableBeam beam : currentRoom.getBeams()){
+			Vector3D kUnit = new Vector3D(0, 0, 1);
+			Vector3D beamDirection = beam.getBeamDirection();
+			
+			Vector3D axis = kUnit.cross(beamDirection);
+			float angle = kUnit.angleTo(beamDirection);
+			
+			Cylinder c = new Cylinder();
+			
+			glColor4f(1,0,0, 0.5f * Math.max(0, Math.min(1, beam.getRemainingLife())));
+			glPushMatrix();
+			glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
+			glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
+			c.draw(0.02f, 0.02f, 50, 10, 10);
+			glPopMatrix();
 		}
 
 		glPopMatrix();
