@@ -43,7 +43,7 @@ public class Robot implements ViewableObject {
 	public void update(int delta) {
 		pos.addLocal(getFacing().mul(delta/250f));
 		
-		if (pos.sqLen() > 250){
+		if (pos.sqLen() > 400){
 			angle += Math.PI + ((Math.random()-0.5) * Math.PI/2);
 		}
 		

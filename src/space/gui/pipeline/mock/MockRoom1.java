@@ -27,7 +27,7 @@ public class MockRoom1 extends MockRoom{
 		hull = new ConcaveHull(points);
 		
 		objects = new ArrayList<Robot>();
-		for (int i=0;i<2;i++){
+		for (int i=0;i<20;i++){
 			objects.add(new Robot(new Vector2D((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
 		}
 	}
