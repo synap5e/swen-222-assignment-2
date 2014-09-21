@@ -1,4 +1,4 @@
-package space.gui.pipeline.wavefront;
+package space.gui.pipeline;
 
 
 import static org.lwjgl.opengl.GL11.*;
@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.Util;
+import org.lwjgl.util.glu.Sphere;
 
-import space.gui.pipeline.Material;
 import space.math.Vector3D;
 
 /**
@@ -19,12 +19,14 @@ import space.math.Vector3D;
  * @author Simon Pinfold
  *
  */
-public class WavefrontModel {
+public class WavefrontModel implements RenderModel{
 
 	private static class Face {
 		int v1, v2, v3;
 		int n1, n2, n3;
 	}
+
+	private static final boolean DEBUG_MODEL_CENTER = false;
 
 	private ArrayList<Vector3D> vertices = new ArrayList<Vector3D>();
 	private ArrayList<Vector3D> normals = new ArrayList<Vector3D>();
@@ -34,8 +36,10 @@ public class WavefrontModel {
 	private Vector3D eulerRotation;
 	private Vector3D offset;
 	private Material mat;
+	
+	private int displayList;
 
-	private WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale, Material mat) throws IOException {
+	public WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale, Material mat) throws IOException {
 		this.offset = offset;
 		this.eulerRotation = eulerRotation;
 		this.scale = scale;
@@ -47,6 +51,13 @@ public class WavefrontModel {
 		   parseLine(line);
 		}
 		br.close();
+		
+		this.createDisplayList();
+	}
+	
+	@Override
+	public void render() {
+		glCallList(displayList);
 	}
 
 	private void parseLine(String line) {
@@ -109,10 +120,20 @@ public class WavefrontModel {
 					);
 	}
 
-	private int createDisplayList(){
-		int displayList = glGenLists(1);
+	private void createDisplayList(){
+		this.displayList = glGenLists(1);
 		glNewList(displayList, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		
+		if (DEBUG_MODEL_CENTER){
+			glPushAttrib(GL_ALL_ATTRIB_BITS);
+			glDisable(GL_TEXTURE_2D);
+			glEnable(GL_COLOR_MATERIAL);
+			glColor3f(1,0,0);
+			Sphere s = new Sphere();
+			s.draw(0.1f, 10, 10);
+			glPopAttrib();
+		}
 		
 		glTranslatef(offset.getX(), offset.getY(), offset.getZ());
 		
@@ -149,21 +170,11 @@ public class WavefrontModel {
 				glVertex3f(v3.getX(), v3.getY(), v3.getZ());
 			}
 		}
+		
 		glEnd();
 
 		glPopAttrib();
 		glEndList();
-
-		return displayList;
-	}
-
-	public static int loadDisplayList(File file) throws IOException {
-		return loadDisplayList(file, new Vector3D(0,0,0), new Vector3D(0,0,0), 1f, Material.black_plastic);
-	}
-	
-	public static int loadDisplayList(File file, Vector3D offset, Vector3D eulerRotation, float scale, Material mat) throws IOException {
-		WavefrontModel model = new WavefrontModel(file, offset, eulerRotation, scale, mat);
-		return model.createDisplayList();
 	}
 
 }

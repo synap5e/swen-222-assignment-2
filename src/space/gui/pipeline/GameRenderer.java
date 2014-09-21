@@ -30,7 +30,6 @@ import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
-import space.gui.pipeline.wavefront.WavefrontModel;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.world.Player;
@@ -47,7 +46,7 @@ public class GameRenderer {
 	private int height;
 	private int width;
 
-	private Map<Class<? extends ViewableObject>, Integer> models;
+	private Map<Class<? extends ViewableObject>, RenderModel> models;
 	private Map<ViewableRoom, RoomModel> roomModels;
 
 	public GameRenderer(int width, int height) {
@@ -59,9 +58,9 @@ public class GameRenderer {
 	}
 
 	public void loadModels(ViewableWorld world) {
-		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
+		this.models = new HashMap<Class<? extends ViewableObject>, RenderModel>();
 		try {
-			models.put(Robot.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.23f, Material.bronze));
+			models.put(Robot.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -234,7 +233,7 @@ public class GameRenderer {
 		glPopMatrix();
 	}
 
-	public static void drawObject(ViewableObject vob, Map<Class<? extends ViewableObject>, Integer> models) {
+	public static void drawObject(ViewableObject vob, Map<Class<? extends ViewableObject>, RenderModel> models) {
 		glPushMatrix();
 		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
 		glRotated(vob.getAngle(), 0, -1, 0);
@@ -243,7 +242,7 @@ public class GameRenderer {
 		getAssignedColor(vob);
 
 
-		glCallList(models.get(vob.getClass()));
+		models.get(vob.getClass()).render();
 		glPopMatrix();
 	}
 
