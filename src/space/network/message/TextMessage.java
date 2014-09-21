@@ -1,5 +1,8 @@
 package space.network.message;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+
 /**
  * TextMessage represents text message that is able to be sent or received over the network.
  * 
@@ -24,14 +27,10 @@ public class TextMessage implements Message {
 	/**
 	 * Creates the text message from data received over the network.
 	 * 
-	 * @param data the data received. Each integer must be a char in the text.
+	 * @param data the data received. Should be a byte array that holds chars.
 	 */
-	public TextMessage(int[] data){
-		char[] mess = new char[data.length];
-		for (int i = 0; i < data.length; ++i){
-			mess[i] = (char) data[i];
-		}
-		text = String.valueOf(mess);
+	public TextMessage(byte[] data){
+		text = ByteBuffer.wrap(data).asCharBuffer().toString();
 	}
 	
 	/**
@@ -43,13 +42,12 @@ public class TextMessage implements Message {
 	}
 	
 	@Override
-	public int[] toIntArray() {
-		int[] data = new int[text.length()];
-		char[] chars =  text.toCharArray();
-		for (int i = 0; i < chars.length; ++i){
-			data[i] = chars[i];
+	public byte[] toByteArray() {
+		ByteBuffer buffer = ByteBuffer.allocate(text.length()*Character.BYTES);
+		for (char c : text.toCharArray()){
+			buffer.putChar(c);
 		}
-		return data;
+		return buffer.array();
 	}
 	
 	@Override

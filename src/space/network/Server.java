@@ -12,6 +12,8 @@ import org.lwjgl.Sys;
 
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
+import space.network.message.Message;
+import space.network.message.PlayerJoinedMessage;
 import space.network.message.TextMessage;
 import space.world.Player;
 import space.world.Room;
@@ -131,9 +133,12 @@ public class Server {
 					}
 					synchronized (world){
 						world.addEntity(new Player(new Vector2D(0, 0), id));
-						//TODO: Tell new client their ID.
-						
-						//TODO: Tell clients about new player
+						System.out.println(id);
+						//Tell clients about new player. The new client will use the id given.
+						Message playerJoined = new PlayerJoinedMessage(id);
+						for (Connection con : connections.values()){
+							con.sendMessage(playerJoined);
+						}
 					}
 				} catch (IOException e) {
 					System.err.println("Connection Attempt Failed");

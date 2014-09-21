@@ -19,7 +19,7 @@ public class MessageTests {
 		String text = "test message";
 		TextMessage original = new TextMessage(text);
 		
-		int[] data = original.toIntArray();
+		byte[] data = original.toByteArray();
 		
 		TextMessage message = new TextMessage(data);
 

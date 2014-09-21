@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 import space.network.message.Message;
+import space.network.message.PlayerJoinedMessage;
 import space.network.message.TextMessage;
 
 public class Connection {
 	
 	private static final int TEXT = 0;
+	private static final int PLAYER_JOINED = 1;
 	private static final int UNKNOWN = -1;
 	
 	
@@ -43,13 +46,13 @@ public class Connection {
 		try {
 			int type = incoming.read();
 			int length = incoming.read();
-			int[] data = new int[length];
-			for (int i = 0; i < length; ++i){
-				data[i] = incoming.read();
-			}
+			byte[] data = new byte[length];
+			incoming.read(data);
 			switch (type){
 				case TEXT:
 					return new TextMessage(data);
+				case PLAYER_JOINED:
+					return new PlayerJoinedMessage(data);
 				default:
 					//TODO: decide how to deal with format error
 					return null;
@@ -64,13 +67,11 @@ public class Connection {
 	public void sendMessage(Message message){
 		try {
 			int type = typeOf(message);
-			int[] data = message.toIntArray();
+			byte[] data = message.toByteArray();
 			
 			outgoing.write(type);
 			outgoing.write(data.length);
-			for (int value : data){
-				outgoing.write(value);
-			}
+			outgoing.write(data);
 		} catch (IOException e) {
 			// TODO decide how to deal with exception
 			e.printStackTrace();
@@ -80,6 +81,7 @@ public class Connection {
 	private int typeOf(Message message){
 		//TODO: decide how whether this is the best way to determine the type of a message
 		if (message instanceof TextMessage) return TEXT;
+		else if (message instanceof PlayerJoinedMessage) return PLAYER_JOINED;
 		else return UNKNOWN;
 	}
 	
