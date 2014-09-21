@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import space.gui.pipeline.mock.MockWorld;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.world.Player;

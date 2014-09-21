@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import space.network.message.TextMessage;
+
 public class ConnectionTests {
 
 	private static final String host = "localhost";
@@ -86,11 +88,12 @@ public class ConnectionTests {
 	
 	@Test
 	public void testSendingAndRecievingMessage() {
-		String testMessage = "test123";
+		String text = "test123";
+		TextMessage testMessage = new TextMessage(text);
 		serverside.sendMessage(testMessage);
 		assertTrue(clientside.hasMessage());
-		String message = clientside.readMessage();
-		assertEquals(testMessage, message);
+		String message = ((TextMessage) clientside.readMessage()).getText();
+		assertEquals(text, message);
 	}
 
 	//TODO: Write tests for when client/server disconnects unexpectedly

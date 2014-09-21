@@ -7,9 +7,12 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.lwjgl.Sys;
+
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
+import space.network.message.TextMessage;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -73,7 +76,7 @@ public class Server {
 		synchronized (connections) {
 			for (Connection c : connections.values()){
 				//TODO: use a better way to tell the client the server is shutting down
-				c.sendMessage("Server Shutting Down");
+				c.sendMessage(new TextMessage("Server Shutting Down"));
 				c.close();
 			}
 		}
