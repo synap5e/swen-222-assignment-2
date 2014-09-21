@@ -27,7 +27,6 @@ public class Client {
 	 */
 	private Connection connection;
 	
-	//TODO: Change type to World
 	/**
 	 * The local version of the game world.
 	 */
