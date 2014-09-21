@@ -11,9 +11,9 @@ public interface ViewableObject {
 	
 	public Vector2D getPosition();
 	
-	/** Gets the objects rotation around the y axis in radions
-	 * 
-	 * @return
+	/** Gets the objects rotation around the y axis in degrees
+	 *  Some objects may not have meaningful angles, in this case the return value can be anything
+	 * @return the angle in degrees
 	 */
 	public float getAngle();
 
