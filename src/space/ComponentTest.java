@@ -46,9 +46,7 @@ public class ComponentTest extends JFrame {
 		c.setIgnoreRepaint(true);
 		c.setFocusable(true);
 		this.getContentPane().add(c);
-		
-		
-		Player mockPlayer = new Player(new Vector2D(0, 0), 4321);
+
 		World world = new World();
 		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
 		world.addRoom(r);
@@ -60,7 +58,7 @@ public class ComponentTest extends JFrame {
 		
 		//Start a server so a client can connect to it
 		new Server("localhost", 1234);
-		Client client = new Client("localhost", 1234, world, mockPlayer);
+		Client client = new Client("localhost", 1234, world);
 		
 		Mouse.setGrabbed(true);
 		Mouse.setClipMouseCoordinatesToWindow(false);
@@ -75,7 +73,7 @@ public class ComponentTest extends JFrame {
 			client.update(delta);
 			
 			// update renderer
-			rcp.renderTick(delta, mockPlayer, world);
+			rcp.renderTick(delta, client.getLocalPlayer(), world);
 
 			Display.update();
 			Display.sync(60);

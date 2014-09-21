@@ -14,6 +14,10 @@ public class PlayerJoinedMessage implements Message {
 		this.playerId = ByteBuffer.wrap(playerId).getInt();
 	}
 	
+	public int getPlayerID(){
+		return playerId;
+	}
+	
 	@Override
 	public byte[] toByteArray() {
 		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);

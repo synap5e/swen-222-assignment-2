@@ -2,10 +2,13 @@ package space.network;
 
 import java.io.IOException;
 import java.net.Socket;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.network.message.PlayerJoinedMessage;
 import space.world.Player;
 import space.world.World;
 
@@ -50,11 +53,9 @@ public class Client {
 	 * @param host the host name of the server
 	 * @param port the port of the server
 	 * @param world the local instance of the game world
-	 * @param localPlayer the local player
 	 */
-	public Client(String host, int port, World world, Player localPlayer){
+	public Client(String host, int port, World world){
 		this.world = world;
-		this.localPlayer = localPlayer;
 		
 		//Connect to the server
 		try {
@@ -63,6 +64,10 @@ public class Client {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
 		}
+		
+		//Create the local player, using the ID supplied by the server
+		PlayerJoinedMessage joinConfirmation = (PlayerJoinedMessage) connection.readMessage();
+		localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 		
 		//Get the initial location of the mouse
 		lastx = Mouse.getX();

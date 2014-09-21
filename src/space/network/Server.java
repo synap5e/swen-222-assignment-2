@@ -133,7 +133,7 @@ public class Server {
 					}
 					synchronized (world){
 						world.addEntity(new Player(new Vector2D(0, 0), id));
-						System.out.println(id);
+						
 						//Tell clients about new player. The new client will use the id given.
 						Message playerJoined = new PlayerJoinedMessage(id);
 						for (Connection con : connections.values()){
