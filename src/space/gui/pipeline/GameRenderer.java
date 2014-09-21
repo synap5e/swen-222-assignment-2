@@ -20,6 +20,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 
+import space.gui.pipeline.mock.Bullet;
 import space.gui.pipeline.mock.Robot;
 import space.gui.pipeline.mock.MockWorld;
 import space.gui.pipeline.viewable.ViewableBeam;
@@ -61,6 +62,7 @@ public class GameRenderer {
 		this.models = new HashMap<Class<? extends ViewableObject>, RenderModel>();
 		try {
 			models.put(Robot.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
+			models.put(Bullet.class, new BulletModel());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

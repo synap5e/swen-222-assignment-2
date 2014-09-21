@@ -6,6 +6,7 @@ import java.util.List;
 
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
+import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.ConcaveHull;
@@ -15,11 +16,12 @@ import space.math.Vector3D;
 
 public class MockRoom1 extends MockRoom{
 
-	
+	List<Bullet> bullets = new ArrayList<Bullet>();
 	
 	protected float lf = 5;
 	protected Vector2D pos = new Vector2D(0, 0);
 
+	protected Vector3D dir= new Vector3D(0, 0, 1);
 
 	private float el;
 
@@ -36,8 +38,8 @@ public class MockRoom1 extends MockRoom{
 		hull = new ConcaveHull(points);
 		
 		objects = new ArrayList<Robot>();
-		for (int i=0;i<20;i++){
-			objects.add(new Robot(new Vector2D((float) Math.random()*10f - 5f, (float) (Math.random()*10f - 5f))));
+		for (int i=0;i<2;i++){
+			objects.add(new Robot(new Vector2D((float) Math.random()*20f - 10f, (float) (Math.random()*20f - 10f))));
 		}
 	}
 	
@@ -53,6 +55,28 @@ public class MockRoom1 extends MockRoom{
 			
 			lf = 2;
 		}
+		for (Bullet pel : new ArrayList<>(bullets)){
+			if (!hull.contains(pel.getPosition())){
+				bullets.remove(pel);
+			}
+			pel.update(delta);
+		}
+		
+		if (random.nextDouble() < 0.1){
+			Vector2D dir = objects.get(0).getFacing();
+			Bullet p = new Bullet(/*new Vector3D(random.nextFloat()*10 - 5, random.nextFloat()*5+2.5f, random.nextFloat()*10 - 5),*/
+							new Vector3D(objects.get(0).getPosition().getX(), objects.get(0).getElevation()+4, objects.get(0).getPosition().getY()),
+							new Vector3D(dir.getX(), (float) (random.nextDouble() * 0.25 - 0.125), dir.getY()).normalized().mul(10));
+			bullets.add(p);
+		}
+	}
+	
+	@Override
+	public List<? extends ViewableObject> getContainedObjects() {
+		ArrayList<ViewableObject> vob = new ArrayList<>();
+		vob.addAll(super.getContainedObjects());
+		vob.addAll(bullets);
+		return vob;
 	}
 	
 	@Override
