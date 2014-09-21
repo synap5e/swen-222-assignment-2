@@ -7,9 +7,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.lwjgl.Sys;
-
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.message.Message;
@@ -115,6 +113,12 @@ public class Server {
 				//world.update(delta);
 				
 				last = now;
+				
+				//Sleep, iterating over the loop roughly 60 times a second
+				try {
+					Thread.sleep(17);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 	}
