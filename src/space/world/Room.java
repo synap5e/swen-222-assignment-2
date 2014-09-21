@@ -108,7 +108,7 @@ public class Room implements ViewableRoom{
 		@Override
 		public List<? extends ViewableDoor> getDoors() {
 			// TODO Auto-generated method stub
-			return null;
+			return new ArrayList<ViewableDoor>();
 		}
 
 	}
@@ -121,7 +121,7 @@ public class Room implements ViewableRoom{
 	@Override
 	public List<? extends ViewableDoor> getAllDoors() {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<ViewableDoor>();
 	}
 	
 	

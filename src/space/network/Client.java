@@ -28,7 +28,7 @@ public class Client {
 	/**
 	 * The local version of the game world.
 	 */
-	private MockWorld world;
+	private World world;
 	
 	/**
 	 * The player who is being played by the client.
@@ -53,7 +53,7 @@ public class Client {
 	 * @param world the local instance of the game world
 	 * @param localPlayer the local player
 	 */
-	public Client(String host, int port, MockWorld world, Player localPlayer){
+	public Client(String host, int port, World world, Player localPlayer){
 		this.world = world;
 		this.localPlayer = localPlayer;
 		
@@ -107,7 +107,7 @@ public class Client {
 			System.out.println(connection.readMessage());
 		}
 		
-		world.update(delta);
+		//world.update(delta);
 		updatePlayer(delta);
 	}
 	
@@ -162,8 +162,11 @@ public class Client {
 			//Calculate the movement for this update
 			moveDelta = moveDelta.normalized().mul(delta/75f);
 			
+			Vector2D position = localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ()));
 			//Move the player. TODO: Change to use a translate method
-			localPlayer.setPosition(localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ())));
+			if (world.getRoomAt(position) != null){
+				localPlayer.setPosition(position);
+			}
 			
 			//TODO: send change to server
 		}

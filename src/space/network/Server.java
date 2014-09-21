@@ -4,15 +4,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import org.lwjgl.Sys;
-
-import space.gui.pipeline.mock.MockWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.world.Player;
@@ -29,7 +24,6 @@ public class Server {
 	private ServerSocket socket;
 	private Map<Integer, Connection> connections;
 	
-	//TODO change to world
 	private World world;
 	
 	//TODO: Work out better way of coming up with an ID
@@ -54,7 +48,7 @@ public class Server {
 		//Load the World
 		//TODO: Load world from file
 		world = new World();
-		Room r = new Room(LightMode.DARK, 1, "temp", Arrays.asList(new Vector2D(-20, -20), new Vector2D(20, -20), new Vector2D(20, 20), new Vector2D(-20, 20)));
+		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
 		world.addRoom(r);
 		
 		//Start accepting connections
