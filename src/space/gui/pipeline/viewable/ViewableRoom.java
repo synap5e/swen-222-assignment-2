@@ -46,4 +46,6 @@ public interface ViewableRoom {
 	 * @return
 	 */
 	public Vector2D getAABBBottomRight();
+
+	public List<? extends ViewableBeam> getBeams();
 }

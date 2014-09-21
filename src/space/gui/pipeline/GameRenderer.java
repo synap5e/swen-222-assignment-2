@@ -17,10 +17,13 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 
+import space.gui.pipeline.mock.Bullet;
 import space.gui.pipeline.mock.Robot;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
@@ -28,7 +31,6 @@ import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
-import space.gui.pipeline.wavefront.WavefrontModel;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.world.Player;
@@ -45,7 +47,7 @@ public class GameRenderer {
 	private int height;
 	private int width;
 
-	private Map<Class<? extends ViewableObject>, Integer> models;
+	private Map<Class<? extends ViewableObject>, RenderModel> models;
 	private Map<ViewableRoom, RoomModel> roomModels;
 
 	public GameRenderer(int width, int height) {
@@ -57,9 +59,10 @@ public class GameRenderer {
 	}
 
 	public void loadModels(ViewableWorld world) {
-		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
+		this.models = new HashMap<Class<? extends ViewableObject>, RenderModel>();
 		try {
-			models.put(Robot.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.23f, Material.bronze));
+			models.put(Robot.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
+			models.put(Bullet.class, new BulletModel());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -208,11 +211,34 @@ public class GameRenderer {
 				drawObject(vob, models);
 			}
 		}
+		
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glDisable(GL_LIGHTING);
+		glEnable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		for (ViewableBeam beam : currentRoom.getBeams()){
+			Vector3D kUnit = new Vector3D(0, 0, 1);
+			Vector3D beamDirection = beam.getBeamDirection();
+			
+			Vector3D axis = kUnit.cross(beamDirection);
+			float angle = kUnit.angleTo(beamDirection);
+			
+			Cylinder c = new Cylinder();
+			
+			glColor4f(1,0,0, 0.4f * Math.max(0, Math.min(1, beam.getRemainingLife())));
+			glPushMatrix();
+			glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
+			glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
+			c.draw(0.02f, 0.02f, 50, 10, 10);
+			glPopMatrix();
+		}
+		glPopAttrib();
 
 		glPopMatrix();
 	}
 
-	public static void drawObject(ViewableObject vob, Map<Class<? extends ViewableObject>, Integer> models) {
+	public static void drawObject(ViewableObject vob, Map<Class<? extends ViewableObject>, RenderModel> models) {
 		glPushMatrix();
 		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
 		glRotated(vob.getAngle(), 0, -1, 0);
@@ -221,7 +247,7 @@ public class GameRenderer {
 		getAssignedColor(vob);
 
 
-		glCallList(models.get(vob.getClass()));
+		models.get(vob.getClass()).render();
 		glPopMatrix();
 	}
 

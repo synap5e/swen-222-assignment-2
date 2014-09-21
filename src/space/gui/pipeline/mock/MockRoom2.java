@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -119,6 +120,11 @@ public class MockRoom2 extends MockRoom{
 	@Override
 	public Vector2D getAABBBottomRight() {
 		return hull.getAABBBottomRight();
+	}
+	
+	@Override
+	public List<? extends ViewableBeam> getBeams() {
+		return Arrays.asList();
 	}
 	
 }

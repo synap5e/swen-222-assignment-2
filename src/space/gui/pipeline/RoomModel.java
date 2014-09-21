@@ -30,7 +30,7 @@ public class RoomModel {
 
 	private int displayList;
 	private HashMap<ViewableDoor, Float> doorRotations = new HashMap<ViewableDoor, Float>();;
-	public RoomModel(ViewableRoom room, Map<Class<? extends ViewableObject>, Integer> models){
+	public RoomModel(ViewableRoom room, Map<Class<? extends ViewableObject>, RenderModel> models){
 		// pre-compile the viewmodel for all static models, the walls and the ceiling
 		this.displayList = createDisplayList(room, models);
 	}
@@ -107,7 +107,7 @@ public class RoomModel {
 		doorDisplayList = createDoorDisplayList();
 	}
 
-	private int createDisplayList(ViewableRoom room, Map<Class<? extends ViewableObject>, Integer> models){
+	private int createDisplayList(ViewableRoom room, Map<Class<? extends ViewableObject>, RenderModel> models){
 		int displayList = glGenLists(1);
 		glNewList(displayList, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
