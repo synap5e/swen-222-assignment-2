@@ -2,12 +2,19 @@ package space.network;
 
 import java.io.IOException;
 import java.net.Socket;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import space.gui.pipeline.mock.MockWorld;
+
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.network.message.EntityMovedMessage;
+import space.network.message.Message;
+import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerRotatedMessage;
+import space.world.Entity;
 import space.world.Player;
+import space.world.Room;
 import space.world.World;
 
 /**
@@ -24,11 +31,10 @@ public class Client {
 	 */
 	private Connection connection;
 	
-	//TODO: Change type to World
 	/**
 	 * The local version of the game world.
 	 */
-	private MockWorld world;
+	private World world;
 	
 	/**
 	 * The player who is being played by the client.
@@ -51,11 +57,9 @@ public class Client {
 	 * @param host the host name of the server
 	 * @param port the port of the server
 	 * @param world the local instance of the game world
-	 * @param localPlayer the local player
 	 */
-	public Client(String host, int port, MockWorld world, Player localPlayer){
+	public Client(String host, int port, World world){
 		this.world = world;
-		this.localPlayer = localPlayer;
 		
 		//Connect to the server
 		try {
@@ -64,6 +68,10 @@ public class Client {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
 		}
+		
+		//Create the local player, using the ID supplied by the server
+		PlayerJoinedMessage joinConfirmation = (PlayerJoinedMessage) connection.readMessage();
+		localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 		
 		//Get the initial location of the mouse
 		lastx = Mouse.getX();
@@ -92,7 +100,7 @@ public class Client {
 	 * @return The game world.
 	 */
 	public World getWorld(){
-		return null; //TODO Return the world object, once it is of the correct type.
+		return null;
 	}
 
 	/**
@@ -103,11 +111,42 @@ public class Client {
 	public void update(int delta) {
 		//Apply updates from server
 		while (connection.hasMessage()){
-			//TODO: Actually apply updates
-			System.out.println(connection.readMessage());
+			Message message = connection.readMessage();
+			
+			//Add any new players
+			if (message instanceof PlayerJoinedMessage){
+				PlayerJoinedMessage playerJoined = (PlayerJoinedMessage) message;
+				Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+				world.addEntity(e);
+				world.getRoomAt(e.getPosition()).putInRoom(e);
+			//Move remotely controlled entities
+			} else if (message instanceof EntityMovedMessage){
+				EntityMovedMessage entityMoved = (EntityMovedMessage) message;
+				Entity e = world.getEntity(entityMoved.getEntityID());
+				
+				//Move the room the entity is in if required
+				Room from = world.getRoomAt(e.getPosition());
+				Room to = world.getRoomAt(entityMoved.getNewPosition());
+				if (to != from){
+					from.removeFromRoom(e);
+					to.putInRoom(e);
+				}
+				
+				//Move the entity
+				e.setPosition(entityMoved.getNewPosition());
+			//Rotate remote player
+			} else if (message instanceof PlayerRotatedMessage){
+				PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+				Player p = (Player) world.getEntity(playerRotated.getID());
+
+				p.moveLook(playerRotated.getDelta());
+			} else {
+				//TODO: Decide when to log
+				System.out.println(connection.readMessage());
+			}
 		}
 		
-		world.update(delta);
+		//world.update(delta);
 		updatePlayer(delta);
 	}
 	
@@ -123,7 +162,11 @@ public class Client {
 		//Update the players viewing direction
 		Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
 		localPlayer.moveLook(mouseDelta);
-		//TODO: Broadcast change to server
+		
+		//Broadcast change to server
+		if (mouseDelta.sqLen() > 0){
+			connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
+		}
 
 		//Deal with player movement
 		applyWalk(delta);
@@ -162,10 +205,14 @@ public class Client {
 			//Calculate the movement for this update
 			moveDelta = moveDelta.normalized().mul(delta/75f);
 			
+			Vector2D position = localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ()));
 			//Move the player. TODO: Change to use a translate method
-			localPlayer.setPosition(localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ())));
-			
-			//TODO: send change to server
+			if (world.getRoomAt(position) != null){
+				localPlayer.setPosition(position);
+				
+				//Tell the server that the player moved
+				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
+			}
 		}
 	}
 	

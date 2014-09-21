@@ -1,6 +1,8 @@
 package space;
 
 import java.awt.Canvas;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.swing.JFrame;
 
@@ -11,10 +13,13 @@ import org.lwjgl.opengl.Display;
 
 import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.Client;
 import space.network.Server;
 import space.world.Player;
+import space.world.Room;
+import space.world.World;
 
 /**
  * 
@@ -41,30 +46,17 @@ public class ComponentTest extends JFrame {
 		c.setIgnoreRepaint(true);
 		c.setFocusable(true);
 		this.getContentPane().add(c);
-		
-		
-		Player mockPlayer = new Player(new Vector2D(0, 0), 4321);
-		MockWorld mockWorld = new MockWorld();
 
+		World world = new World();
+		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
+		world.addRoom(r);
+		
 		GameRenderer rcp = new GameRenderer(width, height);
 		rcp.setParent(c);
 		
-		rcp.loadModels(mockWorld);
+		rcp.loadModels(world);
 		
-		//Start a server so a client can be created
-		Thread server = new Thread(new Runnable(){
-			@Override
-			public void run() {
-				new Server("localhost", 1234);
-			}
-		});
-		server.start();
-		
-		Client client = new Client("localhost", 1234, mockWorld, mockPlayer);
-		try {
-			server.join();
-		} catch (InterruptedException e) {
-		}
+		Client client = new Client("localhost", 1234, world);
 		
 		Mouse.setGrabbed(true);
 		Mouse.setClipMouseCoordinatesToWindow(false);
@@ -79,7 +71,7 @@ public class ComponentTest extends JFrame {
 			client.update(delta);
 			
 			// update renderer
-			rcp.renderTick(delta, mockPlayer, mockWorld);
+			rcp.renderTick(delta, client.getLocalPlayer(), world);
 
 			Display.update();
 			Display.sync(60);

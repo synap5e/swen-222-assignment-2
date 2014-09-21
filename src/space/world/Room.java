@@ -137,7 +137,7 @@ public class Room implements ViewableRoom{
 	@Override
 	public List<? extends ViewableBeam> getBeams() {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<ViewableBeam>();
 	}
 	
 	public boolean isPositionVacant(Vector2D position){
