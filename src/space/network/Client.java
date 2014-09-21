@@ -9,8 +9,11 @@ import org.lwjgl.input.Mouse;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.EntityMovedMessage;
+import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
+import space.world.Entity;
 import space.world.Player;
+import space.world.Room;
 import space.world.World;
 
 /**
@@ -107,8 +110,28 @@ public class Client {
 	public void update(int delta) {
 		//Apply updates from server
 		while (connection.hasMessage()){
-			//TODO: Actually apply updates
-			System.out.println(connection.readMessage());
+			Message message = connection.readMessage();
+			
+			//Add any new players
+			if (message instanceof PlayerJoinedMessage){
+				PlayerJoinedMessage playerJoined = (PlayerJoinedMessage) message;
+				Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+				world.addEntity(e);
+				world.getRoomAt(e.getPosition()).putInRoom(e);
+			//Move remotely controlled entities
+			} else if (message instanceof EntityMovedMessage){
+				EntityMovedMessage entityMoved = (EntityMovedMessage) message;
+				Entity e = world.getEntity(entityMoved.getEntityID());
+				Room from = world.getRoomAt(e.getPosition());
+				Room to = world.getRoomAt(entityMoved.getNewPosition());
+				if (to != from){
+					from.removeFromRoom(e);
+					to.putInRoom(e);
+				}
+			} else {
+				//TODO: Decide when to log
+				System.out.println(connection.readMessage());
+			}
 		}
 		
 		//world.update(delta);

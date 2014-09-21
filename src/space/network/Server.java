@@ -7,12 +7,16 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.lwjgl.Sys;
+
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
+import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
 import space.network.message.TextMessage;
+import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -101,10 +105,25 @@ public class Server {
 						int id = cons.getKey();
 						
 						while (con.hasMessage()){
-							//TODO: Actually apply updates
-							System.out.println(con.readMessage());
-							
-							//TODO: Send out updates to other clients
+							Message message = con.readMessage();
+							if (message instanceof EntityMovedMessage){
+								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
+								Entity e = world.getEntity(entityMoved.getEntityID());
+								Room original = world.getRoomAt(e.getPosition());
+								Room current = world.getRoomAt(entityMoved.getNewPosition());
+								
+								//TODO improve method of making sure an entity stays inside a room
+								if (current != null){
+									e.setPosition(entityMoved.getNewPosition());
+									if (original != current){
+										original.removeFromRoom(e);
+										current.putInRoom(e);
+									}
+									
+									//Forward the message to all the other clients
+									sendMessageToAllExcept(id, message);
+								}
+							}
 						}
 					}
 				}
@@ -118,6 +137,14 @@ public class Server {
 				try {
 					Thread.sleep(17);
 				} catch (InterruptedException e) {
+				}
+			}
+		}
+		
+		private void sendMessageToAllExcept(int connectionID, Message message){
+			for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
+				if (cons.getKey() != connectionID){
+					cons.getValue().sendMessage(message);
 				}
 			}
 		}
