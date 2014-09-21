@@ -8,13 +8,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 
+import space.ComponentTest;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerRotatedMessage;
 import space.network.message.TextMessage;
 import space.world.Entity;
 import space.world.Player;
@@ -90,6 +93,14 @@ public class Server {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 	
+	private void sendMessageToAllExcept(int connectionID, Message message){
+		for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
+			if (cons.getKey() != connectionID){
+				cons.getValue().sendMessage(message);
+			}
+		}
+	}
+	
 	private class ServerGameLoop implements Runnable {
 		
 		@Override
@@ -106,6 +117,8 @@ public class Server {
 						
 						while (con.hasMessage()){
 							Message message = con.readMessage();
+							
+							//If an entity moved
 							if (message instanceof EntityMovedMessage){
 								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
 								Entity e = world.getEntity(entityMoved.getEntityID());
@@ -123,6 +136,15 @@ public class Server {
 									//Forward the message to all the other clients
 									sendMessageToAllExcept(id, message);
 								}
+							//If an entity rotated
+							} else if (message instanceof PlayerRotatedMessage){
+								PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+								Player p = (Player) world.getEntity(playerRotated.getID());
+			
+								p.moveLook(playerRotated.getDelta());
+								
+								//Forward the message to all the other clients
+								sendMessageToAllExcept(id, message);
 							}
 						}
 					}
@@ -137,14 +159,6 @@ public class Server {
 				try {
 					Thread.sleep(17);
 				} catch (InterruptedException e) {
-				}
-			}
-		}
-		
-		private void sendMessageToAllExcept(int connectionID, Message message){
-			for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
-				if (cons.getKey() != connectionID){
-					cons.getValue().sendMessage(message);
 				}
 			}
 		}
@@ -170,11 +184,29 @@ public class Server {
 						for (Connection con : connections.values()){
 							con.sendMessage(playerJoined);
 						}
+						
+						//Add the other players to the client
+						Connection con = connections.get(id);
+						for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
+							int otherId = cons.getKey();
+							if (otherId != id){
+								Player other = (Player) world.getEntity(otherId);
+								con.sendMessage(new PlayerJoinedMessage(otherId));
+								con.sendMessage(new EntityMovedMessage(otherId, world.getEntity(otherId).getPosition()));
+								con.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
+							}
+						}
+						
+						sendMessageToAllExcept(id, new PlayerRotatedMessage(id, new Vector2D((-180)*8, 0)));
 					}
 				} catch (IOException e) {
 					System.err.println("Connection Attempt Failed");
 				}
 			}
 		}
+	}
+	
+	public static void main(String[] args){
+		new Server("localhost", 1234);
 	}
 }

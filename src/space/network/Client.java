@@ -11,6 +11,7 @@ import space.math.Vector3D;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerRotatedMessage;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -99,7 +100,7 @@ public class Client {
 	 * @return The game world.
 	 */
 	public World getWorld(){
-		return null; //TODO Return the world object, once it is of the correct type.
+		return null;
 	}
 
 	/**
@@ -122,12 +123,23 @@ public class Client {
 			} else if (message instanceof EntityMovedMessage){
 				EntityMovedMessage entityMoved = (EntityMovedMessage) message;
 				Entity e = world.getEntity(entityMoved.getEntityID());
+				
+				//Move the room the entity is in if required
 				Room from = world.getRoomAt(e.getPosition());
 				Room to = world.getRoomAt(entityMoved.getNewPosition());
 				if (to != from){
 					from.removeFromRoom(e);
 					to.putInRoom(e);
 				}
+				
+				//Move the entity
+				e.setPosition(entityMoved.getNewPosition());
+			//Rotate remote player
+			} else if (message instanceof PlayerRotatedMessage){
+				PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+				Player p = (Player) world.getEntity(playerRotated.getID());
+
+				p.moveLook(playerRotated.getDelta());
 			} else {
 				//TODO: Decide when to log
 				System.out.println(connection.readMessage());
@@ -150,7 +162,11 @@ public class Client {
 		//Update the players viewing direction
 		Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
 		localPlayer.moveLook(mouseDelta);
-		//TODO: Broadcast change to server
+		
+		//Broadcast change to server
+		if (mouseDelta.sqLen() > 0){
+			connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
+		}
 
 		//Deal with player movement
 		applyWalk(delta);

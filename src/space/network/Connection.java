@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerRotatedMessage;
 import space.network.message.TextMessage;
 
 public class Connection {
@@ -16,6 +17,7 @@ public class Connection {
 	private static final int TEXT = 0;
 	private static final int PLAYER_JOINED = 1;
 	private static final int ENTITY_MOVED = 2;
+	private static final int ENTITY_ROTATED = 3;
 	private static final int UNKNOWN = -1;
 	
 	
@@ -57,6 +59,8 @@ public class Connection {
 					return new PlayerJoinedMessage(data);
 				case ENTITY_MOVED:
 					return new EntityMovedMessage(data);
+				case ENTITY_ROTATED:
+					return new PlayerRotatedMessage(data);
 				default:
 					//TODO: decide how to deal with format error
 					return null;
@@ -87,6 +91,7 @@ public class Connection {
 		if (message instanceof TextMessage) return TEXT;
 		else if (message instanceof PlayerJoinedMessage) return PLAYER_JOINED;
 		else if (message instanceof EntityMovedMessage) return ENTITY_MOVED;
+		else if (message instanceof PlayerRotatedMessage) return ENTITY_ROTATED; //TODO: Check actual class when it exists
 		else return UNKNOWN;
 	}
 	
