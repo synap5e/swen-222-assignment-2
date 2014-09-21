@@ -93,9 +93,7 @@ public class Player extends Character implements ViewablePlayer{
 	}
 	
 	public boolean withinReach(Vector2D pos){
-		float difference = Math.abs(getPosition().getX() - pos.getX());
-		difference += Math.abs(getPosition().getY() - pos.getY());
-		return difference <= reach;
+		return getPosition().sub(pos).sqLen() <= Math.pow(reach, 2);
 	}
 	
 }
