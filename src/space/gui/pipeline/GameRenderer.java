@@ -210,8 +210,10 @@ public class GameRenderer {
 			}
 		}
 		
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glDisable(GL_LIGHTING);
 		glEnable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		for (ViewableBeam beam : currentRoom.getBeams()){
 			Vector3D kUnit = new Vector3D(0, 0, 1);
@@ -222,13 +224,14 @@ public class GameRenderer {
 			
 			Cylinder c = new Cylinder();
 			
-			glColor4f(1,0,0, 0.5f * Math.max(0, Math.min(1, beam.getRemainingLife())));
+			glColor4f(1,0,0, 0.4f * Math.max(0, Math.min(1, beam.getRemainingLife())));
 			glPushMatrix();
 			glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
 			glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
 			c.draw(0.02f, 0.02f, 50, 10, 10);
 			glPopMatrix();
 		}
+		glPopAttrib();
 
 		glPopMatrix();
 	}

@@ -20,6 +20,10 @@ public class MockRoom1 extends MockRoom{
 	protected float lf = 5;
 	protected Vector2D pos = new Vector2D(0, 0);
 
+
+	private float el;
+
+
 	public MockRoom1() {
 		ArrayList<Vector2D> points = new ArrayList<Vector2D>(200);
 		
@@ -40,9 +44,13 @@ public class MockRoom1 extends MockRoom{
 	@Override
 	public void update(int delta) {
 		super.update(delta);
-		lf -= delta/500f;
-		if (lf < -3){
+		lf -= delta/200f;
+		if (lf < -2){
 			pos = getContainedObjects().get(0).getPosition().sub(new Vector2D(0, 0));
+			//Vector2D t = objects.get(1).getFacing();
+			//dir = new Vector3D(t.getX(), (float) (random.nextDouble() * 0.25 - 0.125), t.getY()).normalized();
+			el = (float) (random.nextDouble() * 0.25 - 0.125);
+			
 			lf = 2;
 		}
 	}
@@ -257,12 +265,12 @@ public class MockRoom1 extends MockRoom{
 			
 			@Override
 			public Vector2D getPosition() {
-				return pos ;
+				return objects.get(1).getPosition().add(objects.get(1).getFacing().normalized().mul(0.8f));
 			}
 			
 			@Override
 			public float getElevation() {
-				return 5;
+				return objects.get(1).getElevation() + 6.05f;
 			}
 			
 			@Override
@@ -277,7 +285,8 @@ public class MockRoom1 extends MockRoom{
 			
 			@Override
 			public Vector3D getBeamDirection() {
-				return new Vector3D(-1, 0.2f, 1).normalized();
+				Vector2D t = objects.get(1).getFacing();
+				return new Vector3D(t.getX(), el, t.getY()).normalized();
 			}
 
 			@Override

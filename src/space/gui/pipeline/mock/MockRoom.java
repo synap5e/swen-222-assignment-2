@@ -22,7 +22,7 @@ import space.math.Vector2D;
  */
 public abstract class MockRoom implements ViewableRoom {
 
-	private static Random random = new Random();
+	static Random random = new Random();
 
 
 
