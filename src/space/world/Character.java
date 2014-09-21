@@ -11,11 +11,11 @@ public abstract class Character extends NonStationary {
 		super(pos, i, "");
 	}
 
-	public void carryItem(Pickup p){
+	public void pickupItem(Pickup p){
 		inventory.add(p);
 	}
 
-	public void dropItem(Pickup p){
+	public void dropItem(Object p){
 		inventory.remove(p);
 	}
 	

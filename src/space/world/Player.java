@@ -7,6 +7,7 @@ import space.math.Vector3D;
 public class Player extends Character implements ViewablePlayer{
 	private int points;
 	private Room room;
+	private final float reach = 5f;
 	private float jumpTime = 0;
 	private float xRotation = 90;
 	private float yRotation = 100;
@@ -14,9 +15,9 @@ public class Player extends Character implements ViewablePlayer{
 	private static final float EYE_HEIGHT = 6;
 	private static final float JUMP_HEIGHT = 2;
 
-	public Player(Vector2D pos,int i, Room r){
+	public Player(Vector2D pos,int i/*, Room r*/){
 		super(pos,i);
-		room = r;
+		//room = r;
 	}
 	
 	private static float DEGREES_TO_RADIANS(float degrees){
@@ -85,6 +86,16 @@ public class Player extends Character implements ViewablePlayer{
 
 	public Room getRoom() {
 		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+	
+	public boolean withinReach(Vector2D pos){
+		float difference = Math.abs(getPosition().getX() - pos.getX());
+		difference += Math.abs(getPosition().getY() - pos.getY());
+		return difference <= reach;
 	}
 	
 }

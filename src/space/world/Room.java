@@ -149,4 +149,7 @@ public class Room implements ViewableRoom{
 		return exits;
 	}
 	
+	public boolean containsEntity(Entity e){
+		return entities.contains(e);
+	}
 }

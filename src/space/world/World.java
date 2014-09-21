@@ -40,6 +40,7 @@ public class World implements ViewableWorld{
 						p.setPosition(newPos);
 						room.removeFromRoom(p);
 						entry.getKey().putInRoom(p);
+						p.setRoom(entry.getKey());
 					}
 					return;
 				}
@@ -47,6 +48,21 @@ public class World implements ViewableWorld{
 		}
 	}
 
+	public void pickUpEntity(Player player, Entity entity){
+		if(!(entity instanceof Pickup)){return;}
+		if(player.withinReach(entity.getPosition()) && player.getRoom().containsEntity(entity)){
+			player.pickupItem((Pickup) entity);
+			player.getRoom().removeFromRoom(entity);
+		}
+	}
+	
+	public void dropEntity(Player player, Entity entity, Vector2D dropSpot){
+		if(player.withinReach(dropSpot) && player.getRoom().contains(dropSpot)){
+			player.dropItem(entity);
+			entity.setPosition(dropSpot);
+			player.getRoom().putInRoom(entity);
+		}
+	}
 	@Override
 	public Room getRoomAt(Vector2D pos) {
 		for(Room r : rooms.values()){
