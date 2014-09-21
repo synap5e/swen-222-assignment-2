@@ -1,24 +1,22 @@
 package space.world;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
 public class Player extends Character implements ViewablePlayer{
 	private int points;
+	private Room room;
+	private float jumpTime = 0;
+	private float xRotation = 90;
+	private float yRotation = 100;
+	
 	private static final float EYE_HEIGHT = 6;
 	private static final float JUMP_HEIGHT = 2;
 
-	private float jumpTime = 0;
-
-	private float xRotation = 90;
-	private float yRotation = 100;
-
-	public Player(Vector2D pos,int i){
+	public Player(Vector2D pos,int i, Room r){
 		super(pos,i);
+		room = r;
 	}
 	
 	private static float DEGREES_TO_RADIANS(float degrees){
@@ -83,6 +81,10 @@ public class Player extends Character implements ViewablePlayer{
 	public boolean isTorchOn() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	public Room getRoom() {
+		return room;
 	}
 	
 }

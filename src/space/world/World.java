@@ -25,32 +25,28 @@ public class World implements ViewableWorld{
 			addRoom(r);
 		}
 	}
-	
-	public void movePlayer(Player p, Vector2D newPosition){//probably need to do something on invalid moves...
-		Room prevRoom = getRoomAt(p.getPosition());
-		Room newRoom = getRoomAt(newPosition);
-		if(prevRoom.equals(newRoom)){
-			p.setPosition(newPosition);
+
+	public void movePlayer(Player p, Vector2D newPos){
+		Room room = p.getRoom();
+		if(room.contains(newPos)){//moving around same room
+			if(room.isPositionVacant(newPos)){
+				p.setPosition(newPos);
+			}
 		}else{
-			Exit exit = prevRoom.getExitTo(newRoom);
-			if(exit != null){
-				if(exit.isLocked()){//player needs a key that opens the exit
-					for(Pickup i : p.getInventory()){
-						if(i instanceof Key && ((Key) i).getExit().equals(exit)){
-							p.setPosition(newPosition);
-							prevRoom.removeFromRoom(p);
-							newRoom.putInRoom(p);
-						}
+			for(Map.Entry<Room, Exit> entry : room.getExits().entrySet()){//see if player trying to move to adjacent room
+				if(entry.getKey().contains(newPos)){//found room player is trying to move to
+					if(entry.getValue().canGoThrough(p)&&entry.getKey().isPositionVacant(newPos)){
+					//check that player can go through exit and nothing is on the new position
+						p.setPosition(newPos);
+						room.removeFromRoom(p);
+						entry.getKey().putInRoom(p);
 					}
-				}else{//not locked,player can proceed to go to other room
-					p.setPosition(newPosition);
-					prevRoom.removeFromRoom(p);
-					newRoom.putInRoom(p);
+					return;
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	public Room getRoomAt(Vector2D pos) {
 		for(Room r : rooms.values()){

@@ -107,21 +107,19 @@ public class Room implements ViewableRoom{
 		}
 		@Override
 		public List<? extends ViewableDoor> getDoors() {
-			// TODO Auto-generated method stub
-			return null;
+			return new ArrayList<Exit>(exits.values());
 		}
 
 	}
 
 	@Override
-	public boolean contains(Vector2D point) {
-		return roomShape.contains(point);
+	public boolean contains(Vector2D position) {
+		return roomShape.contains(position);
 	}
 
 	@Override
 	public List<? extends ViewableDoor> getAllDoors() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<Exit>(exits.values());
 	}
 	
 	
@@ -133,6 +131,22 @@ public class Room implements ViewableRoom{
 	@Override
 	public Vector2D getAABBBottomRight() {
 		return roomShape.getAABBBottomRight();
+	}
+	
+	public boolean isPositionVacant(Vector2D position){
+		for(Entity e : entities){
+			if(e.getPosition().equals(position, 0.5f)){
+				if(e.canClip()){
+					return false;
+				}
+				return true;
+			}
+		}
+		return true;
+	}
+
+	public Map<Room, Exit> getExits() {
+		return exits;
 	}
 	
 }
