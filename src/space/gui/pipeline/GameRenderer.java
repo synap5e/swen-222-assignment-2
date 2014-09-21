@@ -59,6 +59,7 @@ public class GameRenderer {
 	public void loadModels(ViewableWorld world) {
 		this.models = new HashMap<Class<? extends ViewableObject>, Integer>();
 		try {
+			models.put(Player.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.23f, Material.bronze));
 			models.put(Robot.class, WavefrontModel.loadDisplayList(new File("./assets/models/character_model.obj"), new Vector3D(0,0,0), new Vector3D(0,270,0), 0.23f, Material.bronze));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

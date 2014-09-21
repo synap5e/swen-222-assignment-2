@@ -56,8 +56,6 @@ public class ComponentTest extends JFrame {
 		
 		rcp.loadModels(world);
 		
-		//Start a server so a client can connect to it
-		new Server("localhost", 1234);
 		Client client = new Client("localhost", 1234, world);
 		
 		Mouse.setGrabbed(true);
