@@ -8,6 +8,7 @@ import org.lwjgl.input.Mouse;
 
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.network.message.EntityMovedMessage;
 import space.network.message.PlayerJoinedMessage;
 import space.world.Player;
 import space.world.World;
@@ -170,9 +171,10 @@ public class Client {
 			//Move the player. TODO: Change to use a translate method
 			if (world.getRoomAt(position) != null){
 				localPlayer.setPosition(position);
+				
+				//Tell the server that the player moved
+				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
 			}
-			
-			//TODO: send change to server
 		}
 	}
 	
