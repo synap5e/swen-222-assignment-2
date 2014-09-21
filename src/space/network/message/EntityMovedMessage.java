@@ -66,7 +66,7 @@ public class EntityMovedMessage implements Message {
 	
 	@Override
 	public byte[] toByteArray() {
-		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES*3);
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE+Float.SIZE*2);
 		buffer.putInt(entityID);
 		buffer.putFloat(newPosition.getX());
 		buffer.putFloat(newPosition.getY());

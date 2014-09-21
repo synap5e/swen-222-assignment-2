@@ -43,7 +43,7 @@ public class TextMessage implements Message {
 	
 	@Override
 	public byte[] toByteArray() {
-		ByteBuffer buffer = ByteBuffer.allocate(text.length()*Character.BYTES);
+		ByteBuffer buffer = ByteBuffer.allocate(text.length()*Character.SIZE);
 		for (char c : text.toCharArray()){
 			buffer.putChar(c);
 		}
