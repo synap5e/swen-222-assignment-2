@@ -201,6 +201,7 @@ public class Client {
 		}
 		
 		//If the player is intended to move
+		moveDelta.setY(0);
 		if (moveDelta.sqLen() != 0){
 			//Calculate the movement for this update
 			moveDelta = moveDelta.normalized().mul(delta/75f);
