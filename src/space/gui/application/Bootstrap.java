@@ -2,6 +2,7 @@ package space.gui.application;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -10,8 +11,12 @@ import org.lwjgl.opengl.DisplayMode;
 
 import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
+import space.network.Client;
 import space.world.Player;
+import space.world.Room;
+import space.world.World;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
@@ -23,11 +28,13 @@ public class Bootstrap {
 
 	public static void main(String[] args) throws LWJGLException, IOException {
 		
-		//Load World
-		MockWorld mockWorld = new MockWorld();
-
-		//Load Player
-		Player player = new Player(new Vector2D(0, 0), 4321);
+		//Load World TODO Load from json
+		World world = new World();
+		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
+		world.addRoom(r);
+		
+		//Create the client TODO use program arguments for host and port
+		Client client = new Client("localhost", 1234, world);
 	
 		Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 		Display.create();
@@ -45,7 +52,7 @@ public class Bootstrap {
         //Load Render Pipeline
 		GameRenderer rcp = new GameRenderer(WIDTH, HEIGHT);
 		
-		rcp.loadModels(mockWorld);
+		rcp.loadModels(world);
 		
 		
 		long last = getTime();
@@ -55,12 +62,11 @@ public class Bootstrap {
 			int delta = (int)(now - last);
 			last = now;
 
-			// do world update
-		//	player.update(delta);
-			mockWorld.update(delta);
+			// update the world via the client
+			client.update(delta);
 			
 			// update renderer
-			rcp.renderTick(delta, player, mockWorld);
+			rcp.renderTick(delta, client.getLocalPlayer(), world);
 
 			// update gui
 			gui.update();
@@ -69,7 +75,7 @@ public class Bootstrap {
 			Display.sync(60);
 
 		}
-		
+		client.shutdown();
 		Display.destroy();
 	}
 	
