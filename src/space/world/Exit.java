@@ -52,12 +52,6 @@ public class Exit extends NonStationary implements ViewableDoor{
 	}
 
 	@Override
-	public Vector2D getLocation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public float getOpenPercent() {
 		return amtOpen;
 	}
