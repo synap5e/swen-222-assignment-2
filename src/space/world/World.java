@@ -29,13 +29,13 @@ public class World implements ViewableWorld{
 	public void movePlayer(Player p, Vector2D newPos){
 		Room room = p.getRoom();
 		if(room.contains(newPos)){//moving around same room
-			if(room.isPositionVacant(newPos)){
+			if(room.isPositionVacant(newPos, /* TODO: p.getCollisionRadius() */0)){
 				p.setPosition(newPos);
 			}
 		}else{
 			for(Map.Entry<Room, Exit> entry : room.getExits().entrySet()){//see if player trying to move to adjacent room
 				if(entry.getKey().contains(newPos)){//found room player is trying to move to
-					if(entry.getValue().canGoThrough(p)&&entry.getKey().isPositionVacant(newPos)){
+					if(entry.getValue().canGoThrough(p)&&entry.getKey().isPositionVacant(newPos, /* TODO: p.getCollisionRadius() */ 0)){
 					//check that player can go through exit and nothing is on the new position
 						p.setPosition(newPos);
 						room.removeFromRoom(p);

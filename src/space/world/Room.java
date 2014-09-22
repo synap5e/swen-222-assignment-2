@@ -140,9 +140,9 @@ public class Room implements ViewableRoom{
 		return new ArrayList<ViewableBeam>();
 	}
 	
-	public boolean isPositionVacant(Vector2D position){
+	public boolean isPositionVacant(Vector2D position, float radius){
 		for(Entity e : entities){
-			if(e.getPosition().equals(position, 0.5f)){
+			if(position.sub(e.getPosition()).len() < /* e.getCollisionRadius() + radius */ 0){
 				if(e.canClip()){
 					return false;
 				}
