@@ -7,11 +7,8 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-
-import space.ComponentTest;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.message.EntityMovedMessage;
