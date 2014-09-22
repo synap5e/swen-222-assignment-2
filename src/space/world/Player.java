@@ -41,8 +41,8 @@ public class Player extends Character implements ViewablePlayer{
 		this.xRotation += mouseDelta.getY()/8f;
 		this.yRotation += mouseDelta.getX()/8f;
 
-		if (xRotation >= 180) xRotation = 180;
-		if (xRotation <= 0) xRotation = 0;
+		if (xRotation >= 180) xRotation = 179;
+		if (xRotation <= 0) xRotation = 1;
 	}
 
 	@Override
