@@ -2,6 +2,7 @@ package space.gui.pipeline.mock;
 
 import org.lwjgl.input.Keyboard;
 
+import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.math.Vector2D;
 
@@ -10,7 +11,7 @@ import space.math.Vector2D;
  * @author Simon Pinfold
  *
  */
-public class Robot implements ViewableObject {
+public class Robot implements ViewableObject, ViewableNonStationary {
 
 	private Vector2D pos;
 	
@@ -72,11 +73,6 @@ public class Robot implements ViewableObject {
 	@Override
 	public float getElevation() {
 		return (float) (1 - 1 * Math.pow(jumpTime*2 - 1, 2));
-	}
-
-	@Override
-	public boolean canMove() {
-		return true;
 	}
 
 }

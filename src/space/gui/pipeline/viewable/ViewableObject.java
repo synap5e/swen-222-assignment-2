@@ -19,6 +19,4 @@ public interface ViewableObject {
 
 	public float getElevation();
 	
-	public boolean canMove();
-
 }

@@ -41,12 +41,6 @@ public class Exit extends NonStationary implements ViewableDoor{
 	}
 
 	@Override
-	public boolean canMove() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void update(float delta) {
 		// TODO Auto-generated method stub
 		

@@ -16,11 +16,6 @@ public class Key extends Pickup implements ViewableObject {
 	}
 
 	@Override
-	public boolean canMove() {
-		return true;
-	}
-
-	@Override
 	public void update(float f) {
 		// TODO Auto-generated method stub
 		

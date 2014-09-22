@@ -25,9 +25,11 @@ import space.gui.pipeline.mock.Robot;
 import space.gui.pipeline.mock.MockWorld;
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
+import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.gui.pipeline.viewable.ViewableRoom;
+import space.gui.pipeline.viewable.ViewableStationary;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
@@ -208,7 +210,7 @@ public class GameRenderer {
 		setLight(player, currentRoom);
 		roomModels.get(currentRoom).render();
 		for (ViewableObject vob : currentRoom.getContainedObjects()){
-			if (vob.canMove()){
+			if (vob instanceof ViewableNonStationary){
 				drawObject(vob, models);
 			}
 		}

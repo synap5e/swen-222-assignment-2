@@ -14,8 +14,10 @@ import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.Sphere;
 
 import space.gui.pipeline.viewable.ViewableDoor;
+import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
+import space.gui.pipeline.viewable.ViewableStationary;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Segment2D;
 import space.math.Vector2D;
@@ -167,7 +169,7 @@ public class RoomModel {
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_COLOR_MATERIAL);
 		for (ViewableObject viewableObject : room.getContainedObjects()){
-			if (!viewableObject.canMove()){
+			if (viewableObject instanceof ViewableStationary){
 				GameRenderer.drawObject(viewableObject, models);
 			}
 		}

@@ -303,11 +303,6 @@ public class MockRoom1 extends MockRoom{
 			}
 			
 			@Override
-			public boolean canMove() {
-				return true;
-			}
-			
-			@Override
 			public Vector3D getBeamDirection() {
 				Vector2D t = objects.get(1).getFacing();
 				return new Vector3D(t.getX(), el, t.getY()).normalized();

@@ -55,11 +55,6 @@ public class Player extends Character implements ViewablePlayer{
 		return getEyeHeight()-EYE_HEIGHT;
 	}
 
-	@Override
-	public boolean canMove() {
-		return true;
-	}
-	
 	public int getPoints() {
 		return points;
 	}
