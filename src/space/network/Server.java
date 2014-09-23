@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.message.EntityMovedMessage;
@@ -195,6 +198,10 @@ public class Server {
 						}
 						
 						sendMessageToAllExcept(id, new PlayerRotatedMessage(id, new Vector2D((-180)*8, 0)));
+					}
+				} catch (SocketException se){
+					if (!se.getMessage().equals("socket closed")){
+						System.err.println("Socket Failure");
 					}
 				} catch (IOException e) {
 					System.err.println("Connection Attempt Failed");
