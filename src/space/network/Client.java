@@ -42,14 +42,9 @@ public class Client {
 	private Player localPlayer;
 	
 	/**
-	 * The last x coordinate for the mouse.
+	 * Sets player as controlled by user input.
 	 */
-	private int lastx;
-	
-	/**
-	 * The last y coordinate for the mouse.
-	 */
-	private int lasty;
+	private boolean active;
 	
 	/**
 	 * Creates a game client that connects to a server.
@@ -72,10 +67,6 @@ public class Client {
 		//Create the local player, using the ID supplied by the server
 		PlayerJoinedMessage joinConfirmation = (PlayerJoinedMessage) connection.readMessage();
 		localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
-		
-		//Get the initial location of the mouse
-		lastx = Mouse.getX();
-		lasty = Mouse.getY();
 	}
 	
 	/**
@@ -156,11 +147,15 @@ public class Client {
 	 * @param delta the change in time since the last update
 	 */
 	private void updatePlayer(int delta){
-		int x = Mouse.getX();
-		int y = Mouse.getY();
+		if(!active){
+			return;
+		}
+		
+		int dx = Mouse.getDX();
+		int dy = Mouse.getDY();
 		
 		//Update the players viewing direction
-		Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
+		Vector2D mouseDelta = new Vector2D(dx,dy);
 		localPlayer.moveLook(mouseDelta);
 		
 		//Broadcast change to server
@@ -173,8 +168,17 @@ public class Client {
 		updateJump(delta);
 
 		//Record the latest location of the mouse
-		lastx = x;
-		lasty = y;
+		//lastx = x;
+		//lasty = y;
+	}
+	
+	/**
+	 * Updates the local player.
+	 * 
+	 * @param flag controls whether the player is being controlled by controller input
+	 */
+	public void setActive(boolean flag){
+		active = flag;
 	}
 	
 	/**
