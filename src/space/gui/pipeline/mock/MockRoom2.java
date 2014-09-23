@@ -61,7 +61,7 @@ public class MockRoom2 extends MockRoom{
 				return Arrays.asList(new ViewableDoor() {
 	
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(0, -15);
 					}
 
@@ -79,12 +79,22 @@ public class MockRoom2 extends MockRoom{
 					public ViewableRoom getRoom2() {
 						return MockRoom.room1;
 					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
+					}
 					
 				},
 				new ViewableDoor() {
 					
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(-15, -15-7.5f);
 					}
 
@@ -101,6 +111,16 @@ public class MockRoom2 extends MockRoom{
 					@Override
 					public ViewableRoom getRoom2() {
 						return MockRoom1.room1;
+					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
 					}
 					
 					

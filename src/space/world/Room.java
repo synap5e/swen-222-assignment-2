@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
@@ -22,7 +23,7 @@ public class Room implements ViewableRoom{
 	private String description;
 	private ConcaveHull roomShape;
 	private Set<Entity> entities = new HashSet<Entity>();
-	private Map<Room,Exit> exits = new HashMap<Room,Exit>();
+	private Map<Room,Door> exits = new HashMap<Room,Door>();
 	
 	public Room(LightMode m, int i, String d, ConcaveHull r){
 		mode = m;
@@ -52,7 +53,7 @@ public class Room implements ViewableRoom{
 		return walls;
 	}
 	
-	public void addExit(Exit e){
+	public void addExit(Door e){
 		if(e.getRoom1().equals(this)){
 			exits.put(e.getRoom2(), e);
 		}
@@ -61,7 +62,7 @@ public class Room implements ViewableRoom{
 		}
 	}
 	
-	public Exit getExitTo(Room other){
+	public Door getExitTo(Room other){
 		return exits.get(other);
 	}
 	
@@ -91,6 +92,66 @@ public class Room implements ViewableRoom{
 		return new ArrayList<Entity>(entities);
 	}
 	
+	@Override
+	public boolean contains(Vector2D position) {
+		return roomShape.contains(position);
+	}
+
+	@Override
+	public List<? extends ViewableDoor> getAllDoors() {
+		return new ArrayList<Door>(exits.values());
+	}
+	
+	
+	@Override
+	public Vector2D getAABBTopLeft() {
+		return roomShape.getAABBTopLeft();
+	}
+
+	@Override
+	public Vector2D getAABBBottomRight() {
+		return roomShape.getAABBBottomRight();
+	}
+
+	@Override
+	public List<? extends ViewableBeam> getBeams() {
+		// TODO Auto-generated method stub
+		return new ArrayList<ViewableBeam>();
+	}
+	
+	public boolean isPositionVacant(Vector2D position, float radius){
+		for(Entity e : entities){
+			if(position.sub(e.getPosition()).len() < /* e.getCollisionRadius() + radius */ 0){
+				if(e.canClip()){
+					return false;
+				}
+				return true;
+			}
+		}
+		return true;
+	}
+
+	public Map<Room, Door> getExits() {
+		return exits;
+	}
+	
+	public boolean containsEntity(Entity e){
+		return entities.contains(e);
+	}
+
+	public boolean contains(Vector2D position, float radius) {
+		// TODO actually use the radius
+		return contains(position);
+	}
+
+	public void update(int delta) {
+		for(Entity e: entities){
+			e.update(delta);
+		}
+		
+	}
+	
+
 	private class Wall implements ViewableWall{
 		private Segment2D lineSeg;
 		
@@ -108,55 +169,9 @@ public class Room implements ViewableRoom{
 		}
 		@Override
 		public List<? extends ViewableDoor> getDoors() {
-			return new ArrayList<Exit>(exits.values());
+			return new ArrayList<Door>(exits.values());
 		}
 
 	}
 
-	@Override
-	public boolean contains(Vector2D position) {
-		return roomShape.contains(position);
-	}
-
-	@Override
-	public List<? extends ViewableDoor> getAllDoors() {
-		return new ArrayList<Exit>(exits.values());
-	}
-	
-	
-	@Override
-	public Vector2D getAABBTopLeft() {
-		return roomShape.getAABBTopLeft();
-	}
-
-	@Override
-	public Vector2D getAABBBottomRight() {
-		return roomShape.getAABBBottomRight();
-	}
-
-	@Override
-	public List<? extends ViewableBeam> getBeams() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public boolean isPositionVacant(Vector2D position){
-		for(Entity e : entities){
-			if(e.getPosition().equals(position, 0.5f)){
-				if(e.canClip()){
-					return false;
-				}
-				return true;
-			}
-		}
-		return true;
-	}
-
-	public Map<Room, Exit> getExits() {
-		return exits;
-	}
-	
-	public boolean containsEntity(Entity e){
-		return entities.contains(e);
-	}
 }

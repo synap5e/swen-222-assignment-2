@@ -1,10 +1,11 @@
 package space.gui.pipeline.mock;
 
+import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
-public class Bullet implements ViewableObject{
+public class Bullet implements ViewableObject, ViewableNonStationary{
 
 	Vector3D pos;
 	private Vector3D vel;
@@ -27,11 +28,6 @@ public class Bullet implements ViewableObject{
 	@Override
 	public float getElevation() {
 		return pos.getY();
-	}
-
-	@Override
-	public boolean canMove() {
-		return true;
 	}
 
 	public void update(int delta) {

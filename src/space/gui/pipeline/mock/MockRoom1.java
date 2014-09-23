@@ -110,7 +110,7 @@ public class MockRoom1 extends MockRoom{
 				return Arrays.asList(new ViewableDoor() {
 	
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(0, -15);
 					}
 
@@ -128,12 +128,22 @@ public class MockRoom1 extends MockRoom{
 					public ViewableRoom getRoom2() {
 						return MockRoom.room2;
 					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
+					}
 					
 				},
 				new ViewableDoor() {
 					
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(-15, -15-7.5f);
 					}
 
@@ -151,6 +161,16 @@ public class MockRoom1 extends MockRoom{
 					public ViewableRoom getRoom2() {
 						return MockRoom1.room2;
 					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
+					}
 					
 					
 				});
@@ -158,7 +178,7 @@ public class MockRoom1 extends MockRoom{
 				return Arrays.asList(new ViewableDoor() {
 
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(-6.1194305f, 20.970146f);
 					}
 
@@ -176,6 +196,16 @@ public class MockRoom1 extends MockRoom{
 					public ViewableRoom getRoom2() {
 						return null;
 					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
+					}
 					
 					
 				});
@@ -183,7 +213,7 @@ public class MockRoom1 extends MockRoom{
 				return Arrays.asList(new ViewableDoor() {
 
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(-28.514435f, -26.286095f);
 					}
 
@@ -201,13 +231,23 @@ public class MockRoom1 extends MockRoom{
 					public ViewableRoom getRoom2() {
 						return null;
 					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
+					}
 					
 					
 				},
 				new ViewableDoor() {
 
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(-25.543304f, -18.858284f);
 					}
 
@@ -225,13 +265,23 @@ public class MockRoom1 extends MockRoom{
 					public ViewableRoom getRoom2() {
 						return null;
 					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
+					}
 					
 					
 				},
 				new ViewableDoor() {
 
 					@Override
-					public Vector2D getLocation() {
+					public Vector2D getPosition() {
 						return new Vector2D(-12.173228f, 14.566872f);
 					}
 
@@ -248,6 +298,16 @@ public class MockRoom1 extends MockRoom{
 					@Override
 					public ViewableRoom getRoom2() {
 						return null;
+					}
+
+					@Override
+					public float getAngle() {
+						return 0;
+					}
+
+					@Override
+					public float getElevation() {
+						return 0;
 					}
 					
 
@@ -300,11 +360,6 @@ public class MockRoom1 extends MockRoom{
 			@Override
 			public float getAngle() {
 				return 45;
-			}
-			
-			@Override
-			public boolean canMove() {
-				return true;
 			}
 			
 			@Override

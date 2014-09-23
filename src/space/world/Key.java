@@ -4,26 +4,20 @@ import space.gui.pipeline.viewable.ViewableObject;
 import space.math.Vector2D;
 
 public class Key extends Pickup implements ViewableObject {
-	private Exit exit; //the exit it opens
+	private Door exit; //the exit it opens
+	private static final float COL_RADIUS = 1;
 	
-	public Key(Vector2D pos, int i, String d,Exit e) {
+	public Key(Vector2D pos, int i, String d,Door e) {
 		super(pos, i,d);
 		exit = e;
 	}
 
-	public Exit getExit() {
+	public Door getExit() {
 		return exit;
 	}
 
 	@Override
-	public boolean canMove() {
-		return true;
-	}
-
-	@Override
-	public void update(float f) {
-		// TODO Auto-generated method stub
-		
+	public void update(int delta) {
 	}
 
 	@Override
@@ -42,6 +36,11 @@ public class Key extends Pickup implements ViewableObject {
 	public float getElevation() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public float getCollisionRadius() {
+		return COL_RADIUS;
 	}	
 
 }

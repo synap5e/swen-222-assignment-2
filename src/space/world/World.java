@@ -26,21 +26,21 @@ public class World implements ViewableWorld{
 		}
 	}
 
-	public void movePlayer(Player p, Vector2D newPos){
-		Room room = p.getRoom();
-		if(room.contains(newPos)){//moving around same room
-			if(room.isPositionVacant(newPos)){
-				p.setPosition(newPos);
+	public void moveCharacter(Character c, Vector2D newPos){
+		Room room = c.getRoom();
+		if(room.contains(newPos, c.getCollisionRadius())){//moving around same room
+			if(room.isPositionVacant(newPos, c.getCollisionRadius())){
+				c.setPosition(newPos);
 			}
 		}else{
-			for(Map.Entry<Room, Exit> entry : room.getExits().entrySet()){//see if player trying to move to adjacent room
-				if(entry.getKey().contains(newPos)){//found room player is trying to move to
-					if(entry.getValue().canGoThrough(p)&&entry.getKey().isPositionVacant(newPos)){
+			for(Map.Entry<Room, Door> entry : room.getExits().entrySet()){//see if player trying to move to adjacent room
+				if(entry.getKey().contains(newPos, c.getCollisionRadius())){//found room player is trying to move to
+					if(entry.getValue().canGoThrough(c)&&entry.getKey().isPositionVacant(newPos, c.getCollisionRadius())){
 					//check that player can go through exit and nothing is on the new position
-						p.setPosition(newPos);
-						room.removeFromRoom(p);
-						entry.getKey().putInRoom(p);
-						p.setRoom(entry.getKey());
+						c.setPosition(newPos);
+						room.removeFromRoom(c);
+						entry.getKey().putInRoom(c);
+						c.setRoom(entry.getKey());
 					}
 					return;
 				}
@@ -48,19 +48,19 @@ public class World implements ViewableWorld{
 		}
 	}
 
-	public void pickUpEntity(Player player, Entity entity){
+	public void pickUpEntity(Character character, Entity entity){
 		if(!(entity instanceof Pickup)){return;}
-		if(player.withinReach(entity.getPosition()) && player.getRoom().containsEntity(entity)){
-			player.pickupItem((Pickup) entity);
-			player.getRoom().removeFromRoom(entity);
+		if(character.withinReach(entity.getPosition()) && character.getRoom().containsEntity(entity)){
+			character.pickupItem((Pickup) entity);
+			character.getRoom().removeFromRoom(entity);
 		}
 	}
 	
-	public void dropEntity(Player player, Entity entity, Vector2D dropSpot){
-		if(player.withinReach(dropSpot) && player.getRoom().contains(dropSpot)){
-			player.dropItem(entity);
+	public void dropEntity(Character character, Entity entity, Vector2D dropSpot){
+		if(character.withinReach(dropSpot) && character.getRoom().contains(dropSpot)){
+			character.dropItem(entity);
 			entity.setPosition(dropSpot);
-			player.getRoom().putInRoom(entity);
+			character.getRoom().putInRoom(entity);
 		}
 	}
 	@Override
@@ -94,4 +94,9 @@ public class World implements ViewableWorld{
 		return new ArrayList<ViewableRoom>(rooms.values());
 	}
 	
+	public void update(int delta){
+		for(Room r : rooms.values()){
+			r.update(delta);
+		}
+	}
 }

@@ -2,10 +2,8 @@ package space.gui.pipeline.viewable;
 
 import space.math.Vector2D;
 
-public interface ViewableDoor {
+public interface ViewableDoor extends ViewableObject{
 	
-	public Vector2D getLocation();
-
 	/** 1 = fully open
 	 *  0 = fully closed
 	 * @return

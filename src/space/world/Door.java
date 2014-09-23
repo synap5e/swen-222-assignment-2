@@ -3,14 +3,14 @@ package space.world;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.math.Vector2D;
 
-public class Exit extends NonStationary implements ViewableDoor{
+public class Door extends NonStationary implements ViewableDoor{
 	private Room room1;
 	private Room room2;
 	private boolean oneWay; //if oneWay, can only get from room1 to room2
 	private boolean locked;
 	private float amtOpen = 0; 
 	
-	public Exit(Vector2D pos, int i, String desc,Room r1, Room r2, boolean ow, boolean l){
+	public Door(Vector2D pos, int i, String desc,Room r1, Room r2, boolean ow, boolean l){
 		super(pos, i, desc);
 		room1 = r1;
 		room2 = r2;
@@ -41,26 +41,8 @@ public class Exit extends NonStationary implements ViewableDoor{
 	}
 
 	@Override
-	public boolean canMove() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void update(float delta) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public boolean canClip() {
 		return true;
-	}
-
-	@Override
-	public Vector2D getLocation() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -68,16 +50,29 @@ public class Exit extends NonStationary implements ViewableDoor{
 		return amtOpen;
 	}
 	
-	public boolean canGoThrough(Player p){
-		if(!locked){
-			return true;
-		}
+	public void unlock(Player p){
 		for(Pickup i : p.getInventory()){
 			if(i instanceof Key && ((Key) i).getExit().equals(this)){ //player has key to unlock this exit
-				return true;
+				locked = false;
+				return;
 			}
 		}
-		return false;
+	}
+	
+	public boolean canGoThrough(Character c){
+		return !locked && amtOpen == 1 ;
+	}
+
+	@Override
+	public void update(int delta) {
+		// TODO opening door stuff
+		
+	}
+
+	@Override
+	public float getCollisionRadius() {
+		// TODO
+		return 0;
 	}
 	
 }

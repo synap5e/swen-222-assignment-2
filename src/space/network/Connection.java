@@ -4,8 +4,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+
+import space.network.message.EntityMovedMessage;
+import space.network.message.Message;
+import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerRotatedMessage;
+import space.network.message.TextMessage;
 
 public class Connection {
+	
+	private static final int TEXT = 0;
+	private static final int PLAYER_JOINED = 1;
+	private static final int ENTITY_MOVED = 2;
+	private static final int ENTITY_ROTATED = 3;
+	private static final int UNKNOWN = -1;
+	
 	
 	private Socket socket;
 	private OutputStream outgoing;
@@ -32,14 +46,25 @@ public class Connection {
 		}
 	}
 	
-	public String readMessage(){
+	public Message readMessage(){
 		try {
+			int type = incoming.read();
 			int length = incoming.read();
-			char[] mess = new char[length];
-			for (int i = 0; i < length; ++i){
-				mess[i] = (char) incoming.read();
+			byte[] data = new byte[length];
+			incoming.read(data);
+			switch (type){
+				case TEXT:
+					return new TextMessage(data);
+				case PLAYER_JOINED:
+					return new PlayerJoinedMessage(data);
+				case ENTITY_MOVED:
+					return new EntityMovedMessage(data);
+				case ENTITY_ROTATED:
+					return new PlayerRotatedMessage(data);
+				default:
+					//TODO: decide how to deal with format error
+					return null;
 			}
-			return String.valueOf(mess);
 		} catch (IOException e) {
 			// TODO decide how to deal with exception
 			e.printStackTrace();
@@ -47,16 +72,27 @@ public class Connection {
 		}
 	}
 	
-	public void sendMessage(String message){
+	public void sendMessage(Message message){
 		try {
-			outgoing.write(message.length());
-			for (char c : message.toCharArray()){
-				outgoing.write(c);
-			}
+			int type = typeOf(message);
+			byte[] data = message.toByteArray();
+			
+			outgoing.write(type);
+			outgoing.write(data.length);
+			outgoing.write(data);
 		} catch (IOException e) {
 			// TODO decide how to deal with exception
 			e.printStackTrace();
 		}
+	}
+	
+	private int typeOf(Message message){
+		//TODO: decide how whether this is the best way to determine the type of a message
+		if (message instanceof TextMessage) return TEXT;
+		else if (message instanceof PlayerJoinedMessage) return PLAYER_JOINED;
+		else if (message instanceof EntityMovedMessage) return ENTITY_MOVED;
+		else if (message instanceof PlayerRotatedMessage) return ENTITY_ROTATED; //TODO: Check actual class when it exists
+		else return UNKNOWN;
 	}
 	
 	public void close(){
