@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE themes PUBLIC "-//www.matthiasmann.de//TWL-Theme//EN" "http://hg.l33tlabs.org/twl/raw-file/tip/src/de/matthiasmann/twl/theme/theme.dtd">
 <themes>
-    <images file="item-background-highlight.png">
+    <images file="hud/item-background-highlight.png">
         <area name="-item.background.highlight" xywh="*"/>
     </images>
 
-    <images file="item-background.png" format="RGBA">
+    <images file="hud/item-background.png" format="RGBA">
         <select name="item.background">
             <alias ref="-item.background.highlight" if="armed ^ selected"/>
             <area xywh="*"/>
         </select>
     </images>
 
-    <images file="menu-background-highlight.png" format="RGBA">
+    <images file="hud/menu-background-highlight.png" format="RGBA">
         <area name="-menu.background.highlight" xywh="*"/>
     </images>
 
-    <images file="menu-background.png" format="RGBA">
+    <images file="hud/menu-background.png" format="RGBA">
         <select name="menu.background">
             <alias ref="-menu.background.highlight" if="armed ^ selected"/>
             <area xywh="*"/>
         </select>
     </images>
 
-    <images file="item-placeholder.png" format="RGBA">
+    <images file="hud/item-placeholder.png" format="RGBA">
         <area name="-item-placeholder-0" xywh="0,32,32,32"/>
 
         <animation name="-item-placeholder-anim" timeSource="hover">
@@ -37,11 +37,11 @@
         </select>
     </images>
 
-    <images file="pause.png" format="RGBA">
+    <images file="hud/pause.png" format="RGBA">
         <area name="button.pause.overlay" center="true" xywh="*"/>
     </images>
 
-    <images file="menu.png" format="RGBA">
+    <images file="hud/menu.png" format="RGBA">
         <area name="-menu-0" xywh="0,0,36,57"/>
 
         <animation name="-menu-anim" timeSource="hover">
@@ -55,12 +55,12 @@
         </select>
     </images>
 
-    <images file="simple.png" format="RGBA">
+    <images file="hud/simple.png" format="RGBA">
         <area name="-borderG" border="3" xywh="60,0,9,9" splitx="L3,R3" splity="T3,B3"/>
         <area name="white" xywh="23,3,1,1"/>
     </images>
 
-    <images file="icon-gold-star-small.png">
+    <images file="hud/icon-gold-star-small.png">
         <area name="-gold-star" xywh="1,2,32,32"/>
         <select name="gold-star">
             <alias ref="-gold-star" if="hover"/>
@@ -73,6 +73,10 @@
         <fontParam if="error" color="red"/>
         <fontParam if="disabled" color="gray"/>
         <fontParam if="textSelection" color="blue"/>
+    </fontDef>
+
+    <fontDef name="font.menu" filename="font/font.fnt" color="#7F7F7F">
+        <fontParam if="hover" color="white"/>
     </fontDef>
 
     <inputMapDef name="-defaultInputMap">
@@ -149,30 +153,43 @@
         <param name="buttonRadius"><int>16</int></param>
         <param name="radius"><int>55</int></param>
         <param name="border"><border>5</border></param>
-     </theme>
-    
-    <theme name="headsupdisplay" ref="-defaults">
-        
-        <theme name="item-placeholder" ref="item-button">
-            <param name=""><image>button.item-placeholder.*</image></param>
-            <param name="border"><border>background.border</border></param>
-            <param name="tooltip"><string>Placeholder text</string></param>
-        </theme>
-
-        <theme name="pause" ref="menu-button">
-            <param name=""><image>button.pause.*</image></param>
-            <param name="border"><border>background.border</border></param>
-            <param name="tooltip"><string>Pause the game</string></param>
-        </theme>
-
-        <theme name="menu" ref="menu-button">
-            <param name=""><image>button.menu.*</image></param>
-            <param name="border"><border>background.border</border></param>
-            <param name="tooltip"><string>menu !!</string></param>
-        </theme>
-
-        <theme name="fpscounter" ref="label"/>
-
+    </theme>
+     
+    <theme name="guiwrapper" ref="-defaults">
         <theme name="" ref="*"/>
+
+        <theme name="ingamecontroller" ref="-defaults" />
+        <theme name="headsupdisplay" ref="-defaults" >
+            <param name="maxWidth"><int>1</int></param>
+            <param name="maxHeight"><int>1</int></param>
+        
+            <theme name="item-placeholder" ref="item-button">
+                <param name=""><image>button.item-placeholder.*</image></param>
+                <param name="border"><border>background.border</border></param>
+                <param name="tooltip"><string>Placeholder text</string></param>
+            </theme>
+
+            <theme name="pause" ref="menu-button">
+                <param name=""><image>button.pause.*</image></param>
+                <param name="border"><border>background.border</border></param>
+                <param name="tooltip"><string>Pause the game</string></param>
+            </theme>
+
+            <theme name="menu" ref="menu-button">
+                <param name=""><image>button.menu.*</image></param>
+                <param name="border"><border>background.border</border></param>
+                <param name="tooltip"><string>menu !!</string></param>
+            </theme>
+
+            <theme name="fpscounter" ref="label"/>
+
+            <theme name="" ref="*"/>
+        </theme>
+    </theme>
+
+    <theme name="mainmenu" ref="-defaults">
+        <theme name="menuitem" ref="label">
+            <param name="font"><font>font.menu</font></param>
+        </theme>
     </theme>
 </themes>
