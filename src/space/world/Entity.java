@@ -34,4 +34,6 @@ public abstract class Entity implements ViewableObject{
 	}
 	
 	public abstract boolean canClip();
+	public abstract void update(int delta);
+	public abstract float getCollisionRadius();
 }

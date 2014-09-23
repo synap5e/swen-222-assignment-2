@@ -6,7 +6,6 @@ import space.math.Vector3D;
 
 public class Player extends Character implements ViewablePlayer{
 	private int points;
-	private Room room;
 	private final float reach = 5f;
 	private float jumpTime = 0;
 	private float xRotation = 90;
@@ -14,10 +13,10 @@ public class Player extends Character implements ViewablePlayer{
 	
 	private static final float EYE_HEIGHT = 6;
 	private static final float JUMP_HEIGHT = 2;
+	private static final float COL_RADIUS = 5;
 
 	public Player(Vector2D pos,int i/*, Room r*/){
-		super(pos,i);
-		//room = r;
+		super(pos,i/*,r*/);
 	}
 	
 	private static float DEGREES_TO_RADIANS(float degrees){
@@ -68,8 +67,8 @@ public class Player extends Character implements ViewablePlayer{
 	}
 
 	@Override
-	public void update(float f) {
-		// TODO Auto-generated method stub
+	public void update(int delta) {
+		// TODO jump time stuff
 		
 	}
 
@@ -78,17 +77,28 @@ public class Player extends Character implements ViewablePlayer{
 		// TODO Auto-generated method stub
 		return true;
 	}
-
-	public Room getRoom() {
-		return room;
-	}
-
-	public void setRoom(Room room) {
-		this.room = room;
-	}
 	
 	public boolean withinReach(Vector2D pos){
 		return getPosition().sub(pos).sqLen() <= Math.pow(reach, 2);
+	}
+	
+	public void setXRotation(float x){
+		xRotation = x;
+	}
+	
+	public void setYRotation(float y){
+		yRotation = y;
+	}
+
+	@Override
+	public float getCollisionRadius() {
+		return COL_RADIUS;
+	}
+	
+	public void jump(){
+		if(jumpTime == 0){
+			jumpTime = 1;
+		}
 	}
 	
 }

@@ -17,4 +17,7 @@ public abstract class Stationary extends Entity implements ViewableStationary{
 	@Override
 	public final void setPosition(Vector2D pos){
 	}
+	
+	public final void update(int delta){
+	}
 }
