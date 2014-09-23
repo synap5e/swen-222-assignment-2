@@ -5,21 +5,21 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Simon Pinfold
  *
  */
 public class ConcaveHull implements Iterable<Segment2D>{
-	
+
 	private List<Vector2D> hullPoints;
-	
+
 	/** This point will always be outside the hull */
 	private Vector2D outside = new Vector2D(0,0);
 
 	private Vector2D topLeft;
 	private Vector2D bottomRight;
 	private Vector2D centre;
-	
+
 	/** Construct the hull from the specified points, winding clockwise
 	 * @param points
 	 */
@@ -35,7 +35,7 @@ public class ConcaveHull implements Iterable<Segment2D>{
 			if (p.getY() <= outside.getY()){
 				outside.setY(p.getY()-1);
 			}
-			
+
 			if (topLeft.getX() > p.getX()){
 				topLeft.setX(p.getX());
 			}
@@ -48,28 +48,28 @@ public class ConcaveHull implements Iterable<Segment2D>{
 			if (bottomRight.getY() < p.getY()){
 				bottomRight.setY(p.getY());
 			}
-			
-			
-			
+
+
+
 			centre.addLocal(p);
 		}
 		centre.divLocal(points.size());
 	}
-	
+
 	public boolean contains(Vector2D point){
 		// crossing number algorithm
-		
+
 		Segment2D ray = new Segment2D(point, outside);
-		
+
 		// crossing number fails if the ray intersects one of the hull points
-		// if this happens we can correct it by randomly moving the end of the 
+		// if this happens we can correct it by randomly moving the end of the
 		// ray - we try doing this 10 times and give up after this
 		// this should catch 99.999% of cases in the first few iterations
 		// but prevents the possibility of a deadlock
 		for (int i=0;i<10 && intersectsPointOnHull(ray); i++){
 			ray = new Segment2D(point, outside.sub(new Vector2D((float) Math.random()/10f, (float) Math.random()/10f)));
 		}
-		
+
 		int intersections = 0;
 		for (Segment2D edge : this){
 			if (ray.intersects(edge)) ++intersections;
@@ -95,18 +95,18 @@ public class ConcaveHull implements Iterable<Segment2D>{
 		return it.iterator();
 	}
 	//TODO need to get centre of the shape
-	//either implement getBounds() method which returns a Rectangle 
+	//either implement getBounds() method which returns a Rectangle
 	//then I'll call getCenter() on the rectangle
 	//or implement getCenter() directly
-	
+
 	/** Gets the centre, defined by the average of all points on the hull
-	 * 
+	 *
 	 * @return the centre of the hull
 	 */
 	public Vector2D getCentre(){
 		return this.centre;
 	}
-	
+
 	public String toString(){
 		String s = this.hullPoints.toString();
 		return "Hull2(" + s.substring(1, s.length()-1) + ")";
@@ -119,5 +119,15 @@ public class ConcaveHull implements Iterable<Segment2D>{
 	public Vector2D getAABBBottomRight() {
 		return bottomRight;
 	}
-	
+
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public Segment2D get(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

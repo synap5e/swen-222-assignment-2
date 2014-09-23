@@ -1,12 +1,11 @@
 package space.world;
 
-import space.gui.pipeline.viewable.ViewableObject;
 import space.math.Vector2D;
 
-public class Key extends Pickup implements ViewableObject {
+public class Key extends Pickup {
 	private Door exit; //the exit it opens
 	private static final float COL_RADIUS = 1;
-	
+
 	public Key(Vector2D pos, int i, String d,Door e) {
 		super(pos, i,d);
 		exit = e;
@@ -41,6 +40,6 @@ public class Key extends Pickup implements ViewableObject {
 	@Override
 	public float getCollisionRadius() {
 		return COL_RADIUS;
-	}	
+	}
 
 }

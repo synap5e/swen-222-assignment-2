@@ -1,11 +1,14 @@
 package space.world;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+
 
 
 import space.gui.pipeline.viewable.ViewableBeam;
@@ -24,19 +27,23 @@ public class Room implements ViewableRoom{
 	private ConcaveHull roomShape;
 	private Set<Entity> entities = new HashSet<Entity>();
 	private Map<Room,Door> exits = new HashMap<Room,Door>();
-	
-	public Room(LightMode m, int i, String d, ConcaveHull r){
+	private Map<Integer, List<Door>> doors;
+
+
+	public Room(LightMode m, int i, String d, ConcaveHull r,Map<Integer,List<Door>> doors){
 		mode = m;
 		id = i;
 		description = d;
 		roomShape = r;
+		this.doors = doors;
 	}
-	
-	public Room(LightMode m, int i, String d, List<Vector2D> points){
+
+	public Room(LightMode m, int i, String d, List<Vector2D> points,Map<Integer,List<Door>> doors){
 		mode = m;
 		id = i;
 		description = d;
 		roomShape = new ConcaveHull(points);
+		this.doors = doors;
 	}
 
 	@Override
@@ -47,12 +54,12 @@ public class Room implements ViewableRoom{
 	@Override
 	public List<? extends ViewableWall> getWalls() {
 		List<Wall> walls = new ArrayList<Wall>();
-		for(Segment2D seg : roomShape){
-			walls.add(new Wall(seg));
+		for(int i= 0; i<roomShape.size(); i++){
+			walls.add(new Wall(roomShape.get(i),doors.get(i)));
 		}
 		return walls;
 	}
-	
+
 	public void addExit(Door e){
 		if(e.getRoom1().equals(this)){
 			exits.put(e.getRoom2(), e);
@@ -61,19 +68,19 @@ public class Room implements ViewableRoom{
 			exits.put(e.getRoom1(), e);
 		}
 	}
-	
+
 	public Door getExitTo(Room other){
 		return exits.get(other);
 	}
-	
+
 	public void putInRoom(Entity e){
 		entities.add(e);
 	}
-	
+
 	public void removeFromRoom(Entity e){
 		entities.remove(e);
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -86,12 +93,12 @@ public class Room implements ViewableRoom{
 	public LightMode getLightMode() {
 		return mode;
 	}
-	
+
 	@Override
 	public List<? extends ViewableObject> getContainedObjects() {
 		return new ArrayList<Entity>(entities);
 	}
-	
+
 	@Override
 	public boolean contains(Vector2D position) {
 		return roomShape.contains(position);
@@ -101,8 +108,8 @@ public class Room implements ViewableRoom{
 	public List<? extends ViewableDoor> getAllDoors() {
 		return new ArrayList<Door>(exits.values());
 	}
-	
-	
+
+
 	@Override
 	public Vector2D getAABBTopLeft() {
 		return roomShape.getAABBTopLeft();
@@ -118,7 +125,7 @@ public class Room implements ViewableRoom{
 		// TODO Auto-generated method stub
 		return new ArrayList<ViewableBeam>();
 	}
-	
+
 	public boolean isPositionVacant(Vector2D position, float radius){
 		for(Entity e : entities){
 			if(position.sub(e.getPosition()).len() < /* e.getCollisionRadius() + radius */ 0){
@@ -134,7 +141,7 @@ public class Room implements ViewableRoom{
 	public Map<Room, Door> getExits() {
 		return exits;
 	}
-	
+
 	public boolean containsEntity(Entity e){
 		return entities.contains(e);
 	}
@@ -148,15 +155,18 @@ public class Room implements ViewableRoom{
 		for(Entity e: entities){
 			e.update(delta);
 		}
-		
+
 	}
-	
+
 
 	private class Wall implements ViewableWall{
 		private Segment2D lineSeg;
-		
-		public Wall(Segment2D ls){
+		private List<Door> wallDoors;
+
+
+		public Wall(Segment2D ls, List<Door> doors){
 			lineSeg = ls;
+			this.wallDoors = doors;
 		}
 		@Override
 		public Vector2D getStart() {
@@ -169,7 +179,7 @@ public class Room implements ViewableRoom{
 		}
 		@Override
 		public List<? extends ViewableDoor> getDoors() {
-			return new ArrayList<Door>(exits.values());
+			return Collections.unmodifiableList(wallDoors);
 		}
 
 	}

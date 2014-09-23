@@ -8,7 +8,7 @@ public abstract class Entity implements ViewableObject{
 	private int id;
 	private float elevation;
 	private String description;
-	
+
 	public Entity(Vector2D pos, int i,String d){
 		position = pos;
 		id = i;
@@ -17,22 +17,22 @@ public abstract class Entity implements ViewableObject{
 	public Vector2D getPosition(){
 		return position;
 	}
-	
+
 	public int getID(){
 		return id;
 	}
-	
+
 	public float getElevation(){
 		return elevation;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
 	public void setPosition(Vector2D pos){
 		position = pos;
 	}
-	
+
 	public abstract boolean canClip();
 	public abstract void update(int delta);
 	public abstract float getCollisionRadius();
