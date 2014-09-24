@@ -2,20 +2,14 @@ package space.gui.application;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-
 import space.gui.pipeline.GameRenderer;
-import space.gui.pipeline.mock.MockWorld;
-import space.gui.pipeline.viewable.ViewableRoom.LightMode;
-import space.math.Vector2D;
 import space.network.Client;
-import space.world.Player;
-import space.world.Room;
+import space.network.storage.MockStorage;
+import space.network.storage.WorldLoader;
 import space.world.World;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
@@ -29,9 +23,9 @@ public class Bootstrap {
 	public static void main(String[] args) throws LWJGLException, IOException {
 		
 		//Load World TODO Load from json
-		World world = new World();
-		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
-		world.addRoom(r);
+		WorldLoader loader = new MockStorage();
+		loader.loadWorld("savepath");
+		World world = loader.getWorld();
 		
 		//Create the client TODO use program arguments for host and port
 		Client client = new Client("localhost", 1234, world);

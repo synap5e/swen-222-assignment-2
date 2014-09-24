@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.TextMessage;
+import space.network.storage.MockStorage;
+import space.network.storage.WorldLoader;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -36,7 +35,7 @@ public class Server {
 	//TODO: Work out better way of coming up with an ID
 	private int availableId = 9001;
 	
-	public Server(String host, int port){
+	public Server(String host, int port, WorldLoader loader, String savePath){
 		//Create the list of client connections
 		connections = new HashMap<Integer, Connection>();
 		
@@ -53,10 +52,10 @@ public class Server {
 		connectionHandler = new Thread(new ConnectionHandler());
 		
 		//Load the World
+		
 		//TODO: Load world from file
-		world = new World();
-		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
-		world.addRoom(r);
+		loader.loadWorld(savePath);
+		world = loader.getWorld();
 		
 		//Start accepting connections
 		connectionHandler.start();
@@ -204,6 +203,6 @@ public class Server {
 	}
 	
 	public static void main(String[] args){
-		new Server("localhost", 1234);
+		new Server("localhost", 1234, new MockStorage(), "savepath");
 	}
 }
