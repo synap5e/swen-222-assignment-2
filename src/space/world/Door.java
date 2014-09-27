@@ -9,6 +9,10 @@ public class Door extends NonStationary implements ViewableDoor{
 	private boolean oneWay; //if oneWay, can only get from room1 to room2
 	private boolean locked;
 	private float amtOpen = 0; 
+	private enum DoorState {OPEN,OPENING,CLOSED,CLOSING};
+	private DoorState state = DoorState.CLOSED;
+	
+	private static final float LENGTH = 500; //I dont know what to name this?
 	
 	public Door(Vector2D pos, int i, String desc,Room r1, Room r2, boolean ow, boolean l){
 		super(pos, i, desc);
@@ -65,7 +69,19 @@ public class Door extends NonStationary implements ViewableDoor{
 
 	@Override
 	public void update(int delta) {
-		// TODO opening door stuff
+		if(state == DoorState.CLOSING){
+			amtOpen -= delta/LENGTH;
+			if(amtOpen <= 0){
+				amtOpen = 0;
+				state = DoorState.CLOSED;
+			}
+		}else if(state == DoorState.OPENING){
+			amtOpen += delta/LENGTH;
+			if(amtOpen >= 1){
+				amtOpen = 1;
+				state = DoorState.OPEN;
+			}
+		}
 		
 	}
 
@@ -73,6 +89,18 @@ public class Door extends NonStationary implements ViewableDoor{
 	public float getCollisionRadius() {
 		// TODO
 		return 0;
+	}
+	
+	public void closeDoor(){
+		if(state != DoorState.CLOSED){
+			state = DoorState.CLOSING;
+		}
+	}
+	
+	public void openDoor(){
+		if(state != DoorState.OPEN){
+			state = DoorState.OPENING;
+		}
 	}
 	
 }

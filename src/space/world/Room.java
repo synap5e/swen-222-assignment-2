@@ -128,7 +128,7 @@ public class Room implements ViewableRoom{
 
 	public boolean isPositionVacant(Vector2D position, float radius){
 		for(Entity e : entities){
-			if(position.sub(e.getPosition()).len() < /* e.getCollisionRadius() + radius */ 0){
+			if(position.sub(e.getPosition()).len() <  e.getCollisionRadius() + radius){
 				if(e.canClip()){
 					return false;
 				}

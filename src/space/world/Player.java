@@ -10,9 +10,11 @@ public class Player extends Character implements ViewablePlayer{
 	private float jumpTime = 0;
 	private float xRotation = 90;
 	private float yRotation = 100;
+	private boolean torchOn = true;
 	
 	private static final float EYE_HEIGHT = 6;
 	private static final float JUMP_HEIGHT = 2;
+	private static final float JUMP_LENGTH = 500;
 	private static final float COL_RADIUS = 5;
 
 	public Player(Vector2D pos,int i/*, Room r*/){
@@ -68,16 +70,23 @@ public class Player extends Character implements ViewablePlayer{
 
 	@Override
 	public void update(int delta) {
-		// TODO jump time stuff
-		
+		if(jumpTime > 0){
+			jumpTime -= delta/JUMP_LENGTH;
+			if(jumpTime < 0){
+				jumpTime = 0;
+			}
+		}		
 	}
 
 	@Override
 	public boolean isTorchOn() {
-		// TODO Auto-generated method stub
-		return true;
+		return torchOn;
 	}
 	
+	public void setTorchOn(boolean t) {
+		this.torchOn = t;
+	}
+
 	public boolean withinReach(Vector2D pos){
 		return getPosition().sub(pos).sqLen() <= Math.pow(reach, 2);
 	}
