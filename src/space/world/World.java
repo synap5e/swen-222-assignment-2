@@ -99,4 +99,9 @@ public class World implements ViewableWorld{
 			r.update(delta);
 		}
 	}
+	
+	public Map<Integer, Room> getRooms(){
+		return  rooms;
+		
+	}
 }

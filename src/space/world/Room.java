@@ -11,6 +11,7 @@ import java.util.Set;
 
 
 
+
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
@@ -182,6 +183,15 @@ public class Room implements ViewableRoom{
 			return Collections.unmodifiableList(wallDoors);
 		}
 
+	}
+
+
+	public ConcaveHull getRoomShape() {
+		return roomShape;
+	}
+
+	public Set<Entity> getEntities() {
+		return entities;
 	}
 
 }

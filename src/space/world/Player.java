@@ -89,6 +89,14 @@ public class Player extends Character implements ViewablePlayer{
 	public void setYRotation(float y){
 		yRotation = y;
 	}
+	
+	public float getXRotation(){
+		return xRotation;
+	}
+	
+	public float getYRotation(){
+		return yRotation;
+	}
 
 	@Override
 	public float getCollisionRadius() {
