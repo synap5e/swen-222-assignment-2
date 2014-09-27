@@ -8,6 +8,7 @@ import java.util.Set;
 
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWorld;
+import space.math.Segment2D;
 import space.math.Vector2D;
 
 public class World implements ViewableWorld{
@@ -33,16 +34,16 @@ public class World implements ViewableWorld{
 				c.setPosition(newPos);
 			}
 		}else{
-			for(Map.Entry<Room, Door> entry : room.getExits().entrySet()){//see if player trying to move to adjacent room
-				if(entry.getKey().contains(newPos, c.getCollisionRadius())){//found room player is trying to move to
-					if(entry.getValue().canGoThrough(c)&&entry.getKey().isPositionVacant(newPos, c.getCollisionRadius())){
-					//check that player can go through exit and nothing is on the new position
+			for(Door door : room.getAllDoors()){
+				Segment2D path = new Segment2D(c.getPosition(),newPos);
+				if(path.onLine(door.getPosition()) && door.canGoThrough()){
+					Room otherRoom = door.otherRoom(room);
+					if(otherRoom.contains(newPos, c.getCollisionRadius())&& otherRoom.isPositionVacant(newPos, c.getCollisionRadius())){
 						c.setPosition(newPos);
 						room.removeFromRoom(c);
-						entry.getKey().putInRoom(c);
-						c.setRoom(entry.getKey());
+						otherRoom.putInRoom(c);
+						c.setRoom(otherRoom);
 					}
-					return;
 				}
 			}
 		}
@@ -63,6 +64,13 @@ public class World implements ViewableWorld{
 			character.getRoom().putInRoom(entity);
 		}
 	}
+	
+	public void update(int delta){
+		for(Room r : rooms.values()){
+			r.update(delta);
+		}
+	}
+	
 	@Override
 	public Room getRoomAt(Vector2D pos) {
 		for(Room r : rooms.values()){
@@ -92,11 +100,5 @@ public class World implements ViewableWorld{
 	@Override
 	public List<ViewableRoom> getViewableRooms() {
 		return new ArrayList<ViewableRoom>(rooms.values());
-	}
-	
-	public void update(int delta){
-		for(Room r : rooms.values()){
-			r.update(delta);
-		}
 	}
 }

@@ -130,4 +130,9 @@ public class ConcaveHull implements Iterable<Segment2D>{
 		return null;
 	}
 
+	public boolean contains(Vector2D position, float radius) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

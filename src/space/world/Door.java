@@ -21,38 +21,6 @@ public class Door extends NonStationary implements ViewableDoor{
 		oneWay = ow;
 		locked = l;
 	}
-
-	public boolean isLocked() {
-		return locked;
-	}
-
-	public Room getRoom1() {
-		return room1;
-	}
-
-	public Room getRoom2() {
-		return room2;
-	}
-
-	public boolean isOneWay() {
-		return oneWay;
-	}
-
-	@Override
-	public float getAngle() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean canClip() {
-		return true;
-	}
-
-	@Override
-	public float getOpenPercent() {
-		return amtOpen;
-	}
 	
 	public void unlock(Player p){
 		for(Pickup i : p.getInventory()){
@@ -63,7 +31,7 @@ public class Door extends NonStationary implements ViewableDoor{
 		}
 	}
 	
-	public boolean canGoThrough(Character c){
+	public boolean canGoThrough(){
 		return !locked && amtOpen == 1 ;
 	}
 
@@ -87,7 +55,6 @@ public class Door extends NonStationary implements ViewableDoor{
 
 	@Override
 	public float getCollisionRadius() {
-		// TODO
 		return 0;
 	}
 	
@@ -98,9 +65,51 @@ public class Door extends NonStationary implements ViewableDoor{
 	}
 	
 	public void openDoor(){
-		if(state != DoorState.OPEN){
+		if(state != DoorState.OPEN && !locked){
 			state = DoorState.OPENING;
 		}
 	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public Room getRoom1() {
+		return room1;
+	}
+
+	public Room getRoom2() {
+		return room2;
+	}
+	
+	public Room otherRoom(Room r){
+		if(r.equals(room1)){
+			return room2;
+		}
+		else if(r.equals(room2) && !oneWay){
+			return room1;
+		}
+		return null;
+	}
+	
+	public boolean isOneWay() {
+		return oneWay;
+	}
+
+	@Override
+	public float getAngle() {
+		return 0;
+	}
+
+	@Override
+	public boolean canClip() {
+		return true;
+	}
+
+	@Override
+	public float getOpenPercent() {
+		return amtOpen;
+	}
+	
 	
 }
