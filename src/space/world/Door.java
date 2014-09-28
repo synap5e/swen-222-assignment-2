@@ -16,10 +16,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	private float amtOpen = 0; // the amount the door is open. 1 is fully open &
 								// 0 is fully closed
 
-	private enum DoorState {
-		OPEN, OPENING, CLOSED, CLOSING
-	};
-
+	private enum DoorState {OPEN, OPENING, CLOSED, CLOSING};
 	private DoorState state = DoorState.CLOSED;
 
 	private static final float LENGTH = 500; // I dont know what to name this?
@@ -58,13 +55,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	 */
 	public void unlock(Player p) {
 		for (Pickup i : p.getInventory()) {
-			if (i instanceof Key && ((Key) i).getDoor().equals(this)) { // player
-																		// has
-																		// key
-																		// to
-																		// unlock
-																		// this
-																		// door
+			if (i instanceof Key && ((Key) i).getDoor().equals(this)) { //player has key to unlock this door
 				locked = false;
 				return;
 			}

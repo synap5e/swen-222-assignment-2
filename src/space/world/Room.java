@@ -58,7 +58,9 @@ public class Room implements ViewableRoom{
 		}
 		for(List<Door> doorList : doors.values()){
 			for(Door d : doorList){
-				d.update(delta);
+				if(d.getRoom1().equals(this)){//prevents doors being updated twice
+					d.update(delta);
+				}
 			}
 		}
 
@@ -74,7 +76,8 @@ public class Room implements ViewableRoom{
 	
 
 	public boolean contains(Vector2D position, float radius) {
-		return roomShape.contains(position,radius);
+		return roomShape.contains(position);
+		//return roomShape.contains(position,radius);
 	}
 	
 	/**Returns whether or not the entity is in the room

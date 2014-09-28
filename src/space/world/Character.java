@@ -6,9 +6,7 @@ import java.util.Set;
 import space.math.Vector2D;
 
 public abstract class Character extends NonStationary {
-	private Set<Pickup> inventory = new HashSet<Pickup>(); // items the
-															// character is
-															// carrying
+	private Set<Pickup> inventory = new HashSet<Pickup>(); // items the character is carrying
 	private Room room; // the room the character is in
 
 	/**

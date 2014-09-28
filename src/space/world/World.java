@@ -70,7 +70,11 @@ public class World implements ViewableWorld{
 	 * <li>the character is dropping it in the room the character is in
 	 * <li> it is dropping it within reach
 	 * <li> character is actually has the entity in their inventory
-	 * <ul>*/
+	 * <ul>
+	 * @param character The character dropping the entity
+	 * @param entity The entity being removed from character's inventory
+	 * @param dropSpot where the entity will be placed
+	 */
 	public void dropEntity(Character character, Entity entity, Vector2D dropSpot){
 		if(character.withinReach(dropSpot) && character.getRoom().contains(dropSpot)){
 			if(character.drop(entity)){
