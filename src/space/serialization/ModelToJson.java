@@ -22,11 +22,13 @@ import space.world.World;
 
 public class ModelToJson implements WorldSaver{
 
+	JSONObject file = new JSONObject();
+	JSONArray listOfRooms = new JSONArray();
+	JSONArray listOfPlayers = new JSONArray();
+
 	@Override
 	public void saveWorld(String savePath, World world, List<Player> players) {
 
-		JSONObject file = new JSONObject();
-		JSONArray listOfRooms = new JSONArray();
 
 		Map<Integer, Room> rooms = world.getRooms();
 		for (Entry<Integer, Room> entry : rooms.entrySet()) {
@@ -34,8 +36,13 @@ public class ModelToJson implements WorldSaver{
 		}
 		file.put("rooms", listOfRooms);
 		
-		JSONArray listOfPlayers = new JSONArray();
-		//TODO - HOW DO I SEE IF A PLAYER EXISTS OR NOT?
+		for(Player p : players){
+			listOfPlayers.add(addPlayer(p));
+		}
+		
+		file.put("players", listOfPlayers);
+		
+		
 	}
 
 	private JSONObject addRoom(Integer roomId, Room room) {
@@ -57,7 +64,12 @@ public class ModelToJson implements WorldSaver{
 				entitiesInRoom.add(addStationary(e));
 			}
 			else if(e instanceof NonStationary){
+				if(e instanceof Player){
+					listOfPlayers.add(addPlayer((Player) e));
+				}
+				else{
 				entitiesInRoom.add(addNonStationary(e));
+				}
 			}
 		}
 		return entitiesInRoom;
@@ -77,8 +89,9 @@ public class ModelToJson implements WorldSaver{
 	}
 
 	private JSONObject AddCharacter(Character e) {
+		//this case should never happen
 		if(e instanceof Player){
-			return addPlayer((Player) e);
+			return null;
 		}
 		//no other kind of character in game yet
 		else{
