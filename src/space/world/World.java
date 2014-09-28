@@ -76,12 +76,14 @@ public class World implements ViewableWorld{
 	 * @param dropSpot where the entity will be placed
 	 */
 	public void dropEntity(Character character, Entity entity, Vector2D dropSpot){
-		if(character.withinReach(dropSpot) && character.getRoom().contains(dropSpot)){
-			if(character.drop(entity)){
+		if(character.withinReach(dropSpot) && character.getInventory().contains(entity) 
+			&& character.getRoom().contains(dropSpot) 
+			&& character.getRoom().isPositionVacant(dropSpot, entity.getCollisionRadius())){
+				character.drop(entity);
 				entity.setPosition(dropSpot);
 				character.getRoom().putInRoom(entity);
-			}
 		}
+		
 	}
 	
 	/**Updates all rooms

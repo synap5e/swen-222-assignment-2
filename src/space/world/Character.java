@@ -39,10 +39,9 @@ public abstract class Character extends NonStationary {
 	 * 
 	 * @param p
 	 *            The object that will be removed
-	 * @return if the object has been successfully removed
 	 */
-	public boolean drop(Object p) {
-		return inventory.remove(p);
+	public void drop(Object p) {
+		inventory.remove(p);
 	}
 
 	/**
