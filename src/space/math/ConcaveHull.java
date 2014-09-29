@@ -121,13 +121,15 @@ public class ConcaveHull implements Iterable<Segment2D>{
 	}
 
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return hullPoints.size();
 	}
 
 	public Segment2D get(int i) {
-		// TODO Auto-generated method stub
-		return null;
+		if (i == 0){
+			return new Segment2D(hullPoints.get(hullPoints.size()-1), hullPoints.get(i));
+		} else {
+			return new Segment2D(hullPoints.get(i-1), hullPoints.get(i));
+		}
 	}
 
 	public boolean contains(Vector2D position, float radius) {
