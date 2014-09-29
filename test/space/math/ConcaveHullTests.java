@@ -1,6 +1,7 @@
 package space.math;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.junit.Test;
 
@@ -45,6 +46,77 @@ public class ConcaveHullTests {
 					-1,		-1
 				).getCentre(),
 				new Vector2D(0, 0));
+	}
+	
+	@Test
+	public void iteratorEqualsIteration(){
+		ConcaveHull h = createHull(
+				0,	1, 	
+				1,	1,
+				1,	0,
+				2,  0, 
+				0, 	2,
+				5,  1				
+			);
+		Iterator<Segment2D> it = h.iterator();
+		for (int i=0;i<h.size();i++){
+			assertEquals(it.next(), h.get(i));
+		}
+		assertFalse(it.hasNext());
+	}
+	
+	@Test
+	public void containsCircleTrue1(){
+		assertTrue(hullContains(createHull(
+					0,	1, 	
+					1,	1,
+					1,	0,
+					0,	0
+				), 
+					0.5f, 0.5f, 0.2f
+				));
+	}
+	
+	@Test
+	public void containsCircleTrue2(){
+		assertTrue(hullContains(createHull(
+					0,	1, 	
+					1,	1,
+					1,	0,
+					0,	0
+				), 
+					0.2f, 0.2f, 0.1f
+				));
+	}
+	
+	@Test
+	public void containsCircleFalse1(){
+		assertFalse(hullContains(createHull(
+					0,	1, 	
+					1,	1,
+					1,	0,
+					0,	0
+				), 
+					0.5f, 0.5f, 0.6f
+				));
+	}
+	
+	@Test
+	public void containsCircleFalse2(){
+		assertFalse(hullContains(createHull(
+					0,	1, 	
+					1,	1,
+					1,	0,
+					0,	0
+				), 
+					0.2f, 0.2f, 0.25f
+				));
+	}
+	
+	
+
+	private boolean hullContains(ConcaveHull hull, float x, float y, float radius) {
+		return hull.contains(new Vector2D(x, y), radius);
 	}
 
 	private boolean hullContains(ConcaveHull hull, float x, float y) {

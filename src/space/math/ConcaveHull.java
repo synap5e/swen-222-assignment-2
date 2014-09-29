@@ -121,18 +121,44 @@ public class ConcaveHull implements Iterable<Segment2D>{
 	}
 
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return hullPoints.size();
 	}
 
 	public Segment2D get(int i) {
-		// TODO Auto-generated method stub
-		return null;
+		if (i == 0){
+			return new Segment2D(hullPoints.get(hullPoints.size()-1), hullPoints.get(i));
+		} else {
+			return new Segment2D(hullPoints.get(i-1), hullPoints.get(i));
+		}
 	}
 
 	public boolean contains(Vector2D position, float radius) {
-		// TODO Auto-generated method stub
-		return false;
+		return getClosestPointOnHull(position).sub(position).sqLen() > radius*radius;
+	}
+	
+	public Vector2D getClosestPointOnHull(Vector2D p){
+		Vector2D closest = null;
+		for (Segment2D s : this){
+			Vector2D closestPointOnLine;
+
+			float xM = s.end.getX() - s.start.getX();
+			float yM = s.end.getY() - s.start.getY();
+
+			float u = ((p.getX() - s.start.getX()) * xM + (p.getY() - s.start.getY()) * yM) / (xM * xM + yM * yM);
+
+			if (u < 0) {
+				closestPointOnLine = new Vector2D(s.start.getX(), s.start.getY());
+			} else if (u > 1) {
+				closestPointOnLine = new Vector2D(s.end.getX(), s.end.getY());
+			} else {
+				closestPointOnLine = new Vector2D(s.start.getX() + u * xM, s.start.getY() + u * yM);
+			}
+
+			if (closest == null || closest.sub(p).sqLen() > closestPointOnLine.sub(p).sqLen()){
+				closest = closestPointOnLine;
+			}
+		}
+		return closest;
 	}
 
 }
