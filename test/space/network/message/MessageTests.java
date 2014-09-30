@@ -32,7 +32,7 @@ public class MessageTests {
 	public void testPlayerJoinedKeepID() {
 		int id = 1234;
 		
-		PlayerJoinedMessage message = new PlayerJoinedMessage(id);
+		PlayerJoiningMessage message = new PlayerJoiningMessage(id);
 		
 		assertEquals(id, message.getPlayerID());
 	}
@@ -41,9 +41,9 @@ public class MessageTests {
 	public void testPlayerMovedFromByteArray() {
 		int id = 1234;
 		
-		PlayerJoinedMessage original = new PlayerJoinedMessage(id);
+		PlayerJoiningMessage original = new PlayerJoiningMessage(id);
 		byte[] data = original.toByteArray();
-		PlayerJoinedMessage message = new PlayerJoinedMessage(data);
+		PlayerJoiningMessage message = new PlayerJoiningMessage(data);
 		
 		assertEquals(id, message.getPlayerID());
 	}

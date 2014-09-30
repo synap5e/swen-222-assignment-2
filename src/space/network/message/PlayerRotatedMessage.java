@@ -31,7 +31,7 @@ public class PlayerRotatedMessage implements Message {
 	
 	@Override
 	public byte[] toByteArray() {
-		ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE+Float.SIZE*2);
+		ByteBuffer buffer = ByteBuffer.allocate((Integer.SIZE+Float.SIZE*2)/8);
 		buffer.putInt(id);
 		buffer.putFloat(mouseDelta.getX());
 		buffer.putFloat(mouseDelta.getY());
