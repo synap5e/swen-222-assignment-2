@@ -1,7 +1,6 @@
 package space.gui.application;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -10,14 +9,10 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import space.gui.pipeline.GameRenderer;
-import space.gui.pipeline.viewable.ViewableRoom.LightMode;
-import space.math.Vector2D;
 import space.network.Client;
 import space.network.Server;
-import space.network.ServerBootstrap;
 import space.network.storage.MockStorage;
 import space.network.storage.WorldLoader;
-import space.world.Room;
 import space.world.World;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.GUI;
