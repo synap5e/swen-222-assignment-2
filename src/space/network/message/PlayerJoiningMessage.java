@@ -54,6 +54,6 @@ public class PlayerJoiningMessage implements Message {
 
 	@Override
 	public String toString(){
-		return "[Player Joined]: Player Joined with the id \"" + playerId + "\"";
+		return "[Player Joining]: Player Joined with the id \"" + playerId + "\"";
 	}
 }
