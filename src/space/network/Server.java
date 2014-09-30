@@ -11,6 +11,7 @@ import org.lwjgl.Sys;
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
@@ -145,7 +146,7 @@ public class Server {
 			long last = getTime();
 			while (stillAlive){
 				long now = getTime();
-				long delta = now - last;
+				int delta = (int) (now - last);
 				
 				Map<Integer,Connection> connections = new HashMap<Integer, Connection>();
 				synchronized (connections) {
@@ -189,6 +190,14 @@ public class Server {
 
 								//Forward the message to all the other clients
 								sendMessageToAllExcept(id, message);
+							} else if (message instanceof JumpMessage){
+								JumpMessage thePlayerWhoJumps = (JumpMessage) message;
+								
+								//Make the player jump
+								((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
+								
+								//Forward the message to all the other clients
+								sendMessageToAllExcept(id, message);
 							}
 						}
 					} catch (IOException e) {
@@ -196,8 +205,8 @@ public class Server {
 					}
 				}
 				
-				//Update world TODO: World needs an update method that updates all updatable entities
-				//world.update(delta);
+				//Update world
+				world.update(delta);
 				
 				last = now;
 				

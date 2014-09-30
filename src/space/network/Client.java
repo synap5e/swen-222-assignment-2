@@ -8,6 +8,7 @@ import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
@@ -160,6 +161,11 @@ public class Client {
 					Player p = (Player) world.getEntity(playerRotated.getID());
 
 					p.moveLook(playerRotated.getDelta());
+				} else if (message instanceof JumpMessage){
+					JumpMessage thePlayerWhoJumps = (JumpMessage) message;
+					
+					//Make the player jump
+					((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
 				} else if (message instanceof ShutdownMessage){
 					shutdown();
 					//TODO: Inform application window to go to main menu
@@ -206,7 +212,9 @@ public class Client {
 		//Deal with jumping
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
 			localPlayer.jump();
-			//TODO tell server
+			
+			//Inform the server of the heroic jump
+			connection.sendMessage(new JumpMessage(localPlayer.getID()));
 		}
 		
 		//Record the latest location of the mouse
@@ -248,7 +256,6 @@ public class Client {
 			//Move the player.
 			world.moveCharacter(localPlayer, position);
 			if (localPlayer.getPosition().equals(position, 0.1f)){
-				System.out.println("test");
 				localPlayer.setPosition(position);
 				
 				//Tell the server that the player moved
