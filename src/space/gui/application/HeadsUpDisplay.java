@@ -8,13 +8,11 @@ import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.Label;
 import de.matthiasmann.twl.RadialPopupMenu;
 import de.matthiasmann.twl.ToggleButton;
-import de.matthiasmann.twl.Widget;
 
-public class HeadsUpDisplay extends Widget {
+public class HeadsUpDisplay extends NestedWidget {
 	
 	private static final int PADDING = 10;
 	private static final int SPACING = 5;
-	
 	
     private static final String[] BUTTON_ITEM_THEMES = {
         "item-placeholder",
@@ -26,7 +24,7 @@ public class HeadsUpDisplay extends Widget {
         "item-placeholder",
         "item-placeholder"
     };
-	
+    
 	private List<ToggleButton> actionButtons;
 	private List<ToggleButton> menuButtons;
     private ToggleButton buttonPause;
@@ -34,12 +32,9 @@ public class HeadsUpDisplay extends Widget {
     
     private FPSCounter fpsCounter;
     private Label labelExample;
-
-	public boolean quit;
 	
-	
-	public HeadsUpDisplay(){
-		this.quit = false;
+	public HeadsUpDisplay(GameApplication gameApplication){
+		super(gameApplication);
 		
         this.actionButtons = new ArrayList<ToggleButton>();
         this.menuButtons = new ArrayList<ToggleButton>();
@@ -81,6 +76,14 @@ public class HeadsUpDisplay extends Widget {
         layoutMisc();
     }
     
+    @Override
+    protected boolean handleEvent(Event evt) {
+        if(super.handleEvent(evt)) {
+            return evt.isMouseEventNoWheel();
+        }
+        return false;
+    }
+    
     private void layoutItems(){
         int x = PADDING;
         int y = 40;
@@ -113,32 +116,7 @@ public class HeadsUpDisplay extends Widget {
         labelExample.setPosition(getInnerWidth() / 2 - labelExample.getWidth() / 2, getInnerBottom() - labelExample.getHeight());
     }
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(super.handleEvent(evt)) {
-            return true;
-        }
-        if (evt.getType() == Event.Type.KEY_PRESSED) {
-		    switch (evt.getKeyCode()) {
-	           case Event.KEY_ESCAPE:
-	               quit = true;
-	               return true;
-	           default:
-	        	   break;
-		    }
-        } else if (evt.getType() == Event.Type.MOUSE_BTNDOWN) {
-        	switch(evt.getMouseButton()){
-            	case Event.MOUSE_RBUTTON:
-                   return createRadialMenu().openPopup(evt);
-	           default:
-	        	   break;
-        	}
-            
-        }
-        return evt.isMouseEventNoWheel();
-    }
-
-    RadialPopupMenu createRadialMenu() {
+	RadialPopupMenu createRadialMenu() {
         RadialPopupMenu rpm = new RadialPopupMenu(this);
         for(int i=0 ; i<10 ; i++) {
             final int idx = i;
