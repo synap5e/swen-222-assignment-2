@@ -1,7 +1,6 @@
 package space.network.message;
 
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 
 /**
  * TextMessage represents text message that is able to be sent or received over the network.
@@ -43,7 +42,7 @@ public class TextMessage implements Message {
 	
 	@Override
 	public byte[] toByteArray() {
-		ByteBuffer buffer = ByteBuffer.allocate(text.length()*Character.SIZE);
+		ByteBuffer buffer = ByteBuffer.allocate(text.length()*Character.SIZE/8);
 		for (char c : text.toCharArray()){
 			buffer.putChar(c);
 		}

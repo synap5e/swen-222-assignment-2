@@ -3,18 +3,29 @@ package space.world;
 import space.math.Vector2D;
 
 public class Key extends Pickup {
-	private Door exit; //the exit it opens
 	private Vector2D position;
 	private int i;
 	private String description;
-	private static final float COL_RADIUS = 1;
+	private Door door; // the door it unlocks
+	private static final float COL_RADIUS = 1; // the collision radius
 
-	public Key(Vector2D pos, int i, String d,Door e) {
-		super(pos, i,d);
-		exit = e;
-		position = pos;
-		this.i = i;
-		description = d;
+	/**
+	 * Creates a new Key entity
+	 * 
+	 * @param pos
+	 *            The position of the key
+	 * @param i
+	 *            The id
+	 * @param e
+	 *            The elevation
+	 * @param desc
+	 *            The description of the key
+	 * @param d
+	 *            The door it unlocks
+	 */
+	public Key(Vector2D pos, int i, String desc, float e, Door d) {
+		super(pos, i, e, desc);
+		door = d;
 	}
 	
 	public Vector2D getPosition(){
@@ -30,34 +41,47 @@ public class Key extends Pickup {
 	}
 	
 	public Door getExit() {
-		return exit;
+		return door;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void update(int delta) {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean canClip() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public float getAngle() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public float getElevation() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public float getCollisionRadius() {
 		return COL_RADIUS;
+	}
+
+	/**
+	 * Returns the door the key unlocks
+	 * 
+	 * @return
+	 */
+	public Door getDoor() {
+		return door;
 	}
 
 }

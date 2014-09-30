@@ -2,16 +2,17 @@ package space.network;
 
 import java.io.IOException;
 import java.net.Socket;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.JumpMessage;
 import space.network.message.Message;
-import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
+import space.network.message.ShutdownMessage;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -64,14 +65,18 @@ public class Client {
 		//Connect to the server
 		try {
 			connection = new Connection(new Socket(host, port));
+			
+			//Request to join the game
+			connection.sendMessage(new PlayerJoiningMessage(-1)); //TODO use previous ID if one exists 
+			
+			//Create the local player, using the ID supplied by the server
+			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
+			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
+			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
 		}
-		
-		//Create the local player, using the ID supplied by the server
-		PlayerJoinedMessage joinConfirmation = (PlayerJoinedMessage) connection.readMessage();
-		localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 		
 		//Get the initial location of the mouse
 		lastx = Mouse.getX();
@@ -82,6 +87,13 @@ public class Client {
 	 * Shuts down the client.
 	 */
 	public void shutdown(){
+		//Inform the server
+		try {
+			connection.sendMessage(new DisconnectMessage(localPlayer.getID()));
+		} catch (IOException e) {
+			//Exception disregarded as it was being closed anyway
+		}
+		
 		connection.close();
 	}
 	
@@ -100,7 +112,7 @@ public class Client {
 	 * @return The game world.
 	 */
 	public World getWorld(){
-		return null;
+		return world;
 	}
 
 	/**
@@ -110,54 +122,80 @@ public class Client {
 	 */
 	public void update(int delta) {
 		//Apply updates from server
-		while (connection.hasMessage()){
-			Message message = connection.readMessage();
-			
-			//Add any new players
-			if (message instanceof PlayerJoinedMessage){
-				PlayerJoinedMessage playerJoined = (PlayerJoinedMessage) message;
-				Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
-				world.addEntity(e);
-				world.getRoomAt(e.getPosition()).putInRoom(e);
-			//Move remotely controlled entities
-			} else if (message instanceof EntityMovedMessage){
-				EntityMovedMessage entityMoved = (EntityMovedMessage) message;
-				Entity e = world.getEntity(entityMoved.getEntityID());
+		try {
+			while (connection.hasMessage()){
+				Message message = connection.readMessage();
 				
-				//Move the room the entity is in if required
-				Room from = world.getRoomAt(e.getPosition());
-				Room to = world.getRoomAt(entityMoved.getNewPosition());
-				if (to != from){
-					from.removeFromRoom(e);
-					to.putInRoom(e);
-				}
-				
-				//Move the entity
-				e.setPosition(entityMoved.getNewPosition());
-			//Rotate remote player
-			} else if (message instanceof PlayerRotatedMessage){
-				PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
-				Player p = (Player) world.getEntity(playerRotated.getID());
+				//Add any new players
+				if (message instanceof PlayerJoiningMessage){
+					PlayerJoiningMessage playerJoined = (PlayerJoiningMessage) message;
+					Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+					world.addEntity(e);
+					world.getRoomAt(e.getPosition()).putInRoom(e);
+				//Remove disconnected players
+				} else if (message instanceof DisconnectMessage){
+					DisconnectMessage playerDisconnected = (DisconnectMessage) message;
+					Entity e = world.getEntity(playerDisconnected.getPlayerID());
+					
+					//Remove from the room and world
+					world.getRoomAt(e.getPosition()).removeFromRoom(e);
+					//world.removeEntity(e);
+				//Move remotely controlled entities
+				} else if (message instanceof EntityMovedMessage){
+					EntityMovedMessage entityMoved = (EntityMovedMessage) message;
+					Entity e = world.getEntity(entityMoved.getEntityID());
+					
+					//Move the room the entity is in if required
+					Room from = world.getRoomAt(e.getPosition());
+					Room to = world.getRoomAt(entityMoved.getNewPosition());
+					if (to != from){
+						from.removeFromRoom(e);
+						to.putInRoom(e);
+					}
+					
+					//Move the entity
+					e.setPosition(entityMoved.getNewPosition());
+				//Rotate remote player
+				} else if (message instanceof PlayerRotatedMessage){
+					PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+					Player p = (Player) world.getEntity(playerRotated.getID());
 
-				p.moveLook(playerRotated.getDelta());
-			} else {
-				//TODO: Decide when to log
-				System.out.println(connection.readMessage());
+					p.moveLook(playerRotated.getDelta());
+				} else if (message instanceof JumpMessage){
+					JumpMessage thePlayerWhoJumps = (JumpMessage) message;
+					
+					//Make the player jump
+					((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
+				} else if (message instanceof ShutdownMessage){
+					shutdown();
+					//TODO: Inform application window to go to main menu
+					throw new RuntimeException("Server shutdown");
+				} else {
+					//TODO: Decide when to log
+					System.out.println(connection.readMessage());
+				}
 			}
+			//Update the world
+			world.update(delta);
+			updatePlayer(delta);
+		} catch (IOException e) {
+			shutdown();
+			//TODO: Inform application window to go to main menu
+			throw new RuntimeException("Server connection lost");
 		}
-		
-		//world.update(delta);
-		updatePlayer(delta);
 	}
 	
 	/**
 	 * Updates the local player.
 	 * 
 	 * @param delta the change in time since the last update
+	 * @throws IOException 
 	 */
-	private void updatePlayer(int delta){
+	private void updatePlayer(int delta) throws IOException{
 		int x = Mouse.getX();
 		int y = Mouse.getY();
+		
+		localPlayer.update(delta);
 		
 		//Update the players viewing direction
 		Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
@@ -170,8 +208,15 @@ public class Client {
 
 		//Deal with player movement
 		applyWalk(delta);
-		updateJump(delta);
 
+		//Deal with jumping
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+			localPlayer.jump();
+			
+			//Inform the server of the heroic jump
+			connection.sendMessage(new JumpMessage(localPlayer.getID()));
+		}
+		
 		//Record the latest location of the mouse
 		lastx = x;
 		lasty = y;
@@ -181,8 +226,9 @@ public class Client {
 	 * Moves the local player depending on the keys pressed.
 	 * 
 	 * @param delta the change in time since the last update
+	 * @throws IOException 
 	 */
-	private void applyWalk(int delta){
+	private void applyWalk(int delta) throws IOException{
 		Vector3D moveDirection = localPlayer.getLookDirection();
 		Vector3D moveDelta = new Vector3D(0, 0, 0);
 
@@ -207,34 +253,14 @@ public class Client {
 			moveDelta = moveDelta.normalized().mul(delta/75f);
 			
 			Vector2D position = localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ()));
-			//Move the player. TODO: Change to use a translate method
-			if (world.getRoomAt(position) != null){
+			//Move the player.
+			world.moveCharacter(localPlayer, position);
+			if (localPlayer.getPosition().equals(position, 0.1f)){
 				localPlayer.setPosition(position);
 				
 				//Tell the server that the player moved
 				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
 			}
 		}
-	}
-	
-	/**
-	 * Updates the local player's jump status.
-	 * 
-	 * @param delta the change in time since the last update
-	 */
-	private void updateJump(int delta){
-		//TODO: implement jumping once methods to do so exist
-		/*float jumpTime = localPlayer.getJumpTime();
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && localPlayer.getJumpTime() == 0){
-			localPlayer.setJumpTime(1);
-			jumpTime = 1;
-		}
-		if (jumpTime > 0){
-			localPlayer.setJumpTime(1);
-			jumpTime -= delta/500f;
-		} else {
-			jumpTime = 0;
-		}*/
 	}
 }

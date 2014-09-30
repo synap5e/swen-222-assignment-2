@@ -82,18 +82,26 @@ public class ConnectionTests {
 	
 	@Test
 	public void testConnectionsStartWithNoMessages() {
-		assertFalse(serverside.hasMessage());
-		assertFalse(clientside.hasMessage());
+		try {
+			assertFalse(serverside.hasMessage());
+			assertFalse(clientside.hasMessage());
+		} catch (IOException e) {
+			fail();
+		}
 	}
 	
 	@Test
 	public void testSendingAndRecievingMessage() {
 		String text = "test123";
 		TextMessage testMessage = new TextMessage(text);
-		serverside.sendMessage(testMessage);
-		assertTrue(clientside.hasMessage());
-		String message = ((TextMessage) clientside.readMessage()).getText();
-		assertEquals(text, message);
+		try {
+			serverside.sendMessage(testMessage);
+			assertTrue(clientside.hasMessage());
+			String message = ((TextMessage) clientside.readMessage()).getText();
+			assertEquals(text, message);
+		} catch (IOException e) {
+			fail();
+		}
 	}
 
 	//TODO: Write tests for when client/server disconnects unexpectedly
