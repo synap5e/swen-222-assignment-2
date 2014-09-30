@@ -13,19 +13,25 @@ import space.world.Room;
 import space.world.World;
 
 /**
- * This class is temporary 
- * 
+ * This class is temporary
+ *
  * @author James Greenwood-Thessman (300289004)
  */
 public class MockStorage implements WorldLoader, WorldSaver {
 
 	private World world;
-	
+
 	@Override
 	public void loadWorld(String savePath) {
 		world = new World();
 		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)), new HashMap<Integer, List<Door>>());
 		world.addRoom(r);
+		Room r2 = new Room(LightMode.DARK, 2, "dark", Arrays.asList(new Vector2D(-20, -20), new Vector2D(20, -20), new Vector2D(20, -40), new Vector2D(-20, -40)), new HashMap<Integer, List<Door>>());
+		world.addRoom(r2);
+		Door d = new Door(new Vector2D(0, -20), 3, "door", r, r2, false, false);
+		r.addDoor(3, d);
+		r2.addDoor(1, d);
+		d.openDoor();
 	}
 
 	@Override
