@@ -204,9 +204,7 @@ public class Client {
 
 		//Deal with jumping
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
-			System.out.println("JUMP!");
 			localPlayer.jump();
-			System.out.println(localPlayer.getEyeHeight());
 			//TODO tell server
 		}
 		
