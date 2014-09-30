@@ -167,17 +167,9 @@ public class Server {
 							} else if (message instanceof EntityMovedMessage){
 								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
 								Entity e = world.getEntity(entityMoved.getEntityID());
-								Room original = world.getRoomAt(e.getPosition());
-								Room current = world.getRoomAt(entityMoved.getNewPosition());
-
-								//TODO improve method of making sure an entity stays inside a room
-								if (current != null){
-									e.setPosition(entityMoved.getNewPosition());
-									if (original != current){
-										original.removeFromRoom(e);
-										current.putInRoom(e);
-									}
-
+								
+								world.moveCharacter((Player) e, entityMoved.getNewPosition());
+								if (e.getPosition().equals(entityMoved.getNewPosition(), 0.1f)){
 									//Forward the message to all the other clients
 									sendMessageToAllExcept(id, message);
 								}
@@ -248,6 +240,7 @@ public class Server {
 					synchronized (world){
 						//TODO load from map if player already exists
 						world.addEntity(new Player(new Vector2D(0, 0), id));
+						((Player) world.getEntity(id)).setRoom(world.getRoomAt(new Vector2D(0, 0)));
 						
 						//Tell clients about new player. The new client will use the id given.
 						Message playerJoined = new PlayerJoiningMessage(id);
