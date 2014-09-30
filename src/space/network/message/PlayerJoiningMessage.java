@@ -46,7 +46,7 @@ public class PlayerJoiningMessage implements Message {
 	
 	@Override
 	public byte[] toByteArray() {
-		ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE);
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE/8);
 		buffer.putInt(playerId);
 		
 		return buffer.array();
