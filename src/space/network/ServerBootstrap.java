@@ -5,6 +5,11 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 
+/**
+ * This is a temp class
+ * 
+ * @author James
+ */
 public class ServerBootstrap {
 	
 	private JFrame serverWindow;

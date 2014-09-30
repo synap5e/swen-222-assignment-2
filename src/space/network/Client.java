@@ -13,6 +13,7 @@ import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
+import space.network.message.ShutdownMessage;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -160,26 +161,32 @@ public class Client {
 					Player p = (Player) world.getEntity(playerRotated.getID());
 
 					p.moveLook(playerRotated.getDelta());
+				} else if (message instanceof ShutdownMessage){
+					shutdown();
+					//TODO: Inform application window to go to main menu
+					throw new RuntimeException("Server shutdown");
 				} else {
 					//TODO: Decide when to log
 					System.out.println(connection.readMessage());
 				}
 			}
+			
+			//world.update(delta);
+			updatePlayer(delta);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			shutdown();
+			//TODO: Inform application window to go to main menu
+			throw new RuntimeException("Server connection lost");
 		}
-		
-		//world.update(delta);
-		updatePlayer(delta);
 	}
 	
 	/**
 	 * Updates the local player.
 	 * 
 	 * @param delta the change in time since the last update
+	 * @throws IOException 
 	 */
-	private void updatePlayer(int delta){
+	private void updatePlayer(int delta) throws IOException{
 		int x = Mouse.getX();
 		int y = Mouse.getY();
 		
@@ -189,12 +196,7 @@ public class Client {
 		
 		//Broadcast change to server
 		if (mouseDelta.sqLen() > 0){
-			try {
-				connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
-			} catch (IOException e) {
-				// TODO work out what to do with exception
-				e.printStackTrace();
-			}
+			connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
 		}
 
 		//Deal with player movement
@@ -210,8 +212,9 @@ public class Client {
 	 * Moves the local player depending on the keys pressed.
 	 * 
 	 * @param delta the change in time since the last update
+	 * @throws IOException 
 	 */
-	private void applyWalk(int delta){
+	private void applyWalk(int delta) throws IOException{
 		Vector3D moveDirection = localPlayer.getLookDirection();
 		Vector3D moveDelta = new Vector3D(0, 0, 0);
 
@@ -241,12 +244,7 @@ public class Client {
 				localPlayer.setPosition(position);
 				
 				//Tell the server that the player moved
-				try {
-					connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
-				} catch (IOException e) {
-					// TODO work out what to do with exception
-					e.printStackTrace();
-				}
+				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
 			}
 		}
 	}

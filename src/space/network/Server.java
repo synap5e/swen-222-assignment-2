@@ -20,6 +20,7 @@ import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
+import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
 import space.world.Entity;
 import space.world.Player;
@@ -86,8 +87,10 @@ public class Server {
 		}
 		synchronized (connections) {
 			for (Connection c : connections.values()){
-				//TODO: use a better way to tell the client the server is shutting down
-				//c.sendMessage(new TextMessage("Server Shutting Down"));
+				try {
+					c.sendMessage(new ShutdownMessage());
+				} catch (IOException e) {
+				}
 				c.close();
 			}
 		}
