@@ -18,6 +18,7 @@ import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
 import space.network.message.PlayerRotatedMessage;
+import space.network.message.RequestJoinMessage;
 import space.network.message.TextMessage;
 import space.world.Entity;
 import space.world.Player;
@@ -169,14 +170,29 @@ public class Server {
 		@Override
 		public void run() {
 			Socket socketConnection;
+			Connection newClient;
 			while(stillAlive){
 				try {
 					socketConnection = socket.accept();
-					int id = availableId++;
+					
+					//Create the connection for the new client
+					newClient = new Connection(socketConnection);
+					//Get the previous ID of the client
+					int id = ((RequestJoinMessage) newClient.readMessage()).getPreviousID();
+					
+					//If the client didn't have an ID previously
+					if (id == -1){
+						//Assign a new ID
+						id = availableId++;
+					}
+					
+					//Add the client the map of connections
 					synchronized (connections) {
 						connections.put(id, new Connection(socketConnection));
 					}
+					
 					synchronized (world){
+						//TODO load from map if player already exists
 						world.addEntity(new Player(new Vector2D(0, 0), id));
 						
 						//Tell clients about new player. The new client will use the id given.

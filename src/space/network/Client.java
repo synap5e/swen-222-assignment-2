@@ -12,6 +12,7 @@ import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoinedMessage;
 import space.network.message.PlayerRotatedMessage;
+import space.network.message.RequestJoinMessage;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -68,6 +69,9 @@ public class Client {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
 		}
+		
+		//Request to join the game
+		connection.sendMessage(new RequestJoinMessage(-1)); //TODO use previous ID if one exists 
 		
 		//Create the local player, using the ID supplied by the server
 		PlayerJoinedMessage joinConfirmation = (PlayerJoinedMessage) connection.readMessage();
