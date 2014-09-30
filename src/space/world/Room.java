@@ -129,7 +129,9 @@ public class Room implements ViewableRoom{
 	public List<? extends ViewableWall> getWalls() {
 		List<Wall> walls = new ArrayList<Wall>();
 		for(int i= 0; i<roomShape.size(); i++){
-			walls.add(new Wall(roomShape.get(i),doors.get(i)));
+			List<Door> doorsForWall = doors.get(i);
+			if (doorsForWall == null) doorsForWall = new ArrayList<Door>();
+			walls.add(new Wall(roomShape.get(i), doorsForWall));
 		}
 		return walls;
 	}

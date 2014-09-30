@@ -110,7 +110,7 @@ public class Client {
 	 * @return The game world.
 	 */
 	public World getWorld(){
-		return null;
+		return world;
 	}
 
 	/**
@@ -168,8 +168,8 @@ public class Client {
 					System.out.println(connection.readMessage());
 				}
 			}
-			
-			//world.update(delta);
+			//Update the world
+			world.update(delta);
 			updatePlayer(delta);
 		} catch (IOException e) {
 			shutdown();
@@ -188,6 +188,8 @@ public class Client {
 		int x = Mouse.getX();
 		int y = Mouse.getY();
 		
+		localPlayer.update(delta);
+		
 		//Update the players viewing direction
 		Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
 		localPlayer.moveLook(mouseDelta);
@@ -199,8 +201,15 @@ public class Client {
 
 		//Deal with player movement
 		applyWalk(delta);
-		updateJump(delta);
 
+		//Deal with jumping
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+			System.out.println("JUMP!");
+			localPlayer.jump();
+			System.out.println(localPlayer.getEyeHeight());
+			//TODO tell server
+		}
+		
 		//Record the latest location of the mouse
 		lastx = x;
 		lasty = y;
@@ -245,26 +254,5 @@ public class Client {
 				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
 			}
 		}
-	}
-	
-	/**
-	 * Updates the local player's jump status.
-	 * 
-	 * @param delta the change in time since the last update
-	 */
-	private void updateJump(int delta){
-		//TODO: implement jumping once methods to do so exist
-		/*float jumpTime = localPlayer.getJumpTime();
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && localPlayer.getJumpTime() == 0){
-			localPlayer.setJumpTime(1);
-			jumpTime = 1;
-		}
-		if (jumpTime > 0){
-			localPlayer.setJumpTime(1);
-			jumpTime -= delta/500f;
-		} else {
-			jumpTime = 0;
-		}*/
 	}
 }
