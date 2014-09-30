@@ -16,7 +16,7 @@ public class Player extends Character implements ViewablePlayer {
 	private static final float EYE_HEIGHT = 6;
 	private static final float JUMP_HEIGHT = 2;
 	private static final float JUMP_LENGTH = 500;
-	private static final float COL_RADIUS = 5;
+	private static final float COL_RADIUS = 1.5f;
 
 	/**
 	 * Constructs a new player
