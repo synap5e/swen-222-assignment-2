@@ -13,7 +13,7 @@ import space.network.message.TextMessage;
 public class Connection {
 	
 	private static final int TEXT = 0;
-	private static final int PLAYER_JOINED = 1;
+	private static final int PLAYER_JOINING = 1;
 	private static final int ENTITY_MOVED = 2;
 	private static final int ENTITY_ROTATED = 3;
 	private static final int UNKNOWN = -1;
@@ -53,7 +53,7 @@ public class Connection {
 			switch (type){
 				case TEXT:
 					return new TextMessage(data);
-				case PLAYER_JOINED:
+				case PLAYER_JOINING:
 					return new PlayerJoiningMessage(data);
 				case ENTITY_MOVED:
 					return new EntityMovedMessage(data);
@@ -87,7 +87,7 @@ public class Connection {
 	private int typeOf(Message message){
 		//TODO: decide how whether this is the best way to determine the type of a message
 		if (message instanceof TextMessage) return TEXT;
-		else if (message instanceof PlayerJoiningMessage) return PLAYER_JOINED;
+		else if (message instanceof PlayerJoiningMessage) return PLAYER_JOINING;
 		else if (message instanceof EntityMovedMessage) return ENTITY_MOVED;
 		else if (message instanceof PlayerRotatedMessage) return ENTITY_ROTATED; //TODO: Check actual class when it exists
 		else return UNKNOWN;
