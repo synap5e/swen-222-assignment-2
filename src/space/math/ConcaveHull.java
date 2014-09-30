@@ -1,6 +1,7 @@
 package space.math;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -159,6 +160,10 @@ public class ConcaveHull implements Iterable<Segment2D>{
 			}
 		}
 		return closest;
+	}
+
+	public List<Vector2D> getPoints(){
+		return Collections.unmodifiableList(hullPoints);
 	}
 
 }
