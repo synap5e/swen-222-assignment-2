@@ -35,22 +35,28 @@ public class World implements ViewableWorld{
 	 * @param newPos Where the character will be moved to if move is valid*/
 	public void moveCharacter(Character c, Vector2D newPos){
 		Room room = c.getRoom();
-		if(room.contains(newPos, c.getCollisionRadius())){//moving around same room
+		boolean byOpenDoor = false;
+
+		for(Door door : room.getAllDoors()){
+			Room otherRoom = door.otherRoom(room);
+
+			if (door.getPosition().sub(newPos).sqLen() < 5 && door.canGoThrough()){
+				byOpenDoor = true;
+			}
+
+			if(byOpenDoor && otherRoom.contains(newPos) && otherRoom.isPositionVacant(newPos, c.getCollisionRadius())){
+				c.setPosition(newPos);
+				room.removeFromRoom(c);
+				otherRoom.putInRoom(c);
+				c.setRoom(otherRoom);
+			}
+		}
+
+		if(byOpenDoor){
+			c.setPosition(newPos);
+		} else if(room.contains(newPos, c.getCollisionRadius())){//moving around same room
 			if(room.isPositionVacant(newPos, c.getCollisionRadius())){
 				c.setPosition(newPos);
-			}
-		}else{
-			for(Door door : room.getAllDoors()){
-				Segment2D path = new Segment2D(c.getPosition(),newPos);
-				if(path.onLine(door.getPosition()) && door.canGoThrough()){
-					Room otherRoom = door.otherRoom(room);
-					if(otherRoom.contains(newPos, c.getCollisionRadius())&& otherRoom.isPositionVacant(newPos, c.getCollisionRadius())){
-						c.setPosition(newPos);
-						room.removeFromRoom(c);
-						otherRoom.putInRoom(c);
-						c.setRoom(otherRoom);
-					}
-				}
 			}
 		}
 	}
