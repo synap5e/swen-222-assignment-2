@@ -17,11 +17,10 @@ public class MainMenu extends NestedWidget {
 		
 		this.menuItems = new ArrayList<Label>();
 		
-		
 		Label menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setState(GameApplication.SINGLEPLAYER);
+				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
 			}
 		};
 		menuItem.setText("Play Singleplayer");
@@ -30,7 +29,7 @@ public class MainMenu extends NestedWidget {
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setState(GameApplication.MULTIPLAYER);
+				gameApplication.setGameState(GameApplication.MULTIPLAYER);
 			}
 		};
 		menuItem.setText("Play Multiplayer");
@@ -39,7 +38,7 @@ public class MainMenu extends NestedWidget {
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setState(GameApplication.SINGLEPLAYER);
+				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
 			}
 		};
 		menuItem.setText("Instructions");
@@ -48,7 +47,7 @@ public class MainMenu extends NestedWidget {
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setState(GameApplication.SINGLEPLAYER);
+				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
 			}
 		};
 		menuItem.setText("Controls");
@@ -57,7 +56,7 @@ public class MainMenu extends NestedWidget {
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setState(GameApplication.QUIT);
+				gameApplication.setGameState(GameApplication.QUIT);
 			}
 		};
 		menuItem.setText("Exit");

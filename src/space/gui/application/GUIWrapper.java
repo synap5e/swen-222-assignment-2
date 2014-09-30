@@ -15,26 +15,31 @@ public class GUIWrapper extends NestedWidget{
     
     @Override
     protected boolean handleEvent(Event evt) {
+        if(super.handleEvent(evt)) {
+            return true;
+        }
+    	boolean returnFlag = evt.isMouseEventNoWheel();
     	if (evt.getType() == Event.Type.KEY_PRESSED) {
 		    switch (evt.getKeyCode()) {
 	           case Event.KEY_ESCAPE:
-	        	   gameApplication.captureMouse(false);
-	               return true;
+	        	   System.out.println(gameApplication.isMenuVisible());
+	        	   gameApplication.setMenuVisible(!gameApplication.isMenuVisible());
+	               return returnFlag;
 	           default:
-	        	   break;
+	        	   return false;
 		    }
         } else if (evt.getType() == Event.Type.MOUSE_BTNDOWN) {
         	switch(evt.getMouseButton()){
             	case Event.MOUSE_RBUTTON:
             		gameApplication.openPopup(evt);
-            		return true;
-            	case Event.MOUSE_LBUTTON:
-            		gameApplication.captureMouse(true);
-            		return true;
+            		return returnFlag;
+            	//case Event.MOUSE_LBUTTON:
+            	//	gameApplication.captureMouse(true);
+            	//	return returnFlag;
             	default:
-	        	   break;
+            		return false;
         	}
     	}
-    	return evt.isMouseEventNoWheel();
+    	return false;
     }
 }

@@ -58,6 +58,7 @@
     <images file="hud/simple.png" format="RGBA">
         <area name="-borderG" border="3" xywh="60,0,9,9" splitx="L3,R3" splity="T3,B3"/>
         <area name="white" xywh="23,3,1,1"/>
+        <alias name="ingamemenu.background" ref="white" tint="#AA000000"/>
     </images>
 
     <images file="hud/icon-gold-star-small.png">
@@ -67,6 +68,7 @@
             <alias ref="-gold-star" tint="#7F7F7F"/>
         </select>
         <alias name="radialpopupmenu.background" ref="white" tint="#803F3F3F"/>
+
     </images>
 
     <fontDef name="normal" filename="font/font.fnt" color="white">
@@ -75,7 +77,7 @@
         <fontParam if="textSelection" color="blue"/>
     </fontDef>
 
-    <fontDef name="font.menu" filename="font/font.fnt" color="#7F7F7F">
+    <fontDef name="font.menu" filename="font/font.fnt" color="#9F9F9F">
         <fontParam if="hover" color="white"/>
     </fontDef>
 
@@ -188,6 +190,13 @@
     </theme>
 
     <theme name="mainmenu" ref="-defaults">
+        <theme name="menuitem" ref="label">
+            <param name="font"><font>font.menu</font></param>
+        </theme>
+    </theme>
+
+    <theme name="ingamemenu" ref="-defaults">
+        <param name="background"><image>ingamemenu.background</image></param>
         <theme name="menuitem" ref="label">
             <param name="font"><font>font.menu</font></param>
         </theme>

@@ -79,9 +79,9 @@ public class HeadsUpDisplay extends NestedWidget {
     @Override
     protected boolean handleEvent(Event evt) {
         if(super.handleEvent(evt)) {
-            return true;
+            return evt.isMouseEventNoWheel();
         }
-        return evt.isMouseEventNoWheel();
+        return false;
     }
     
     private void layoutItems(){

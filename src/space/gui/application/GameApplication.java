@@ -43,11 +43,10 @@ public class GameApplication {
 	GUI gui;
 	GUIWrapper guiWrapper;
 	
-	IngameController ingameController;
-	
 	HeadsUpDisplay hud;
 	
 	MainMenu mainMenu;
+	IngameMenu ingameMenu;
 	
 	public GameApplication(int width, int height) throws LWJGLException, IOException{
 		this.width = width;
@@ -111,7 +110,9 @@ public class GameApplication {
 		
 		//Load GUI
 		guiWrapper.add(new HeadsUpDisplay(this));
-		guiWrapper.add(new IngameController(this));
+		
+		ingameMenu = new IngameMenu(this);
+		guiWrapper.add(ingameMenu);
 		
 		gui.setRootPane(guiWrapper);
 		gui.reapplyTheme();
@@ -124,6 +125,7 @@ public class GameApplication {
 		this.end = false;
 		this.lastTick = getTime();
 		
+		//setMenuVisible(false);
 		captureMouse(true);
 		
 		
@@ -151,11 +153,11 @@ public class GameApplication {
 		Display.sync(60);
 	}
 	
-	public void stopGame(){
+	public void stop(){
 		end = true;
 	}
 	
-	public void setState(int i){
+	public void setGameState(int i){
 		if(i >= 0){
 			state = i;
 			end = true;
@@ -184,6 +186,15 @@ public class GameApplication {
 
 	public void openPopup(Event evt) {
 		hud.createRadialMenu().openPopup(evt);
+	}
+
+	public void setMenuVisible(boolean flag) {
+		captureMouse(!flag);
+		ingameMenu.setVisible(flag);
+	}
+
+	public boolean isMenuVisible() {
+		return ingameMenu.isVisible();
 	}
 	
 }
