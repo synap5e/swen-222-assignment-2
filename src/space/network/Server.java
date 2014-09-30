@@ -5,14 +5,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import org.lwjgl.Sys;
-
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
@@ -21,7 +17,6 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
-import space.network.message.TextMessage;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -160,8 +155,6 @@ public class Server {
 				for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
 					Connection con = cons.getValue();
 					int id = cons.getKey();
-
-					int conId = id;
 					try {
 						while (!con.isClosed() && con.hasMessage()){
 							Message message = con.readMessage();

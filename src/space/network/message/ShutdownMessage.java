@@ -11,4 +11,9 @@ public class ShutdownMessage implements Message {
 	public byte[] toByteArray() {
 		return new byte[0];
 	}
+	
+	@Override
+	public String toString(){
+		return "[Shutdown]: The server has shutdown";
+	}
 }
