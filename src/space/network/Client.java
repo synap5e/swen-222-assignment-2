@@ -2,10 +2,13 @@ package space.network;
 
 import java.io.IOException;
 import java.net.Socket;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
@@ -83,6 +86,9 @@ public class Client {
 	 * Shuts down the client.
 	 */
 	public void shutdown(){
+		//Inform the server
+		connection.sendMessage(new DisconnectMessage(localPlayer.getID()));
+		
 		connection.close();
 	}
 	
@@ -120,6 +126,14 @@ public class Client {
 				Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
 				world.addEntity(e);
 				world.getRoomAt(e.getPosition()).putInRoom(e);
+			//Remove disconnected players
+			} else if (message instanceof DisconnectMessage){
+				DisconnectMessage playerDisconnected = (DisconnectMessage) message;
+				Entity e = world.getEntity(playerDisconnected.getPlayerID());
+				
+				//Remove from the room and world
+				world.getRoomAt(e.getPosition()).removeFromRoom(e);
+				//world.removeEntity(e);
 			//Move remotely controlled entities
 			} else if (message instanceof EntityMovedMessage){
 				EntityMovedMessage entityMoved = (EntityMovedMessage) message;

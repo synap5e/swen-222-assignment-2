@@ -5,12 +5,17 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.lwjgl.Sys;
+
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
+import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
@@ -32,6 +37,7 @@ public class Server {
 	private Map<Integer, Connection> connections;
 	
 	private World world;
+	private Map<Integer, Player> unactivePlayers;
 	
 	//TODO: Work out better way of coming up with an ID
 	private int availableId = 9001;
@@ -39,6 +45,7 @@ public class Server {
 	public Server(String host, int port){
 		//Create the list of client connections
 		connections = new HashMap<Integer, Connection>();
+		unactivePlayers = new HashMap<Integer, Player>();
 		
 		//Create the socket for clients to connect to
 		try {
@@ -86,6 +93,30 @@ public class Server {
 		}
 	}
 	
+	private void handleDisconnect(int disconnectedID){
+		Player p = (Player) world.getEntity(disconnectedID);
+		
+		//Remove player from world
+		world.getRoomAt(p.getPosition()).removeFromRoom(p);
+		//world.removeEntity(p); TODO add world.removeEntity(Entity e)
+		
+		//Keep track of the player allowing for reconnects
+		unactivePlayers.put(disconnectedID, p);
+		
+		//Close the connection to the client
+		connections.get(disconnectedID).close();
+		
+		synchronized (connections) {
+			connections.remove(disconnectedID);
+			
+			//Tell the other clients that the player has disconnected
+			DisconnectMessage disconnect = new DisconnectMessage(disconnectedID);
+			for (Connection con : connections.values()){
+				con.sendMessage(disconnect);
+			}
+		}
+	}
+	
 	private static long getTime() {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
@@ -112,11 +143,15 @@ public class Server {
 						Connection con = cons.getValue();
 						int id = cons.getKey();
 						
-						while (con.hasMessage()){
+						while (!con.isClosed() && con.hasMessage()){
 							Message message = con.readMessage();
 							
+							//Handle disconnected players
+							if (message instanceof DisconnectMessage){
+								DisconnectMessage playerDisconnected = (DisconnectMessage) message;
+								handleDisconnect(playerDisconnected.getPlayerID());
 							//If an entity moved
-							if (message instanceof EntityMovedMessage){
+							} else if (message instanceof EntityMovedMessage){
 								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
 								Entity e = world.getEntity(entityMoved.getEntityID());
 								Room original = world.getRoomAt(e.getPosition());

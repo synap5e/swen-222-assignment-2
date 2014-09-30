@@ -20,8 +20,7 @@ public class Connection {
 	private static final int ENTITY_ROTATED = 3;
 	private static final int DISCONNECT = 4;
 	private static final int UNKNOWN = -1;
-	
-	
+
 	private Socket socket;
 	private OutputStream outgoing;
 	private InputStream incoming;
@@ -45,6 +44,10 @@ public class Connection {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public boolean isClosed(){
+		return socket.isClosed();
 	}
 	
 	public Message readMessage(){
