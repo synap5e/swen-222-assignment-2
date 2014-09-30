@@ -71,6 +71,7 @@ public class Client {
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
 			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
+			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -244,8 +245,10 @@ public class Client {
 			moveDelta = moveDelta.normalized().mul(delta/75f);
 			
 			Vector2D position = localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ()));
-			//Move the player. TODO: Change to use a translate method
-			if (world.getRoomAt(position) != null){
+			//Move the player.
+			world.moveCharacter(localPlayer, position);
+			if (localPlayer.getPosition().equals(position, 0.1f)){
+				System.out.println("test");
 				localPlayer.setPosition(position);
 				
 				//Tell the server that the player moved
