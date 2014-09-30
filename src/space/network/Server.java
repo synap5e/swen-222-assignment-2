@@ -87,7 +87,7 @@ public class Server {
 		synchronized (connections) {
 			for (Connection c : connections.values()){
 				//TODO: use a better way to tell the client the server is shutting down
-				c.sendMessage(new TextMessage("Server Shutting Down"));
+				//c.sendMessage(new TextMessage("Server Shutting Down"));
 				c.close();
 			}
 		}
@@ -108,11 +108,19 @@ public class Server {
 		
 		synchronized (connections) {
 			connections.remove(disconnectedID);
-			
-			//Tell the other clients that the player has disconnected
-			DisconnectMessage disconnect = new DisconnectMessage(disconnectedID);
-			for (Connection con : connections.values()){
-				con.sendMessage(disconnect);
+		}
+		
+		Map<Integer,Connection> connections = new HashMap<Integer, Connection>();
+		synchronized (connections) {
+			connections.putAll(this.connections);
+		}
+		//Tell the other clients that the player has disconnected
+		DisconnectMessage disconnect = new DisconnectMessage(disconnectedID);
+		for (Map.Entry<Integer, Connection> con : connections.entrySet()){
+			try {
+				con.getValue().sendMessage(disconnect);
+			} catch (IOException e) {
+				handleDisconnect(con.getKey());
 			}
 		}
 	}
@@ -124,7 +132,11 @@ public class Server {
 	private void sendMessageToAllExcept(int connectionID, Message message){
 		for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
 			if (cons.getKey() != connectionID){
-				cons.getValue().sendMessage(message);
+				try {
+					cons.getValue().sendMessage(message);
+				} catch (IOException e) {
+					handleDisconnect(cons.getKey());
+				}
 			}
 		}
 	}
@@ -138,14 +150,19 @@ public class Server {
 				long now = getTime();
 				long delta = now - last;
 				
+				Map<Integer,Connection> connections = new HashMap<Integer, Connection>();
 				synchronized (connections) {
-					for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
-						Connection con = cons.getValue();
-						int id = cons.getKey();
-						
+					connections.putAll(Server.this.connections);
+				}
+				for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
+					Connection con = cons.getValue();
+					int id = cons.getKey();
+
+					int conId = id;
+					try {
 						while (!con.isClosed() && con.hasMessage()){
 							Message message = con.readMessage();
-							
+
 							//Handle disconnected players
 							if (message instanceof DisconnectMessage){
 								DisconnectMessage playerDisconnected = (DisconnectMessage) message;
@@ -156,7 +173,7 @@ public class Server {
 								Entity e = world.getEntity(entityMoved.getEntityID());
 								Room original = world.getRoomAt(e.getPosition());
 								Room current = world.getRoomAt(entityMoved.getNewPosition());
-								
+
 								//TODO improve method of making sure an entity stays inside a room
 								if (current != null){
 									e.setPosition(entityMoved.getNewPosition());
@@ -164,7 +181,7 @@ public class Server {
 										original.removeFromRoom(e);
 										current.putInRoom(e);
 									}
-									
+
 									//Forward the message to all the other clients
 									sendMessageToAllExcept(id, message);
 								}
@@ -172,13 +189,15 @@ public class Server {
 							} else if (message instanceof PlayerRotatedMessage){
 								PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
 								Player p = (Player) world.getEntity(playerRotated.getID());
-			
+
 								p.moveLook(playerRotated.getDelta());
-								
+
 								//Forward the message to all the other clients
 								sendMessageToAllExcept(id, message);
 							}
 						}
+					} catch (IOException e) {
+						handleDisconnect(cons.getKey());
 					}
 				}
 				

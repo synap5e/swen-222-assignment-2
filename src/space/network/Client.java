@@ -65,17 +65,17 @@ public class Client {
 		//Connect to the server
 		try {
 			connection = new Connection(new Socket(host, port));
+			
+			//Request to join the game
+			connection.sendMessage(new PlayerJoiningMessage(-1)); //TODO use previous ID if one exists 
+			
+			//Create the local player, using the ID supplied by the server
+			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
+			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
 		}
-		
-		//Request to join the game
-		connection.sendMessage(new PlayerJoiningMessage(-1)); //TODO use previous ID if one exists 
-		
-		//Create the local player, using the ID supplied by the server
-		PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
-		localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 		
 		//Get the initial location of the mouse
 		lastx = Mouse.getX();
@@ -87,7 +87,11 @@ public class Client {
 	 */
 	public void shutdown(){
 		//Inform the server
-		connection.sendMessage(new DisconnectMessage(localPlayer.getID()));
+		try {
+			connection.sendMessage(new DisconnectMessage(localPlayer.getID()));
+		} catch (IOException e) {
+			//Exception disregarded as it was being closed anyway
+		}
 		
 		connection.close();
 	}
@@ -117,48 +121,53 @@ public class Client {
 	 */
 	public void update(int delta) {
 		//Apply updates from server
-		while (connection.hasMessage()){
-			Message message = connection.readMessage();
-			
-			//Add any new players
-			if (message instanceof PlayerJoiningMessage){
-				PlayerJoiningMessage playerJoined = (PlayerJoiningMessage) message;
-				Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
-				world.addEntity(e);
-				world.getRoomAt(e.getPosition()).putInRoom(e);
-			//Remove disconnected players
-			} else if (message instanceof DisconnectMessage){
-				DisconnectMessage playerDisconnected = (DisconnectMessage) message;
-				Entity e = world.getEntity(playerDisconnected.getPlayerID());
+		try {
+			while (connection.hasMessage()){
+				Message message = connection.readMessage();
 				
-				//Remove from the room and world
-				world.getRoomAt(e.getPosition()).removeFromRoom(e);
-				//world.removeEntity(e);
-			//Move remotely controlled entities
-			} else if (message instanceof EntityMovedMessage){
-				EntityMovedMessage entityMoved = (EntityMovedMessage) message;
-				Entity e = world.getEntity(entityMoved.getEntityID());
-				
-				//Move the room the entity is in if required
-				Room from = world.getRoomAt(e.getPosition());
-				Room to = world.getRoomAt(entityMoved.getNewPosition());
-				if (to != from){
-					from.removeFromRoom(e);
-					to.putInRoom(e);
-				}
-				
-				//Move the entity
-				e.setPosition(entityMoved.getNewPosition());
-			//Rotate remote player
-			} else if (message instanceof PlayerRotatedMessage){
-				PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
-				Player p = (Player) world.getEntity(playerRotated.getID());
+				//Add any new players
+				if (message instanceof PlayerJoiningMessage){
+					PlayerJoiningMessage playerJoined = (PlayerJoiningMessage) message;
+					Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+					world.addEntity(e);
+					world.getRoomAt(e.getPosition()).putInRoom(e);
+				//Remove disconnected players
+				} else if (message instanceof DisconnectMessage){
+					DisconnectMessage playerDisconnected = (DisconnectMessage) message;
+					Entity e = world.getEntity(playerDisconnected.getPlayerID());
+					
+					//Remove from the room and world
+					world.getRoomAt(e.getPosition()).removeFromRoom(e);
+					//world.removeEntity(e);
+				//Move remotely controlled entities
+				} else if (message instanceof EntityMovedMessage){
+					EntityMovedMessage entityMoved = (EntityMovedMessage) message;
+					Entity e = world.getEntity(entityMoved.getEntityID());
+					
+					//Move the room the entity is in if required
+					Room from = world.getRoomAt(e.getPosition());
+					Room to = world.getRoomAt(entityMoved.getNewPosition());
+					if (to != from){
+						from.removeFromRoom(e);
+						to.putInRoom(e);
+					}
+					
+					//Move the entity
+					e.setPosition(entityMoved.getNewPosition());
+				//Rotate remote player
+				} else if (message instanceof PlayerRotatedMessage){
+					PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+					Player p = (Player) world.getEntity(playerRotated.getID());
 
-				p.moveLook(playerRotated.getDelta());
-			} else {
-				//TODO: Decide when to log
-				System.out.println(connection.readMessage());
+					p.moveLook(playerRotated.getDelta());
+				} else {
+					//TODO: Decide when to log
+					System.out.println(connection.readMessage());
+				}
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		//world.update(delta);
@@ -180,7 +189,12 @@ public class Client {
 		
 		//Broadcast change to server
 		if (mouseDelta.sqLen() > 0){
-			connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
+			try {
+				connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
+			} catch (IOException e) {
+				// TODO work out what to do with exception
+				e.printStackTrace();
+			}
 		}
 
 		//Deal with player movement
@@ -227,7 +241,12 @@ public class Client {
 				localPlayer.setPosition(position);
 				
 				//Tell the server that the player moved
-				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
+				try {
+					connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
+				} catch (IOException e) {
+					// TODO work out what to do with exception
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -36,60 +36,43 @@ public class Connection {
 		}
 	}
 	
-	public boolean hasMessage(){
-		try {
+	public boolean hasMessage() throws IOException{
 			return incoming.available() > 0;
-		} catch (IOException e) {
-			// TODO decide how to deal with exception
-			e.printStackTrace();
-			return false;
-		}
 	}
 	
 	public boolean isClosed(){
 		return socket.isClosed();
 	}
 	
-	public Message readMessage(){
-		try {
-			int type = incoming.read();
-			int length = incoming.read();
-			byte[] data = new byte[length];
-			incoming.read(data);
-			switch (type){
-				case TEXT:
-					return new TextMessage(data);
-				case PLAYER_JOINING:
-					return new PlayerJoiningMessage(data);
-				case ENTITY_MOVED:
-					return new EntityMovedMessage(data);
-				case ENTITY_ROTATED:
-					return new PlayerRotatedMessage(data);
-				case DISCONNECT:
-					return new DisconnectMessage(data);
-				default:
-					//TODO: decide how to deal with format error
-					return null;
-			}
-		} catch (IOException e) {
-			// TODO decide how to deal with exception
-			e.printStackTrace();
-			return null;
+	public Message readMessage() throws IOException{
+		int type = incoming.read();
+		int length = incoming.read();
+		byte[] data = new byte[length];
+		incoming.read(data);
+		switch (type){
+			case TEXT:
+				return new TextMessage(data);
+			case PLAYER_JOINING:
+				return new PlayerJoiningMessage(data);
+			case ENTITY_MOVED:
+				return new EntityMovedMessage(data);
+			case ENTITY_ROTATED:
+				return new PlayerRotatedMessage(data);
+			case DISCONNECT:
+				return new DisconnectMessage(data);
+			default:
+				//TODO: decide how to deal with format error
+				return null;
 		}
 	}
 	
-	public void sendMessage(Message message){
-		try {
-			int type = typeOf(message);
-			byte[] data = message.toByteArray();
-			
-			outgoing.write(type);
-			outgoing.write(data.length);
-			outgoing.write(data);
-		} catch (IOException e) {
-			// TODO decide how to deal with exception
-			e.printStackTrace();
-		}
+	public void sendMessage(Message message) throws IOException{
+		int type = typeOf(message);
+		byte[] data = message.toByteArray();
+		
+		outgoing.write(type);
+		outgoing.write(data.length);
+		outgoing.write(data);
 	}
 	
 	private int typeOf(Message message){
