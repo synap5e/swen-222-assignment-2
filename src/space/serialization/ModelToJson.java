@@ -52,9 +52,30 @@ public class ModelToJson implements WorldSaver{
 		r.put("description", room.getDescription());
 		r.put("Room Shape", room.getRoomShape());
 		r.put("contains", addContains(room));
-		//ADD DOORS IN ROOM - MAP ?????
+		r.put("walls", addWall(room.getDoors()));
 		return r;
 	}
+
+	private JSONArray addWall(Map<Integer, List<Door>> doors) {
+		JSONArray walls = new JSONArray();
+		for (Entry<Integer, List<Door>> entry : doors.entrySet()) {
+			JSONObject wall = new JSONObject();
+			wall.put(entry.getKey(),addDoors(entry.getValue()));
+			walls.add(wall);
+		}
+		return walls;
+	}
+
+	private JSONObject addDoors(List<Door> value) {
+		JSONArray doors = new JSONArray();
+		JSONObject d = new JSONObject();
+		for(Door dr: value){
+			doors.add(dr);
+		}
+		d.put("doors", doors);
+		return d;
+	}
+	
 
 	private JSONArray addContains(Room room) {
 		Set<Entity> entities = room.getEntities();

@@ -193,5 +193,9 @@ public class Room implements ViewableRoom{
 	public Set<Entity> getEntities() {
 		return entities;
 	}
+	
+	public Map<Integer, List<Door>> getDoors(){
+		return doors;
+	}
 
 }
