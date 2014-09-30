@@ -8,6 +8,7 @@ import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
@@ -71,6 +72,7 @@ public class Client {
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
 			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
+			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -110,7 +112,7 @@ public class Client {
 	 * @return The game world.
 	 */
 	public World getWorld(){
-		return null;
+		return world;
 	}
 
 	/**
@@ -159,6 +161,11 @@ public class Client {
 					Player p = (Player) world.getEntity(playerRotated.getID());
 
 					p.moveLook(playerRotated.getDelta());
+				} else if (message instanceof JumpMessage){
+					JumpMessage thePlayerWhoJumps = (JumpMessage) message;
+					
+					//Make the player jump
+					((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
 				} else if (message instanceof ShutdownMessage){
 					shutdown();
 					//TODO: Inform application window to go to main menu
@@ -168,8 +175,8 @@ public class Client {
 					System.out.println(connection.readMessage());
 				}
 			}
-			
-			//world.update(delta);
+			//Update the world
+			world.update(delta);
 			updatePlayer(delta);
 		} catch (IOException e) {
 			shutdown();
@@ -188,6 +195,8 @@ public class Client {
 		int x = Mouse.getX();
 		int y = Mouse.getY();
 		
+		localPlayer.update(delta);
+		
 		//Update the players viewing direction
 		Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
 		localPlayer.moveLook(mouseDelta);
@@ -199,8 +208,15 @@ public class Client {
 
 		//Deal with player movement
 		applyWalk(delta);
-		updateJump(delta);
 
+		//Deal with jumping
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+			localPlayer.jump();
+			
+			//Inform the server of the heroic jump
+			connection.sendMessage(new JumpMessage(localPlayer.getID()));
+		}
+		
 		//Record the latest location of the mouse
 		lastx = x;
 		lasty = y;
@@ -237,34 +253,14 @@ public class Client {
 			moveDelta = moveDelta.normalized().mul(delta/75f);
 			
 			Vector2D position = localPlayer.getPosition().add(new Vector2D(moveDelta.getX(), moveDelta.getZ()));
-			//Move the player. TODO: Change to use a translate method
-			if (world.getRoomAt(position) != null){
+			//Move the player.
+			world.moveCharacter(localPlayer, position);
+			if (localPlayer.getPosition().equals(position, 0.1f)){
 				localPlayer.setPosition(position);
 				
 				//Tell the server that the player moved
 				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
 			}
 		}
-	}
-	
-	/**
-	 * Updates the local player's jump status.
-	 * 
-	 * @param delta the change in time since the last update
-	 */
-	private void updateJump(int delta){
-		//TODO: implement jumping once methods to do so exist
-		/*float jumpTime = localPlayer.getJumpTime();
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && localPlayer.getJumpTime() == 0){
-			localPlayer.setJumpTime(1);
-			jumpTime = 1;
-		}
-		if (jumpTime > 0){
-			localPlayer.setJumpTime(1);
-			jumpTime -= delta/500f;
-		} else {
-			jumpTime = 0;
-		}*/
 	}
 }

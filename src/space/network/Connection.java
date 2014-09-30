@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
@@ -20,6 +21,7 @@ public class Connection {
 	private static final int ENTITY_ROTATED = 3;
 	private static final int DISCONNECT = 4;
 	private static final int SHUTDOWN = 5;
+	private static final int JUMP = 6;
 	private static final int UNKNOWN = -1;
 
 	private Socket socket;
@@ -63,6 +65,8 @@ public class Connection {
 				return new DisconnectMessage(data);
 			case SHUTDOWN:
 				return new ShutdownMessage();
+			case JUMP:
+				return new JumpMessage(data);
 			default:
 				//TODO: decide how to deal with format error
 				return null;
@@ -86,6 +90,7 @@ public class Connection {
 		else if (message instanceof PlayerRotatedMessage) return ENTITY_ROTATED; //TODO: Check actual class when it exists
 		else if (message instanceof DisconnectMessage) return DISCONNECT;
 		else if (message instanceof ShutdownMessage) return SHUTDOWN;
+		else if (message instanceof JumpMessage) return JUMP;
 		else return UNKNOWN;
 	}
 	

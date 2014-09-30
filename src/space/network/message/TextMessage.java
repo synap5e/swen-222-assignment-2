@@ -1,7 +1,6 @@
 package space.network.message;
 
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 
 /**
  * TextMessage represents text message that is able to be sent or received over the network.
