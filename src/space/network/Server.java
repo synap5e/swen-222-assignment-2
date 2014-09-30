@@ -19,7 +19,6 @@ import space.network.storage.WorldLoader;
 import space.network.message.ShutdownMessage;
 import space.world.Entity;
 import space.world.Player;
-import space.world.Room;
 import space.world.World;
 
 //TODO: Work out a way to let the server be shutdown nicely
@@ -96,6 +95,7 @@ public class Server {
 		
 		//Remove player from world
 		world.getRoomAt(p.getPosition()).removeFromRoom(p);
+		
 		//world.removeEntity(p); TODO add world.removeEntity(Entity e)
 		
 		//Keep track of the player allowing for reconnects
@@ -241,6 +241,7 @@ public class Server {
 						//TODO load from map if player already exists
 						world.addEntity(new Player(new Vector2D(0, 0), id));
 						((Player) world.getEntity(id)).setRoom(world.getRoomAt(new Vector2D(0, 0)));
+						world.getRoomAt(new Vector2D(0, 0)).putInRoom(world.getEntity(id));
 						
 						//Tell clients about new player. The new client will use the id given.
 						Message playerJoined = new PlayerJoiningMessage(id);
