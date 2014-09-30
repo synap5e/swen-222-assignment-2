@@ -1,5 +1,7 @@
 package space.serialization;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +24,7 @@ import space.world.World;
 
 public class ModelToJson implements WorldSaver{
 
-	JSONObject file = new JSONObject();
+	JSONObject fileobject = new JSONObject();
 	JSONArray listOfRooms = new JSONArray();
 	JSONArray listOfPlayers = new JSONArray();
 
@@ -34,13 +36,43 @@ public class ModelToJson implements WorldSaver{
 		for (Entry<Integer, Room> entry : rooms.entrySet()) {
 			listOfRooms.add(addRoom(entry.getKey(), entry.getValue()));
 		}
-		file.put("rooms", listOfRooms);
+		fileobject.put("rooms", listOfRooms);
 		
 		for(Player p : players){
 			listOfPlayers.add(addPlayer(p));
 		}
 		
-		file.put("players", listOfPlayers);
+		fileobject.put("players", listOfPlayers);
+		FileWriter file = null;
+		try {
+			file = new FileWriter(savePath+".txt");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+            file.write(fileobject.toJSONString());
+            System.out.println("Successfully Copied JSON Object to File...");
+            System.out.println("\nJSON Object: " + fileobject);
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+ 
+        } finally {
+            try {
+				file.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            try {
+				file.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
 		
 		
 	}
