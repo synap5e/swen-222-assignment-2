@@ -3,13 +3,14 @@ package space.network.message;
 import java.nio.ByteBuffer;
 
 /**
- * PlayerJoingedMessage is message used for telling a client that a player has joined the game.
+ * PlayerJoiningMessage is message used for telling a client or server that a player is joining the game.
  * The message composes of the ID of the new player. This message is also used for confirming that
- *  to a client that it has joined as well as assigning it's player with an ID.
+ *  to a client that it has joined as well as assigning it's player with an ID. 
+ *  When used by a client connecting to a server, the ID is the previous ID the client had. -1 is used when no previous ID exists.
  * 
  * @author James Greenwood-Thessman (greenwjame1)
  */
-public class PlayerJoinedMessage implements Message {
+public class PlayerJoiningMessage implements Message {
 
 	/**
 	 * The ID of the player who joined
@@ -17,25 +18,25 @@ public class PlayerJoinedMessage implements Message {
 	private int playerId;
 	
 	/**
-	 * Creates the message that a player joined.
+	 * Creates the message that a player is joining the game.
 	 * 
-	 * @param playerId the ID of the player that joined
+	 * @param playerId the ID of the player that is joining.
 	 */
-	public PlayerJoinedMessage(int playerId) {
+	public PlayerJoiningMessage(int playerId) {
 		this.playerId = playerId;
 	}
 	
 	/**
-	 * Creates the message that a player joined.
+	 * Creates the message that a player is joining the game.
 	 * 
 	 * @param playerId the byte array containing the ID of the player that joined
 	 */
-	public PlayerJoinedMessage(byte[] playerId) {
+	public PlayerJoiningMessage(byte[] playerId) {
 		this.playerId = ByteBuffer.wrap(playerId).getInt();
 	}
 	
 	/**
-	 * Gets the ID of the player that joined.
+	 * Gets the ID of the player that is joining.
 	 * 
 	 * @return The ID of the player.
 	 */

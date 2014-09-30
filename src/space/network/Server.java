@@ -8,17 +8,13 @@ import java.net.SocketException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
-import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
-import space.network.message.RequestJoinMessage;
 import space.network.message.TextMessage;
 import space.world.Entity;
 import space.world.Player;
@@ -178,7 +174,7 @@ public class Server {
 					//Create the connection for the new client
 					newClient = new Connection(socketConnection);
 					//Get the previous ID of the client
-					int id = ((RequestJoinMessage) newClient.readMessage()).getPreviousID();
+					int id = ((PlayerJoiningMessage) newClient.readMessage()).getPlayerID();
 					
 					//If the client didn't have an ID previously
 					if (id == -1){
@@ -196,7 +192,7 @@ public class Server {
 						world.addEntity(new Player(new Vector2D(0, 0), id));
 						
 						//Tell clients about new player. The new client will use the id given.
-						Message playerJoined = new PlayerJoinedMessage(id);
+						Message playerJoined = new PlayerJoiningMessage(id);
 						for (Connection con : connections.values()){
 							con.sendMessage(playerJoined);
 						}
@@ -207,7 +203,7 @@ public class Server {
 							int otherId = cons.getKey();
 							if (otherId != id){
 								Player other = (Player) world.getEntity(otherId);
-								con.sendMessage(new PlayerJoinedMessage(otherId));
+								con.sendMessage(new PlayerJoiningMessage(otherId));
 								con.sendMessage(new EntityMovedMessage(otherId, world.getEntity(otherId).getPosition()));
 								con.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
 							}

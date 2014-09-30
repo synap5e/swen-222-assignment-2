@@ -2,17 +2,14 @@ package space.network;
 
 import java.io.IOException;
 import java.net.Socket;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.EntityMovedMessage;
 import space.network.message.Message;
-import space.network.message.PlayerJoinedMessage;
+import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
-import space.network.message.RequestJoinMessage;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -71,10 +68,10 @@ public class Client {
 		}
 		
 		//Request to join the game
-		connection.sendMessage(new RequestJoinMessage(-1)); //TODO use previous ID if one exists 
+		connection.sendMessage(new PlayerJoiningMessage(-1)); //TODO use previous ID if one exists 
 		
 		//Create the local player, using the ID supplied by the server
-		PlayerJoinedMessage joinConfirmation = (PlayerJoinedMessage) connection.readMessage();
+		PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
 		localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 		
 		//Get the initial location of the mouse
@@ -118,8 +115,8 @@ public class Client {
 			Message message = connection.readMessage();
 			
 			//Add any new players
-			if (message instanceof PlayerJoinedMessage){
-				PlayerJoinedMessage playerJoined = (PlayerJoinedMessage) message;
+			if (message instanceof PlayerJoiningMessage){
+				PlayerJoiningMessage playerJoined = (PlayerJoiningMessage) message;
 				Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
 				world.addEntity(e);
 				world.getRoomAt(e.getPosition()).putInRoom(e);
