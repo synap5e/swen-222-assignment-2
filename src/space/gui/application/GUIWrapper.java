@@ -24,7 +24,6 @@ public class GUIWrapper extends NestedWidget{
     	if (evt.getType() == Event.Type.KEY_PRESSED) {
 		    switch (evt.getKeyCode()) {
 	           case Event.KEY_ESCAPE:
-	        	   System.out.println(gameApplication.isMenuVisible());
 	        	   gameApplication.setMenuVisible(!gameApplication.isMenuVisible());
 	               return returnFlag;
 	           default:
