@@ -38,7 +38,7 @@ public class World implements ViewableWorld{
 		for(Door door : room.getAllDoors()){
 			Room otherRoom = door.otherRoom(room);
 
-			if (door.getPosition().sub(newPos).sqLen() < 5 && door.canGoThrough()){
+			if (door.getPosition().sub(newPos).sqLen() < 3 && door.canGoThrough()){
 				byOpenDoor = true;
 			}
 
