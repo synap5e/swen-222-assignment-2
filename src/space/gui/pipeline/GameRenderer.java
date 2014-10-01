@@ -201,7 +201,7 @@ public class GameRenderer {
 		for (ViewableRoom room : roomsToRender){
 			if (room != null){
 				if (room != currentRoom){
-					setLight(null, room);
+					setLight(player, room);
 					roomModels.get(room).render();
 				}
 			}

@@ -78,8 +78,7 @@ public class Room implements ViewableRoom{
 	
 
 	public boolean contains(Vector2D position, float radius) {
-		return roomShape.contains(position);
-		//return roomShape.contains(position,radius);
+		return roomShape.contains(position,radius);
 	}
 	
 	/**Returns whether or not the entity is in the room
