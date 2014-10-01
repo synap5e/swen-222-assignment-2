@@ -68,6 +68,7 @@ public class Client {
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
 			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
+			localPlayer.getRoom().putInRoom(localPlayer);
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -193,8 +194,6 @@ public class Client {
 	 */
 	private void updatePlayer(int delta) throws IOException{
 		if (!isActive) return;
-		
-		localPlayer.update(delta);
 		
 		//Update the players viewing direction
 		int dx = Mouse.getDX();
