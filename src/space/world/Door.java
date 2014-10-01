@@ -52,21 +52,19 @@ public class Door extends NonStationary implements ViewableDoor {
 		this.i=i;
 		position = pos;
 	}
-//<<<<<<< HEAD
-	
-	public Vector2D getPosition(){
-		return position;
-	}
-	public int geti(){
-		return i;
-	}
-	public String getDescription(){
-		return description;
-	}
-	
-	
 
-//=======
+//	
+//	public Vector2D getPosition(){
+//		return position;
+//	}
+//	public int geti(){
+//		return i;
+//	}
+//	public String getDescription(){
+//		return description;
+//	}
+//	
+
 
 	/**
 	 * Unlocks the door if the player has the key to unlock it

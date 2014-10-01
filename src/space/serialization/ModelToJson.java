@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import space.math.ConcaveHull;
 import space.network.storage.WorldSaver;
 import space.world.Door;
 import space.world.Entity;
@@ -24,9 +25,9 @@ import space.world.World;
 
 public class ModelToJson implements WorldSaver{
 
-	JSONObject fileobject = new JSONObject();
-	JSONArray listOfRooms = new JSONArray();
-	JSONArray listOfPlayers = new JSONArray();
+	MyJsonObject fileobject = new MyJsonObject();
+	MyJsonList listOfRooms = new MyJsonList();
+	MyJsonList listOfPlayers = new MyJsonList();
 
 	@Override
 	public void saveWorld(String savePath, World world, List<Player> players) {
@@ -41,8 +42,8 @@ public class ModelToJson implements WorldSaver{
 		for(Player p : players){
 			listOfPlayers.add(addPlayer(p));
 		}
-		
 		fileobject.put("players", listOfPlayers);
+		
 		FileWriter file = null;
 		try {
 			file = new FileWriter(savePath+".txt");
@@ -77,41 +78,47 @@ public class ModelToJson implements WorldSaver{
 		
 	}
 
-	private JSONObject addRoom(Integer roomId, Room room) {
-		JSONObject r = new JSONObject();
+	private MyJsonObject addRoom(Integer roomId, Room room) {
+		MyJsonObject r = new MyJsonObject();
 		r.put("id", roomId);
-		r.put("Light Mode", room.getLightMode());
+		r.put("Light Mode", room.getLightMode().toString());
 		r.put("description", room.getDescription());
-		r.put("Room Shape", room.getRoomShape());
+		r.put("Room Shape", addRoomShape(room.getRoomShape()));
 		r.put("contains", addContains(room));
 		r.put("walls", addWall(room.getDoors()));
 		return r;
 	}
 
-	private JSONArray addWall(Map<Integer, List<Door>> doors) {
-		JSONArray walls = new JSONArray();
+	private MyJsonObject addRoomShape(ConcaveHull roomShape) {
+		MyJsonObject hull = new MyJsonObject();
+		//TO DO ASK SIMON ABOOUT CONCAVE HULL
+		return null;
+	}
+
+	private MyJsonList addWall(Map<Integer, List<Door>> doors) {
+		MyJsonList walls = new MyJsonList();
 		for (Entry<Integer, List<Door>> entry : doors.entrySet()) {
-			JSONObject wall = new JSONObject();
+			MyJsonObject wall = new MyJsonObject();
 			wall.put(entry.getKey(),addDoors(entry.getValue()));
 			walls.add(wall);
 		}
 		return walls;
 	}
 
-	private JSONObject addDoors(List<Door> value) {
-		JSONArray doors = new JSONArray();
-		JSONObject d = new JSONObject();
+	private MyJsonObject addDoors(List<Door> value) {
+		MyJsonList doors = new MyJsonList();
+		MyJsonObject d = new MyJsonObject();
 		for(Door dr: value){
-			doors.add(dr);
+			doors.add(dr.getID());
 		}
-		d.put("doors", doors);
+		d.put("doors id", doors);
 		return d;
 	}
 	
 
-	private JSONArray addContains(Room room) {
+	private MyJsonList addContains(Room room) {
 		Set<Entity> entities = room.getEntities();
-		JSONArray entitiesInRoom = new JSONArray();
+		MyJsonList entitiesInRoom = new MyJsonList();
 		for(Entity e: entities){
 			if(e instanceof Stationary){
 				entitiesInRoom.add(addStationary(e));
@@ -128,7 +135,7 @@ public class ModelToJson implements WorldSaver{
 		return entitiesInRoom;
 	}
 
-	private JSONObject addNonStationary(Entity e) {
+	private MyJsonObject addNonStationary(Entity e) {
 		if(e instanceof Door){
 			return AddDoor((Door) e);
 		}
@@ -141,7 +148,7 @@ public class ModelToJson implements WorldSaver{
 		return null;
 	}
 
-	private JSONObject AddCharacter(Character e) {
+	private MyJsonObject AddCharacter(Character e) {
 		//this case should never happen
 		if(e instanceof Player){
 			return null;
@@ -152,8 +159,8 @@ public class ModelToJson implements WorldSaver{
 		}
 	}
 
-	private JSONObject addPlayer(Player e) {
-		JSONObject player = new JSONObject();
+	private MyJsonObject addPlayer(Player e) {
+		MyJsonObject player = new MyJsonObject();
 		player.put("points", e.getPoints());
 		player.put("x rotation", e.getXRotation());
 		player.put("y rotation", e.getYRotation());
