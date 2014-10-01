@@ -43,14 +43,9 @@ public class Client {
 	private Player localPlayer;
 	
 	/**
-	 * The last x coordinate for the mouse.
+	 * Whether the client is active and should take user input.
 	 */
-	private int lastx;
-	
-	/**
-	 * The last y coordinate for the mouse.
-	 */
-	private int lasty;
+	private boolean isActive;
 	
 	/**
 	 * Creates a game client that connects to a server.
@@ -77,10 +72,6 @@ public class Client {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
 		}
-		
-		//Get the initial location of the mouse
-		lastx = Mouse.getX();
-		lasty = Mouse.getY();
 	}
 	
 	/**
@@ -113,6 +104,15 @@ public class Client {
 	 */
 	public World getWorld(){
 		return world;
+	}
+	
+	/**
+	 * Sets whether the client is actively accepting user input.
+	 * 
+	 * @param isActive whether the client should accept user input
+	 */
+	public void setActive(boolean isActive){
+		this.isActive = isActive;
 	}
 
 	/**
@@ -192,13 +192,14 @@ public class Client {
 	 * @throws IOException 
 	 */
 	private void updatePlayer(int delta) throws IOException{
-		int x = Mouse.getX();
-		int y = Mouse.getY();
+		if (!isActive) return;
 		
 		localPlayer.update(delta);
 		
 		//Update the players viewing direction
-		Vector2D mouseDelta = new Vector2D(x-lastx,y-lasty);
+		int dx = Mouse.getDX();
+		int dy = Mouse.getDY();
+		Vector2D mouseDelta = new Vector2D(dx,dy);
 		localPlayer.moveLook(mouseDelta);
 		
 		//Broadcast change to server
@@ -216,10 +217,6 @@ public class Client {
 			//Inform the server of the heroic jump
 			connection.sendMessage(new JumpMessage(localPlayer.getID()));
 		}
-		
-		//Record the latest location of the mouse
-		lastx = x;
-		lasty = y;
 	}
 	
 	/**
