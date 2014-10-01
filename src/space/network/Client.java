@@ -2,6 +2,8 @@ package space.network;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import space.math.Vector2D;
@@ -45,7 +47,12 @@ public class Client {
 	/**
 	 * Whether the client is active and should take user input.
 	 */
-	private boolean isActive;
+	private boolean active;
+	
+	/**
+	 * The list of listeners to be alerted of events
+	 */
+	public List<ClientListener> listeners;
 	
 	/**
 	 * Creates a game client that connects to a server.
@@ -73,6 +80,9 @@ public class Client {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
 		}
+		
+		//Create list of listeners
+		listeners = new ArrayList<ClientListener>();
 	}
 	
 	/**
@@ -113,7 +123,27 @@ public class Client {
 	 * @param isActive whether the client should accept user input
 	 */
 	public void setActive(boolean isActive){
-		this.isActive = isActive;
+		this.active = isActive;
+	}
+	
+	/**
+	 * Adds a listener to the client. The listener will be alerted of critical events that occur.
+	 * 
+	 * @param listener the listener to add
+	 * @return Whether the listener was added successfully
+	 */
+	public boolean addListener(ClientListener listener){
+		return listeners.add(listener);
+	}
+	
+	/**
+	 * Removes a listener to the client. The listener will no longer be alerted of critical events that occur.
+	 * 
+	 * @param listener the listener to remove
+	 * @return Whether the listener was removed successfully
+	 */
+	public boolean removeListener(ClientListener listener){
+		return listeners.remove(listener);
 	}
 
 	/**
@@ -169,8 +199,8 @@ public class Client {
 					((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
 				} else if (message instanceof ShutdownMessage){
 					shutdown();
-					//TODO: Inform application window to go to main menu
-					throw new RuntimeException("Server shutdown");
+					alertListenersOfShutdown("Server has shutdown");
+					return;
 				} else {
 					//TODO: Decide when to log
 					System.out.println(connection.readMessage());
@@ -181,8 +211,7 @@ public class Client {
 			updatePlayer(delta);
 		} catch (IOException e) {
 			shutdown();
-			//TODO: Inform application window to go to main menu
-			throw new RuntimeException("Server connection lost");
+			alertListenersOfShutdown("Connection to server has been lost");
 		}
 	}
 	
@@ -193,7 +222,7 @@ public class Client {
 	 * @throws IOException 
 	 */
 	private void updatePlayer(int delta) throws IOException{
-		if (!isActive) return;
+		if (!active) return;
 		
 		//Update the players viewing direction
 		int dx = Mouse.getDX();
@@ -257,6 +286,18 @@ public class Client {
 				//Tell the server that the player moved
 				connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), position));
 			}
+		}
+	}
+	
+	/**
+	 * Alerts all client listeners that the client has shutdown.
+	 * 
+	 * @param reason a brief explanation of why the client has shutdown
+	 */
+	private void alertListenersOfShutdown(String reason){
+		//Inform all the listeners
+		for (ClientListener listener : listeners){
+			listener.onConnectionClose(reason);
 		}
 	}
 }
