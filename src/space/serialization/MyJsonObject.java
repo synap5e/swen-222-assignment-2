@@ -2,18 +2,34 @@ package space.serialization;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+/**
+ * Represents a MyJsonObject for classes and entities in the game
+ * this is a wrapper class for the raw JSONObject from the library
+ * 
+ * It enables type safety rather than just being generic - to avoid accidently put the wrong data type
+ * 
+ * @author Shweta Barapatre
+ *
+ */
 
 public class MyJsonObject {
 	JSONObject obj;
-	
+		/**
+		 * Constructor - creates a new Json object
+		 */
 		public MyJsonObject(){
 			obj = new JSONObject();
 		}
 		
+		/**
+		 * Second constructor that takes a loaded 
+		 * @param loadedObject JSONObject with data
+		 */
+		
 		public MyJsonObject(JSONObject loadedObject){
 			obj = loadedObject;
 		}
-		
+
 		public void put(String key, String value){
 			obj.put(key, value);
 		}

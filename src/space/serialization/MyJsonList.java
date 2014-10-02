@@ -1,7 +1,18 @@
 package space.serialization;
 
 import org.json.simple.JSONArray;
+
 import org.json.simple.JSONObject;
+
+/**
+ * Represents a MyJsonList for classes and entities in the game
+ * this is a wrapper class for the raw JSONArray from the library
+ * 
+ * It enables type safety rather than being generic - to avoid accidently put the wrong data type
+ * 
+ * @author Shweta Barapatre
+ *
+ */
 
 public class MyJsonList {
 	JSONArray list;
