@@ -53,7 +53,7 @@ public class ModelToJson implements WorldSaver{
 		}
 		
 		try {
-            file.write(fileobject.toJSONString());
+            file.write(fileobject.toString());
             System.out.println("Successfully Copied JSON Object to File...");
             System.out.println("\nJSON Object: " + fileobject);
  
@@ -99,7 +99,7 @@ public class ModelToJson implements WorldSaver{
 		MyJsonList walls = new MyJsonList();
 		for (Entry<Integer, List<Door>> entry : doors.entrySet()) {
 			MyJsonObject wall = new MyJsonObject();
-			wall.put(entry.getKey(),addDoors(entry.getValue()));
+			wall.put(entry.getKey().toString(),addDoors(entry.getValue()));
 			walls.add(wall);
 		}
 		return walls;
@@ -165,14 +165,14 @@ public class ModelToJson implements WorldSaver{
 		player.put("x rotation", e.getXRotation());
 		player.put("y rotation", e.getYRotation());
 		player.put("id", e.getID());
-		JSONArray positionints = new JSONArray();
+		MyJsonList positionints = new MyJsonList();
 		positionints.add(e.getPosition().getX());
 		positionints.add(e.getPosition().getY());
 		player.put("position",positionints);
 		return player;
 	}
 
-	private JSONObject AddPickup(Pickup e) {
+	private MyJsonObject AddPickup(Pickup e) {
 		if(e instanceof Key){
 			return AddKey((Key) e);
 		}
@@ -182,35 +182,35 @@ public class ModelToJson implements WorldSaver{
 		}
 	}
 
-	private JSONObject AddKey(Key e) {
-		JSONObject key = new JSONObject();
+	private MyJsonObject AddKey(Key e) {
+		MyJsonObject key = new MyJsonObject();
 		key.put("doorid", e.getExit().getID());
 		key.put("id", e.geti());
 		key.put("description", e.getDescription());
-		JSONArray positionints = new JSONArray();
+		MyJsonList positionints = new MyJsonList();
 		positionints.add(e.getPosition().getX());
 		positionints.add(e.getPosition().getY());
 		key.put("position",positionints);
 		return key;
 	}
 
-	private JSONObject AddDoor(Door e) {
-		JSONObject door = new JSONObject();
+	private MyJsonObject AddDoor(Door e) {
+		MyJsonObject door = new MyJsonObject();
 		door.put("room1id",e.getRoom1().getID());
 		door.put("room2id", e.getRoom2().getID());
 		door.put("is locked",e.isLocked());
 		door.put("one way", e.isOneWay());
 		door.put("amount open", e.getOpenPercent());
-		door.put("id", e.geti());
+		door.put("id", e.getID());
 		door.put("description", e.getDescription());
-		JSONArray positionints = new JSONArray();
+		MyJsonList positionints = new MyJsonList();
 		positionints.add(e.getPosition().getX());
 		positionints.add(e.getPosition().getY());
 		door.put("position",positionints);
 		return door;
 	}
 
-	private JSONObject addStationary(Entity e) {
+	private MyJsonObject addStationary(Entity e) {
 		// I don't think we have anything that implements a stationary yet? 
 		return null;
 	}

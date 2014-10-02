@@ -48,10 +48,12 @@ public class MyJsonObject {
 			}
 			return (E) value;
 		}
-		
-		
-		
-		
-		
+
+		@Override
+		public String toString() {
+			return obj.toJSONString();
+		}
+
+			
 		
 }

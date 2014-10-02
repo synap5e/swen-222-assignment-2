@@ -53,18 +53,6 @@ public class Door extends NonStationary implements ViewableDoor {
 		position = pos;
 	}
 
-//	
-//	public Vector2D getPosition(){
-//		return position;
-//	}
-//	public int geti(){
-//		return i;
-//	}
-//	public String getDescription(){
-//		return description;
-//	}
-//	
-
 
 	/**
 	 * Unlocks the door if the player has the key to unlock it
@@ -74,8 +62,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	 */
 	public void unlock(Player p) {
 		for (Pickup i : p.getInventory()) {
-			if (i instanceof Key && ((Key) i).getDoor().equals(this)) { //player has key to unlock this door
-//>>>>>>> branch 'master' of https://github.com/synap5e/swen-222-assignment-2.git
+			if (i instanceof Key && ((Key) i).getDoor().equals(this)) { 
 				locked = false;
 				return;
 			}
