@@ -16,8 +16,8 @@ public class World implements ViewableWorld{
 	public World(){
 	}
 	
-	public World(Set<Entity> ent, Set<Room> room){
-		for(Entity e: ent){
+	public World(Set<Entity> entity, Set<Room> room){
+		for(Entity e: entity){
 			addEntity(e);
 		}
 		for(Room r: room){
@@ -98,9 +98,7 @@ public class World implements ViewableWorld{
 		}
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
+
 	@Override
 	public Room getRoomAt(Vector2D pos) {
 		for(Room r : rooms.values()){
@@ -139,9 +137,6 @@ public class World implements ViewableWorld{
 		entities.put(e.getID(), e);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<ViewableRoom> getViewableRooms() {
 		return new ArrayList<ViewableRoom>(rooms.values());

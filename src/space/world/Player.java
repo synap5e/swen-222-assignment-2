@@ -21,15 +21,15 @@ public class Player extends Character implements ViewablePlayer {
 	/**
 	 * Constructs a new player
 	 * 
-	 * @param pos
+	 * @param position
 	 *            The position
-	 * @param i
+	 * @param id
 	 *            The id
 	 * @param r
 	 *            The room the player is in
 	 */
-	public Player(Vector2D pos, int i/* , Room r */) {
-		super(pos, i/* ,r */);
+	public Player(Vector2D position, int id/* , Room r */) {
+		super(position, id/* ,r */);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class Player extends Character implements ViewablePlayer {
 	}
 
 	/**
-	 * {@inheritDoc} This updates the player's jump status
+	 * This updates the player's jump status
 	 */
 	@Override
 	public void update(int delta) {
@@ -68,24 +68,16 @@ public class Player extends Character implements ViewablePlayer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean withinReach(Vector2D pos) {
 		return getPosition().sub(pos).sqLen() <= Math.pow(reach, 2);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public float getAngle() {
 		return yRotation;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public float getElevation() {
 		return getEyeHeight() - EYE_HEIGHT;
@@ -109,17 +101,11 @@ public class Player extends Character implements ViewablePlayer {
 		this.points = points;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canClip() {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isTorchOn() {
 		return torchOn;
@@ -154,27 +140,32 @@ public class Player extends Character implements ViewablePlayer {
 	public void setYRotation(float y) {
 		yRotation = y;
 	}
-
-	/**
-	 * {@inheritDoc}
+	
+	/**Returns the player's x rotation
+	 * @return
 	 */
+	public float getXRotation(){
+		return xRotation;
+	}
+	
+	/**Returns the player's y rotation
+	 * @return
+	 */
+	public float getYRotation(){
+		return yRotation;
+	}
+
 	@Override
 	public float getCollisionRadius() {
 		return COL_RADIUS;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public float getEyeHeight() {
 		return (float) ((EYE_HEIGHT + JUMP_HEIGHT) - JUMP_HEIGHT
 				* Math.pow(jumpTime * 2 - 1, 2));
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Vector3D getLookDirection() {
 		float x_circ = (float) (Math.cos(DEGREES_TO_RADIANS(yRotation)) * Math.sin(DEGREES_TO_RADIANS(xRotation + 180)));
@@ -192,14 +183,6 @@ public class Player extends Character implements ViewablePlayer {
 	 */
 	private static float DEGREES_TO_RADIANS(float degrees) {
 		return (float) ((degrees) * (Math.PI / 180.0));
-	}
-	
-	public float getXRotation(){
-		return xRotation;
-	}
-	
-	public float getYRotation(){
-		return yRotation;
 	}
 
 }

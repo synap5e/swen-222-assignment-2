@@ -12,16 +12,16 @@ public abstract class Character extends NonStationary {
 	/**
 	 * Creates the character
 	 * 
-	 * @param pos
+	 * @param position
 	 *            The character's position
-	 * @param i
+	 * @param id
 	 *            The id of the character
 	 * @param r
 	 *            The room the character is in
 	 */
-	public Character(Vector2D pos, int i/* , Room r */) {
-		super(pos, i, 0, "");
-		// room = r;
+	public Character(Vector2D position, int id/* , Room room */) {
+		super(position, id, 0, "");
+		//this.room = room;
 	}
 
 	/**

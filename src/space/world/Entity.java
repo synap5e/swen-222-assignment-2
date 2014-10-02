@@ -12,18 +12,18 @@ public abstract class Entity implements ViewableObject {
 	/**
 	 * Constructs new entity
 	 * 
-	 * @param pos
+	 * @param position
 	 *            The entity's position
-	 * @param i
+	 * @param id
 	 *            The id
-	 * @param d
+	 * @param description
 	 *            The description of the entity
 	 */
-	public Entity(Vector2D pos, int i, float e, String d) {
-		position = pos;
-		id = i;
-		elevation = e;
-		description = d;
+	public Entity(Vector2D position, int id, float elevation, String description) {
+		this.position = position;
+		this.id = id;
+		this.elevation = elevation;
+		this.description = description;
 	}
 
 	/**
