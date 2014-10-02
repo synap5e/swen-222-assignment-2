@@ -22,19 +22,19 @@ public class Room implements ViewableRoom{
 	private String description;
 	private ConcaveHull roomShape;
 	private Set<Entity> entities = new HashSet<Entity>();
-	private Map<Integer, List<Door>> doors;
+	private Map<Integer, List<Door>> doors; //wall index to door. Maps which door belongs to which wall
 
 	/**Constructs a new room
-	 *@param m The lighting of the room
-	 *@param i The room's id
-	 *@param d The room's description
+	 *@param lightMode The lighting of the room
+	 *@param id The room's id
+	 *@param description The room's description
 	 *@param points The list of points which make up the room's shape
 	 *@param doors The list of doors in the room which maps to which wall it belongs to*/
-	public Room(LightMode m, int i, String d, List<Vector2D> points,Map<Integer,List<Door>> doors){
-		mode = m;
-		id = i;
-		description = d;
-		roomShape = new ConcaveHull(points);
+	public Room(LightMode lightMode, int id, String description, List<Vector2D> points,Map<Integer,List<Door>> doors){
+		mode = lightMode;
+		this.id = id;
+		this.description = description;
+		this.roomShape = new ConcaveHull(points);
 		this.doors = doors;
 	}
 
@@ -113,17 +113,11 @@ public class Room implements ViewableRoom{
 		}
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Vector2D getCentre() {
 		return roomShape.getCentre();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<? extends ViewableWall> getWalls() {
 		List<Wall> walls = new ArrayList<Wall>();
@@ -147,25 +141,32 @@ public class Room implements ViewableRoom{
 		return id;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public LightMode getLightMode() {
 		return mode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/**Returns the concave hull which represents the shape of the room
+	 * @return*/
+	public ConcaveHull getRoomShape() {
+		return roomShape;
+	}
+
+	public Set<Entity> getEntities() {
+		return entities;
+	}
+	
+	/**Returns which door is on which wall. The integer is the wall index
+	 * @return*/
+	public Map<Integer, List<Door>> getDoors(){
+		return doors;
+	}
+	
 	@Override
-	public List<? extends ViewableObject> getContainedObjects() {
+	public List<Entity> getContainedObjects() {
 		return new ArrayList<Entity>(entities);
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Door> getAllDoors() {
 		List<Door> allDoors = new ArrayList<Door>();
@@ -175,25 +176,16 @@ public class Room implements ViewableRoom{
 		return allDoors;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Vector2D getAABBTopLeft() {
 		return roomShape.getAABBTopLeft();
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Vector2D getAABBBottomRight() {
 		return roomShape.getAABBBottomRight();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<? extends ViewableBeam> getBeams() {
 		// TODO Auto-generated method stub
@@ -206,10 +198,10 @@ public class Room implements ViewableRoom{
 		private List<Door> wallDoors;
 		
 		/**Constructs a new wall
-		 * @param ls the line segment
+		 * @param lineSeg the line segment
 		 * @param doors the list of doors belonging to the wall*/
-		public Wall(Segment2D ls, List<Door> doors){
-			lineSeg = ls;
+		public Wall(Segment2D lineSeg, List<Door> doors){
+			this.lineSeg = lineSeg;
 			this.wallDoors = doors;
 		}
 		
@@ -239,17 +231,5 @@ public class Room implements ViewableRoom{
 
 	}
 
-
-	public ConcaveHull getRoomShape() {
-		return roomShape;
-	}
-
-	public Set<Entity> getEntities() {
-		return entities;
-	}
-	
-	public Map<Integer, List<Door>> getDoors(){
-		return doors;
-	}
 
 }

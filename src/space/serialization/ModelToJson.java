@@ -185,7 +185,7 @@ public class ModelToJson implements WorldSaver{
 	private MyJsonObject AddKey(Key e) {
 		MyJsonObject key = new MyJsonObject();
 		key.put("doorid", e.getExit().getID());
-		key.put("id", e.geti());
+		key.put("id", e.getID());
 		key.put("description", e.getDescription());
 		MyJsonList positionints = new MyJsonList();
 		positionints.add(e.getPosition().getX());

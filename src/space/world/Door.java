@@ -16,41 +16,35 @@ public class Door extends NonStationary implements ViewableDoor {
 
 	private float amtOpen = 0; // the amount the door is open. 1 is fully open &
 								// 0 is fully closed
-	private String description;
-	private int i;
-	private Vector2D position;
 	private enum DoorState {OPEN, OPENING, CLOSED, CLOSING};
 	private DoorState state = DoorState.CLOSED;
 
-	private static final float LENGTH = 500; // I dont know what to name this?
+	private static final float LENGTH = 500;
 
 	/**
 	 * Creates new Door
 	 * 
-	 * @param pos
+	 * @param position
 	 *            The door's position
-	 * @param i
+	 * @param id
 	 *            The id
-	 * @param desc
+	 * @param description
 	 *            The door's description
-	 * @param r1
+	 * @param room1
 	 *            ,r2 The rooms the door is connected to
-	 * @param ow
+	 * @param isOneWay
 	 *            Whether or not the door can only be used from r1 to r2 or both
 	 *            ways
-	 * @param l
+	 * @param isLocked
 	 *            Whether or not the door is locked
 	 */
-	public Door(Vector2D pos, int i, String desc, Room r1, Room r2, boolean ow,
-			boolean l) {
-		super(pos, i, 0, desc);
-		room1 = r1;
-		room2 = r2;
-		oneWay = ow;
-		locked = l;
-		description = desc;
-		this.i=i;
-		position = pos;
+	public Door(Vector2D position, int id, String description, Room room1, Room room2, boolean isOneWay,
+			boolean isLocked) {
+		super(position, id, 0, description);
+		this.room1 = room1;
+		this.room2 = room2;
+		this.oneWay = isOneWay;
+		this.locked = isLocked;
 	}
 
 
@@ -62,7 +56,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	 */
 	public void unlock(Player p) {
 		for (Pickup i : p.getInventory()) {
-			if (i instanceof Key && ((Key) i).getDoor().equals(this)) { 
+			if (i instanceof Key && ((Key) i).getDoor().equals(this)) { //player has key to unlock this door
 				locked = false;
 				return;
 			}
@@ -93,9 +87,6 @@ public class Door extends NonStationary implements ViewableDoor {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void update(int delta) {
 		if (state == DoorState.CLOSING) {
@@ -114,9 +105,6 @@ public class Door extends NonStationary implements ViewableDoor {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public float getCollisionRadius() {
 		return 0;
@@ -131,17 +119,11 @@ public class Door extends NonStationary implements ViewableDoor {
 		return locked;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Room getRoom1() {
 		return room1;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Room getRoom2() {
 		return room2;
@@ -174,25 +156,16 @@ public class Door extends NonStationary implements ViewableDoor {
 		return oneWay;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public float getAngle() {
 		return 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canClip() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public float getOpenPercent() {
 		return amtOpen;

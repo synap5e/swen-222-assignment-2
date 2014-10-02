@@ -12,17 +12,17 @@ public abstract class Stationary extends Entity implements ViewableStationary {
 	/**
 	 * Constructs a new stationary entity
 	 * 
-	 * @param pos
+	 * @param position
 	 *            The position
-	 * @param i
+	 * @param id
 	 *            The id
-	 * @param e
+	 * @param elevation
 	 *            The elevation
-	 * @param d
+	 * @param description
 	 *            The description
 	 */
-	public Stationary(Vector2D pos, int i, float e, String d) {
-		super(pos, i, e, d);
+	public Stationary(Vector2D position, int id, float elevation, String description) {
+		super(position, id, elevation, description);
 	}
 
 	/**
