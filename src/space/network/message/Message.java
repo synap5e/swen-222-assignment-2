@@ -5,7 +5,7 @@ package space.network.message;
  * Classes implementing this interface are required to provide a constructor that takes
  *  an integer array in the same format as their return value from toIntArray().
  * 
- * @author James Greenwood-Thessman (greenwjame1)
+ * @author James Greenwood-Thessman (300289004)
  *
  */
 public interface Message {

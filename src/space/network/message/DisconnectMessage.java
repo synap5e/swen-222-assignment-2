@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
  * DisconnectMessage is the message used for informing a client that a player has disconnected. 
  *  It is also used by the client to tell the server that is it disconnecting.
  * 
- * @author James Greenwood-Thessman (greenwjame1)
+ * @author James Greenwood-Thessman (300289004)
  */
 public class DisconnectMessage implements Message {
 

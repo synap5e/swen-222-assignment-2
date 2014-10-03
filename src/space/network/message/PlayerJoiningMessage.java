@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
  *  to a client that it has joined as well as assigning it's player with an ID. 
  *  When used by a client connecting to a server, the ID is the previous ID the client had. -1 is used when no previous ID exists.
  * 
- * @author James Greenwood-Thessman (greenwjame1)
+ * @author James Greenwood-Thessman (300289004)
  */
 public class PlayerJoiningMessage implements Message {
 
