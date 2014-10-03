@@ -3,13 +3,9 @@ package space.network;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
@@ -29,7 +25,7 @@ import space.world.World;
  *  applying changes from the server as well as from local input.
  * Changes caused by local input are sent to the connected server.
  * 
- * @author James Greenwood-Thessman (greenwjame1)
+ * @author James Greenwood-Thessman (300289004)
  */
 public class Client {
 
@@ -165,8 +161,8 @@ public class Client {
 	 */
 	public void update(int delta) {
 		try {
+			//Ensures the world is able to be safely updated
 			synchronized (world) {
-				//Update the world
 				world.update(delta);
 				updatePlayer(delta);
 			}
@@ -276,6 +272,7 @@ public class Client {
 					if (connection.hasMessage()){
 						Message message = connection.readMessage();
 						
+						//Ensure the world is able to be modified
 						synchronized (world) {
 							//Add any new players
 							if (message instanceof PlayerJoiningMessage){
@@ -310,12 +307,22 @@ public class Client {
 			}
 		}
 
+		/**
+		 * Handles a remote player joining the game.
+		 * 
+		 * @param playerJoined the message containing the information about this player
+		 */
 		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
 			Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
 			world.addEntity(e);
 			world.getRoomAt(e.getPosition()).putInRoom(e);
 		}
 		
+		/**
+		 * Handles a remote player disconnecting from the game.
+		 * 
+		 * @param playerDisconnected the message containing the information about this player
+		 */
 		private void handlePlayerDisconnect(DisconnectMessage playerDisconnected){
 			Entity e = world.getEntity(playerDisconnected.getPlayerID());
 			
@@ -324,6 +331,11 @@ public class Client {
 			//world.removeEntity(e);
 		}
 		
+		/**
+		 * Handles an entity moving.
+		 * 
+		 * @param entityMoved the message containing the information about the moving entity
+		 */
 		private void handleMove(EntityMovedMessage entityMoved){
 			Entity e = world.getEntity(entityMoved.getEntityID());
 			
@@ -339,11 +351,21 @@ public class Client {
 			e.setPosition(entityMoved.getNewPosition());
 		}
 		
+		/**
+		 * Handles rotating a remote player's look direction.
+		 * 
+		 * @param playerRotated the message containing the information about the rotation
+		 */
 		private void handlePlayerLook(PlayerRotatedMessage playerRotated){
 			Player p = (Player) world.getEntity(playerRotated.getID());
 			p.moveLook(playerRotated.getDelta());
 		}
 		
+		/**
+		 * Handles a remote player jumping.
+		 * 
+		 * @param jumpingPlayer the message containing the information about the jumping player
+		 */
 		private void handlePlayerJump(JumpMessage jumpingPlayer){
 			Player p = (Player) world.getEntity(jumpingPlayer.getPlayerID());
 			p.jump();
