@@ -13,6 +13,10 @@ import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
 
+/**
+ * 
+ * @author James Greenwood-Thessman (300289004)
+ */
 public class Connection {
 	
 	private static final int TEXT = 0;

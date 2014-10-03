@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * TextMessage represents text message that is able to be sent or received over the network.
  * 
- * @author James Greenwood-Thessman (greenwjame1)
+ * @author James Greenwood-Thessman (300289004)
  */
 public class TextMessage implements Message {
 

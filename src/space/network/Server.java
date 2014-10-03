@@ -19,10 +19,13 @@ import space.network.storage.WorldLoader;
 import space.network.message.ShutdownMessage;
 import space.world.Entity;
 import space.world.Player;
-import space.world.Room;
 import space.world.World;
 
 //TODO: Work out a way to let the server be shutdown nicely
+/**
+ * 
+ * @author James Greenwood-Thessman (300289004)
+ */
 public class Server {
 	
 	private Thread connectionHandler;
@@ -139,6 +142,10 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author James Greenwood-Thessman (300289004)
+	 */
 	private class ServerGameLoop implements Runnable {
 		
 		@Override
@@ -211,6 +218,10 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author James Greenwood-Thessman (300289004)
+	 */
 	private class ConnectionHandler implements Runnable {
 		
 		@Override

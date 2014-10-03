@@ -5,6 +5,10 @@ import java.nio.ByteBuffer;
 import space.math.Vector2D;
 
 //TODO: Create actual class to rotate entities, not just players
+/**
+ * 
+ * @author James Greenwood-Thessman (300289004)
+ */
 public class PlayerRotatedMessage implements Message {
 
 	private Vector2D mouseDelta;

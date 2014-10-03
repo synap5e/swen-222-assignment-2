@@ -3,7 +3,7 @@ package space.network.message;
 /**
  * ShutdownMessage is the message used for informing clients that the server has shutdown and that they should also shutdown.
  * 
- * @author James Greenwood-Thessman (greenwjame1)
+ * @author James Greenwood-Thessman (300289004)
  */
 public class ShutdownMessage implements Message {
 	

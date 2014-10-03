@@ -7,7 +7,7 @@ import space.math.Vector2D;
  * EntityMovedMessage is message used for informing clients and the server that an entity has moved.
  * The message composes of the ID of the enity and the vector of its new position.
  * 
- * @author James Greenwood-Thessman (greenwjame1)
+ * @author James Greenwood-Thessman (300289004)
  */
 public class EntityMovedMessage implements Message {
 
