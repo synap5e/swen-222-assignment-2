@@ -262,8 +262,13 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * MessageHandler handles incoming messages from the server and applies them to the world.
+	 * 
+	 * @author James Greenwood-Thessman (300289004)
+	 */
 	private class MessageHandler implements Runnable {
-
+		
 		@Override
 		public void run() {
 			try {
@@ -274,44 +279,20 @@ public class Client {
 						synchronized (world) {
 							//Add any new players
 							if (message instanceof PlayerJoiningMessage){
-								PlayerJoiningMessage playerJoined = (PlayerJoiningMessage) message;
-								Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
-								world.addEntity(e);
-								world.getRoomAt(e.getPosition()).putInRoom(e);
+								handlePlayerJoin((PlayerJoiningMessage) message);
 							//Remove disconnected players
 							} else if (message instanceof DisconnectMessage){
-								DisconnectMessage playerDisconnected = (DisconnectMessage) message;
-								Entity e = world.getEntity(playerDisconnected.getPlayerID());
-								
-								//Remove from the room and world
-								world.getRoomAt(e.getPosition()).removeFromRoom(e);
-								//world.removeEntity(e);
+								handlePlayerDisconnect((DisconnectMessage) message);
 							//Move remotely controlled entities
 							} else if (message instanceof EntityMovedMessage){
-								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
-								Entity e = world.getEntity(entityMoved.getEntityID());
-								
-								//Move the room the entity is in if required
-								Room from = world.getRoomAt(e.getPosition());
-								Room to = world.getRoomAt(entityMoved.getNewPosition());
-								if (to != from){
-									from.removeFromRoom(e);
-									to.putInRoom(e);
-								}
-								
-								//Move the entity
-								e.setPosition(entityMoved.getNewPosition());
+								handleMove((EntityMovedMessage) message);
 							//Rotate remote player
 							} else if (message instanceof PlayerRotatedMessage){
-								PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
-								Player p = (Player) world.getEntity(playerRotated.getID());
-		
-								p.moveLook(playerRotated.getDelta());
+								handlePlayerLook((PlayerRotatedMessage) message);
+							//Make player jump
 							} else if (message instanceof JumpMessage){
-								JumpMessage thePlayerWhoJumps = (JumpMessage) message;
-								
-								//Make the player jump
-								((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
+								handlePlayerJump((JumpMessage) message);
+							//Remote shutdown
 							} else if (message instanceof ShutdownMessage){
 								shutdown();
 								alertListenersOfShutdown("Server has shutdown");
@@ -327,6 +308,45 @@ public class Client {
 				shutdown();
 				alertListenersOfShutdown("Connection to server has been lost");
 			}
+		}
+
+		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
+			Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+			world.addEntity(e);
+			world.getRoomAt(e.getPosition()).putInRoom(e);
+		}
+		
+		private void handlePlayerDisconnect(DisconnectMessage playerDisconnected){
+			Entity e = world.getEntity(playerDisconnected.getPlayerID());
+			
+			//Remove from the room and world
+			world.getRoomAt(e.getPosition()).removeFromRoom(e);
+			//world.removeEntity(e);
+		}
+		
+		private void handleMove(EntityMovedMessage entityMoved){
+			Entity e = world.getEntity(entityMoved.getEntityID());
+			
+			//Move the room the entity is in if required
+			Room from = world.getRoomAt(e.getPosition());
+			Room to = world.getRoomAt(entityMoved.getNewPosition());
+			if (to != from){
+				from.removeFromRoom(e);
+				to.putInRoom(e);
+			}
+			
+			//Move the entity
+			e.setPosition(entityMoved.getNewPosition());
+		}
+		
+		private void handlePlayerLook(PlayerRotatedMessage playerRotated){
+			Player p = (Player) world.getEntity(playerRotated.getID());
+			p.moveLook(playerRotated.getDelta());
+		}
+		
+		private void handlePlayerJump(JumpMessage jumpingPlayer){
+			Player p = (Player) world.getEntity(jumpingPlayer.getPlayerID());
+			p.jump();
 		}
 	}
 }
