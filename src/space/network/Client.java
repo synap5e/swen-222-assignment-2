@@ -3,9 +3,13 @@ package space.network;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
@@ -49,6 +53,8 @@ public class Client {
 	 */
 	private boolean active;
 	
+	private boolean stillAlive;
+	
 	/**
 	 * The list of listeners to be alerted of events
 	 */
@@ -81,14 +87,20 @@ public class Client {
 			throw new RuntimeException(e);
 		}
 		
+		stillAlive = true;
+		
 		//Create list of listeners
 		listeners = new ArrayList<ClientListener>();
+		
+		new Thread(new MessageHandler()).start();
 	}
 	
 	/**
 	 * Shuts down the client.
 	 */
 	public void shutdown(){
+		stillAlive = false;
+		
 		//Inform the server
 		try {
 			connection.sendMessage(new DisconnectMessage(localPlayer.getID()));
@@ -152,63 +164,12 @@ public class Client {
 	 * @param delta the change in time since the last update
 	 */
 	public void update(int delta) {
-		//Apply updates from server
 		try {
-			while (connection.hasMessage()){
-				Message message = connection.readMessage();
-				
-				//Add any new players
-				if (message instanceof PlayerJoiningMessage){
-					PlayerJoiningMessage playerJoined = (PlayerJoiningMessage) message;
-					Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
-					world.addEntity(e);
-					world.getRoomAt(e.getPosition()).putInRoom(e);
-				//Remove disconnected players
-				} else if (message instanceof DisconnectMessage){
-					DisconnectMessage playerDisconnected = (DisconnectMessage) message;
-					Entity e = world.getEntity(playerDisconnected.getPlayerID());
-					
-					//Remove from the room and world
-					world.getRoomAt(e.getPosition()).removeFromRoom(e);
-					//world.removeEntity(e);
-				//Move remotely controlled entities
-				} else if (message instanceof EntityMovedMessage){
-					EntityMovedMessage entityMoved = (EntityMovedMessage) message;
-					Entity e = world.getEntity(entityMoved.getEntityID());
-					
-					//Move the room the entity is in if required
-					Room from = world.getRoomAt(e.getPosition());
-					Room to = world.getRoomAt(entityMoved.getNewPosition());
-					if (to != from){
-						from.removeFromRoom(e);
-						to.putInRoom(e);
-					}
-					
-					//Move the entity
-					e.setPosition(entityMoved.getNewPosition());
-				//Rotate remote player
-				} else if (message instanceof PlayerRotatedMessage){
-					PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
-					Player p = (Player) world.getEntity(playerRotated.getID());
-
-					p.moveLook(playerRotated.getDelta());
-				} else if (message instanceof JumpMessage){
-					JumpMessage thePlayerWhoJumps = (JumpMessage) message;
-					
-					//Make the player jump
-					((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
-				} else if (message instanceof ShutdownMessage){
-					shutdown();
-					alertListenersOfShutdown("Server has shutdown");
-					return;
-				} else {
-					//TODO: Decide when to log
-					System.out.println(connection.readMessage());
-				}
+			synchronized (world) {
+				//Update the world
+				world.update(delta);
+				updatePlayer(delta);
 			}
-			//Update the world
-			world.update(delta);
-			updatePlayer(delta);
 		} catch (IOException e) {
 			shutdown();
 			alertListenersOfShutdown("Connection to server has been lost");
@@ -298,6 +259,74 @@ public class Client {
 		//Inform all the listeners
 		for (ClientListener listener : listeners){
 			listener.onConnectionClose(reason);
+		}
+	}
+	
+	private class MessageHandler implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				while (stillAlive){
+					if (connection.hasMessage()){
+						Message message = connection.readMessage();
+						
+						synchronized (world) {
+							//Add any new players
+							if (message instanceof PlayerJoiningMessage){
+								PlayerJoiningMessage playerJoined = (PlayerJoiningMessage) message;
+								Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+								world.addEntity(e);
+								world.getRoomAt(e.getPosition()).putInRoom(e);
+							//Remove disconnected players
+							} else if (message instanceof DisconnectMessage){
+								DisconnectMessage playerDisconnected = (DisconnectMessage) message;
+								Entity e = world.getEntity(playerDisconnected.getPlayerID());
+								
+								//Remove from the room and world
+								world.getRoomAt(e.getPosition()).removeFromRoom(e);
+								//world.removeEntity(e);
+							//Move remotely controlled entities
+							} else if (message instanceof EntityMovedMessage){
+								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
+								Entity e = world.getEntity(entityMoved.getEntityID());
+								
+								//Move the room the entity is in if required
+								Room from = world.getRoomAt(e.getPosition());
+								Room to = world.getRoomAt(entityMoved.getNewPosition());
+								if (to != from){
+									from.removeFromRoom(e);
+									to.putInRoom(e);
+								}
+								
+								//Move the entity
+								e.setPosition(entityMoved.getNewPosition());
+							//Rotate remote player
+							} else if (message instanceof PlayerRotatedMessage){
+								PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+								Player p = (Player) world.getEntity(playerRotated.getID());
+		
+								p.moveLook(playerRotated.getDelta());
+							} else if (message instanceof JumpMessage){
+								JumpMessage thePlayerWhoJumps = (JumpMessage) message;
+								
+								//Make the player jump
+								((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
+							} else if (message instanceof ShutdownMessage){
+								shutdown();
+								alertListenersOfShutdown("Server has shutdown");
+								return;
+							} else {
+								//TODO: Decide when to log
+								System.out.println(connection.readMessage());
+							}
+						}
+					}
+				}
+			} catch (IOException e){
+				shutdown();
+				alertListenersOfShutdown("Connection to server has been lost");
+			}
 		}
 	}
 }
