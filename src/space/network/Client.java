@@ -173,6 +173,33 @@ public class Client {
 	}
 	
 	/**
+	 * Gets the entity that the local player is currently looking at in the current room.
+	 * 
+	 * @return The entity being viewed. Is null if no entity is in line of sigh
+	 */
+	public Entity getViewedEntity(){
+		Vector3D look = localPlayer.getLookDirection();
+		Vector2D pos = localPlayer.getPosition();
+		float distance = -localPlayer.getEyeHeight()/look.getY();
+		
+		if (distance < 0) return null;
+		
+		Vector2D locationOnFloor = new Vector2D(pos.getX()+look.getX()*distance, pos.getY()+look.getZ()*distance);
+		
+		Entity viewed = null;
+		float closest = Float.MAX_VALUE;
+		for (Entity e : localPlayer.getRoom().getEntities()){
+			float distanceBetween = e.getPosition().sub(locationOnFloor).sqLen();
+			if(distanceBetween < closest && distanceBetween < e.getCollisionRadius()*e.getCollisionRadius()){
+				viewed = e;
+				closest = distanceBetween;
+			}
+		}
+		return viewed;
+	}
+	
+	
+	/**
 	 * Updates the local player.
 	 * 
 	 * @param delta the change in time since the last update
