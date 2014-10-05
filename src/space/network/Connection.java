@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import space.network.message.DisconnectMessage;
+import space.network.message.DropPickupMessage;
 import space.network.message.EntityMovedMessage;
 import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
@@ -31,6 +32,7 @@ public class Connection {
 	private static final int JUMP = 6;
 	private static final int INTERACTION = 7;
 	private static final int SYNC_DOOR = 8;
+	private static final int DROP_PICKUP = 9;
 	private static final int UNKNOWN = -1;
 
 	private Socket socket;
@@ -80,6 +82,8 @@ public class Connection {
 				return new InteractionMessage(data);
 			case SYNC_DOOR:
 				return new DoorSyncMessage(data);
+			case DROP_PICKUP:
+				return new DropPickupMessage(data);
 			default:
 				//TODO: decide how to deal with format error
 				return null;
@@ -106,6 +110,7 @@ public class Connection {
 		else if (message instanceof JumpMessage) return JUMP;
 		else if (message instanceof InteractionMessage) return INTERACTION;
 		else if (message instanceof DoorSyncMessage) return SYNC_DOOR;
+		else if (message instanceof DropPickupMessage) return DROP_PICKUP;
 		else return UNKNOWN;
 	}
 	

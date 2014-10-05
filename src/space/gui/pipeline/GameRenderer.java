@@ -35,6 +35,7 @@ import space.gui.pipeline.viewable.ViewableWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.world.Key;
 import space.world.Player;
 
 /**
@@ -64,6 +65,7 @@ public class GameRenderer {
 		this.models = new HashMap<Class<? extends ViewableObject>, RenderModel>();
 		try {
 			models.put(Robot.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
+			models.put(Key.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
 			models.put(Bullet.class, new BulletModel());
 			models.put(Player.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
 		} catch (IOException e) {

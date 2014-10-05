@@ -13,6 +13,7 @@ import org.lwjgl.Sys;
 
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
+import space.network.message.DropPickupMessage;
 import space.network.message.EntityMovedMessage;
 import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
@@ -24,6 +25,7 @@ import space.network.message.ShutdownMessage;
 import space.network.message.sync.DoorSyncMessage;
 import space.world.Door;
 import space.world.Entity;
+import space.world.Key;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -205,6 +207,15 @@ public class Server {
 								
 								//Forward the message to all the other clients
 								sendMessageToAllExcept(id, message);
+							//If a player dropped an entity
+							} else if (message instanceof DropPickupMessage){
+								DropPickupMessage drop = (DropPickupMessage) message;
+								Player p = (Player) world.getEntity(drop.getPlayerId());
+								Entity e = world.getEntity(drop.getPickupId());
+								
+								world.dropEntity(p, e, drop.getPosition());
+								
+								sendMessageToAllExcept(id, message);
 							//If a player interacted with an entity
 							} else if (message instanceof InteractionMessage){
 								InteractionMessage interaction = (InteractionMessage) message;
@@ -226,6 +237,9 @@ public class Server {
 										d.openDoor();
 										succesful = true;
 									}
+								} else if (e instanceof Key){
+									world.pickUpEntity(p, e);
+									succesful = true;
 								}
 								
 								//If the interaction succeeded, forward the message
@@ -285,8 +299,10 @@ public class Server {
 					
 					synchronized (world){
 						//TODO load from map if player already exists
-						world.addEntity(new Player(new Vector2D(0, 0), id));
-						((Player) world.getEntity(id)).setRoom(world.getRoomAt(new Vector2D(0, 0)));
+						Player p = new Player(new Vector2D(0, 0), id);
+						world.addEntity(p);
+						p.setRoom(world.getRoomAt(new Vector2D(0, 0)));
+						p.getRoom().putInRoom(p);
 						
 						//Tell clients about new player. The new client will use the id given.
 						Message playerJoined = new PlayerJoiningMessage(id);
@@ -301,7 +317,6 @@ public class Server {
 							if (otherId != id){
 								Player other = (Player) world.getEntity(otherId);
 								con.sendMessage(new PlayerJoiningMessage(otherId));
-								con.sendMessage(new EntityMovedMessage(otherId, world.getEntity(otherId).getPosition()));
 								con.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
 							}
 						}
@@ -310,6 +325,10 @@ public class Server {
 						
 						//Sync the doors
 						for (Room room : world.getRooms().values()){
+							for (Entity e : room.getEntities()){
+								newClient.sendMessage(new EntityMovedMessage(e.getID(), e.getPosition()));
+							}
+							
 							for (List<Door> doors : room.getDoors().values()){
 								for (Door door : doors){
 									//TODO: Might need a more reliable way of checking whether the door is open

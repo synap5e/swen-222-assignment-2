@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -14,6 +15,7 @@ import space.math.Segment2D;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
+import space.network.message.DropPickupMessage;
 import space.network.message.EntityMovedMessage;
 import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
@@ -24,6 +26,8 @@ import space.network.message.ShutdownMessage;
 import space.network.message.sync.SyncMessage;
 import space.world.Door;
 import space.world.Entity;
+import space.world.Key;
+import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -86,6 +90,7 @@ public class Client {
 			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 			localPlayer.getRoom().putInRoom(localPlayer);
+			world.addEntity(localPlayer);
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -182,6 +187,17 @@ public class Client {
 					Entity viewed = getViewedEntity();
 					if (viewed != null){
 						interactWith(viewed);
+					}
+				}
+				
+				//TODO: Tempory code to test dropping entities
+				if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
+					Set<Pickup> inv = localPlayer.getInventory();
+					if (inv.size() > 0){
+						for (Pickup p : inv){
+							drop(p);
+							break;
+						}
 					}
 				}
 				
@@ -282,18 +298,41 @@ public class Client {
 				d.openDoor();
 				interactionSuccessful = true;
 			}
+		} else if (e instanceof Key){
+			world.pickUpEntity(localPlayer, e);
+			interactionSuccessful = true;
 		}
 		
 		if (interactionSuccessful){
-			try {
-				connection.sendMessage(new InteractionMessage(localPlayer.getID(), e.getID()));
-			} catch (IOException e1) {
-				shutdown();
-				alertListenersOfShutdown("Connection to server has been lost");
-			}
+			sendMessage(new InteractionMessage(localPlayer.getID(), e.getID()));
 		}
 
 		return interactionSuccessful;
+	}
+	
+	/**
+	 * Drops an entity from the local players inventory.
+	 * 
+	 * @param e the entity to drop
+	 */
+	public void drop(Entity e){
+		Vector3D look = localPlayer.getLookDirection();
+		Vector2D pos = localPlayer.getPosition();
+		float distance = -localPlayer.getEyeHeight()/look.getY();
+		
+		//If the floor location is in front of the player
+		if (distance >= 0){
+			Vector2D locationOnFloor = new Vector2D(pos.getX()+look.getX()*distance, pos.getY()+look.getZ()*distance);
+			
+			synchronized (world) {
+				world.dropEntity(localPlayer, e, locationOnFloor);
+				
+				//If the entity was dropped tell the server
+				if (e.getPosition().equals(locationOnFloor, 0.01f)){
+					sendMessage(new DropPickupMessage(localPlayer.getID(), e.getID(), locationOnFloor));
+				}
+			}
+		}
 	}
 	
 	/**
@@ -371,6 +410,20 @@ public class Client {
 	}
 	
 	/**
+	 * Sends a message to the server dealing with any connection errors.
+	 * 
+	 * @param message the message to send
+	 */
+	private void sendMessage(Message message){
+		try {
+			connection.sendMessage(message);
+		} catch (IOException e1) {
+			shutdown();
+			alertListenersOfShutdown("Connection to server has been lost");
+		}
+	}
+	
+	/**
 	 * Alerts all client listeners that the client has shutdown.
 	 * 
 	 * @param reason a brief explanation of why the client has shutdown
@@ -419,6 +472,9 @@ public class Client {
 							//Sync the world
 							} else if (message instanceof SyncMessage){
 								((SyncMessage) message).applyTo(world);
+							//Drop a pickup from a player
+							} else if (message instanceof DropPickupMessage){
+								handleDrop((DropPickupMessage) message);
 							//Remote shutdown
 							} else if (message instanceof ShutdownMessage){
 								shutdown();
@@ -443,9 +499,10 @@ public class Client {
 		 * @param playerJoined the message containing the information about this player
 		 */
 		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
-			Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
-			world.addEntity(e);
-			world.getRoomAt(e.getPosition()).putInRoom(e);
+			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+			world.addEntity(p);
+			p.setRoom(world.getRoomAt(p.getPosition()));
+			p.getRoom().putInRoom(p);
 		}
 		
 		/**
@@ -482,6 +539,17 @@ public class Client {
 		}
 		
 		/**
+		 * Handles dropping an entity from a remote player's inventory.
+		 * 
+		 * @param drop the message containing information about the drop
+		 */
+		private void handleDrop(DropPickupMessage drop){
+			Player p = (Player) world.getEntity(drop.getPlayerId());
+			Entity e = world.getEntity(drop.getPickupId());
+			world.dropEntity(p, e, drop.getPosition());
+		}
+		
+		/**
 		 * Handles rotating a remote player's look direction.
 		 * 
 		 * @param playerRotated the message containing the information about the rotation
@@ -509,6 +577,8 @@ public class Client {
 				} else if (d.getOpenPercent() < 0.5){
 					d.openDoor();
 				}
+			} else if (e instanceof Key){
+				world.pickUpEntity(p, e);
 			}
 		}
 		

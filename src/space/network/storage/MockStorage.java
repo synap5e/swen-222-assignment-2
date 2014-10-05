@@ -8,6 +8,7 @@ import java.util.List;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.world.Door;
+import space.world.Key;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -32,6 +33,9 @@ public class MockStorage implements WorldLoader, WorldSaver {
 		r.addDoor(3, d);
 		r2.addDoor(1, d);
 		world.addEntity(d);
+		Key k = new Key(new Vector2D(5f, 5f), 4, "A key", 0, d);
+		world.addEntity(k);
+		r.putInRoom(k);
 	}
 
 	@Override
