@@ -291,12 +291,17 @@ public class Client {
 		//TODO: Remove when e.interact is implemented
 		if (e instanceof Door){
 			Door d = (Door) e;
-			if (d.getOpenPercent() == 1){
-				d.closeDoor();
-				interactionSuccessful = true;
-			} else if (d.getOpenPercent() == 0){
-				d.openDoor();
-				interactionSuccessful = true;
+			if (d.isLocked()){
+				d.unlock(localPlayer);
+			}
+			if (!d.isLocked()){
+				if (d.getOpenPercent() == 1){
+					d.closeDoor();
+					interactionSuccessful = true;
+				} else if (d.getOpenPercent() == 0){
+					d.openDoor();
+					interactionSuccessful = true;
+				}
 			}
 		} else if (e instanceof Key){
 			world.pickUpEntity(localPlayer, e);
@@ -572,10 +577,15 @@ public class Client {
 			//TODO: Remove when e.interact is implemented
 			if (e instanceof Door){
 				Door d = (Door) e;
-				if (d.getOpenPercent() > 0.5){
-					d.closeDoor();
-				} else if (d.getOpenPercent() < 0.5){
-					d.openDoor();
+				if (d.isLocked()){
+					d.unlock(p);
+				}
+				if (!d.isLocked()){
+					if (d.getOpenPercent() > 0.5){
+						d.closeDoor();
+					} else if (d.getOpenPercent() < 0.5){
+						d.openDoor();
+					}
 				}
 			} else if (e instanceof Pickup){
 				Room r = world.getRoomAt(e.getPosition());
