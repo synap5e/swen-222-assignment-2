@@ -7,10 +7,13 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.lwjgl.Sys;
+
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
@@ -189,6 +192,7 @@ public class Server {
 
 								//Forward the message to all the other clients
 								sendMessageToAllExcept(id, message);
+							//If a player jumped
 							} else if (message instanceof JumpMessage){
 								JumpMessage thePlayerWhoJumps = (JumpMessage) message;
 								
@@ -197,6 +201,21 @@ public class Server {
 								
 								//Forward the message to all the other clients
 								sendMessageToAllExcept(id, message);
+							//If a player interacted with an entity
+							} else if (message instanceof InteractionMessage){
+								InteractionMessage interaction = (InteractionMessage) message;
+								
+								//Get the entities involved
+								Entity e = world.getEntity(interaction.getEntityID());
+								Player p = (Player) world.getEntity(interaction.getPlayerID());
+								
+								//Make them interact
+								boolean succesful = false;//TODO: replacce with e.interact(p);
+								
+								//If the interaction succeeded, forward the message
+								if (succesful){
+									sendMessageToAllExcept(id, message);
+								}
 							}
 						}
 					} catch (IOException e) {

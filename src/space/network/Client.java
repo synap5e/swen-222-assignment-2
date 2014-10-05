@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
@@ -212,8 +215,18 @@ public class Client {
 		 * The method could return a boolean whether it was successful 
 		 */
 		
-		//return e.interact(localPlayer);
-		return false;
+		boolean interactionSuccessful = false; //e.interact(localPlayer);
+		
+		if (interactionSuccessful){
+			try {
+				connection.sendMessage(new InteractionMessage(localPlayer.getID(), e.getID()));
+			} catch (IOException e1) {
+				shutdown();
+				alertListenersOfShutdown("Connection to server has been lost");
+			}
+		}
+
+		return interactionSuccessful;
 	}
 	
 	/**
@@ -333,6 +346,9 @@ public class Client {
 							//Make player jump
 							} else if (message instanceof JumpMessage){
 								handlePlayerJump((JumpMessage) message);
+							//Make player interact with entity
+							} else if (message instanceof InteractionMessage){
+								handleInteraction((InteractionMessage) message);
 							//Remote shutdown
 							} else if (message instanceof ShutdownMessage){
 								shutdown();
@@ -403,6 +419,18 @@ public class Client {
 		private void handlePlayerLook(PlayerRotatedMessage playerRotated){
 			Player p = (Player) world.getEntity(playerRotated.getID());
 			p.moveLook(playerRotated.getDelta());
+		}
+		
+		/**
+		 * Handles a remote player interacting with an entity.
+		 * 
+		 * @param interaction the message containing the information about the interaction
+		 */
+		private void handleInteraction(InteractionMessage interaction){
+			Entity e = world.getEntity(interaction.getEntityID());
+			Player p = (Player) world.getEntity(interaction.getPlayerID());
+			
+			//TODO: e.interact(p);
 		}
 		
 		/**
