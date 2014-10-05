@@ -577,8 +577,12 @@ public class Client {
 				} else if (d.getOpenPercent() < 0.5){
 					d.openDoor();
 				}
-			} else if (e instanceof Key){
-				world.pickUpEntity(p, e);
+			} else if (e instanceof Pickup){
+				Room r = world.getRoomAt(e.getPosition());
+				if (r.getEntities().contains(e)){
+					r.removeFromRoom(e);
+				}
+				p.pickup((Pickup) e);
 			}
 		}
 		

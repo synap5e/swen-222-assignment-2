@@ -26,6 +26,7 @@ import space.network.message.sync.DoorSyncMessage;
 import space.world.Door;
 import space.world.Entity;
 import space.world.Key;
+import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -237,8 +238,12 @@ public class Server {
 										d.openDoor();
 										succesful = true;
 									}
-								} else if (e instanceof Key){
-									world.pickUpEntity(p, e);
+								} else if (e instanceof Pickup){
+									Room r = world.getRoomAt(e.getPosition());
+									if (r.getEntities().contains(e)){
+										r.removeFromRoom(e);
+									}
+									p.pickup((Pickup) e);
 									succesful = true;
 								}
 								
@@ -311,13 +316,15 @@ public class Server {
 						}
 						
 						//Add the other players to the client
-						Connection con = connections.get(id);
 						for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
 							int otherId = cons.getKey();
 							if (otherId != id){
 								Player other = (Player) world.getEntity(otherId);
-								con.sendMessage(new PlayerJoiningMessage(otherId));
-								con.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
+								newClient.sendMessage(new PlayerJoiningMessage(otherId));
+								newClient.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
+							}
+							for (Pickup pickup : ((Player) world.getEntity(otherId)).getInventory()){
+								newClient.sendMessage(new InteractionMessage(otherId, pickup.getID()));
 							}
 						}
 						
