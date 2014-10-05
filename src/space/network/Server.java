@@ -219,10 +219,10 @@ public class Server {
 								//TODO: Remove when e.interact is implemented
 								if (e instanceof Door){
 									Door d = (Door) e;
-									if (d.getOpenPercent() == 1){
+									if (d.getOpenPercent() > 0.5){
 										d.closeDoor();
 										succesful = true;
-									} else if (d.getOpenPercent() == 0){
+									} else if (d.getOpenPercent() < 0.5){
 										d.openDoor();
 										succesful = true;
 									}
