@@ -198,6 +198,23 @@ public class Client {
 		return viewed;
 	}
 	
+	/**
+	 * Makes the local player interact with the given entity.
+	 * 
+	 * @param e the entity to interact with
+	 * @return Whether the interaction was successful.
+	 */
+	public boolean interactWith(Entity e){
+		/* TODO: Entities need some way to interact.
+		 * For example, interacting with a door might open/close it. 
+		 * An additional constraint might be the player must also hold the key for that door.
+		 * 
+		 * The method could return a boolean whether it was successful 
+		 */
+		
+		//return e.interact(localPlayer);
+		return false;
+	}
 	
 	/**
 	 * Updates the local player.
