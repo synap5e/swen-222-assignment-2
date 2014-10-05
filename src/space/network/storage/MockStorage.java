@@ -31,6 +31,7 @@ public class MockStorage implements WorldLoader, WorldSaver {
 		Door d = new Door(new Vector2D(0, -20), 3, "door", r, r2, false, false);
 		r.addDoor(3, d);
 		r2.addDoor(1, d);
+		world.addEntity(d);
 		d.openDoor();
 	}
 

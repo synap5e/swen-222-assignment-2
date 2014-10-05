@@ -20,6 +20,7 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.storage.WorldLoader;
 import space.network.message.ShutdownMessage;
+import space.world.Door;
 import space.world.Entity;
 import space.world.Player;
 import space.world.World;
@@ -210,7 +211,19 @@ public class Server {
 								Player p = (Player) world.getEntity(interaction.getPlayerID());
 								
 								//Make them interact
-								boolean succesful = false;//TODO: replacce with e.interact(p);
+								boolean succesful = false;//TODO: replace with e.interact(p);
+								
+								//TODO: Remove when e.interact is implemented
+								if (e instanceof Door){
+									Door d = (Door) e;
+									if (d.getOpenPercent() == 1){
+										d.closeDoor();
+										succesful = true;
+									} else if (d.getOpenPercent() == 0){
+										d.openDoor();
+										succesful = true;
+									}
+								}
 								
 								//If the interaction succeeded, forward the message
 								if (succesful){

@@ -176,14 +176,8 @@ public class Client {
 				//TODO: Tempory code to test getViewedEntity() works for doors
 				if (Keyboard.isKeyDown(Keyboard.KEY_E)){
 					Entity viewed = getViewedEntity();
-					if (viewed instanceof Door){
-						Door d = (Door) viewed;
-						if (d.getOpenPercent() == 1){
-							d.closeDoor();
-						} else if (d.getOpenPercent() == 0){
-							d.openDoor();
-						}
-						
+					if (viewed != null){
+						interactWith(viewed);
 					}
 				}
 			}
@@ -263,6 +257,18 @@ public class Client {
 		 */
 		
 		boolean interactionSuccessful = false; //e.interact(localPlayer);
+		
+		//TODO: Remove when e.interact is implemented
+		if (e instanceof Door){
+			Door d = (Door) e;
+			if (d.getOpenPercent() == 1){
+				d.closeDoor();
+				interactionSuccessful = true;
+			} else if (d.getOpenPercent() == 0){
+				d.openDoor();
+				interactionSuccessful = true;
+			}
+		}
 		
 		if (interactionSuccessful){
 			try {
@@ -478,6 +484,15 @@ public class Client {
 			Player p = (Player) world.getEntity(interaction.getPlayerID());
 			
 			//TODO: e.interact(p);
+			//TODO: Remove when e.interact is implemented
+			if (e instanceof Door){
+				Door d = (Door) e;
+				if (d.getOpenPercent() == 1){
+					d.closeDoor();
+				} else if (d.getOpenPercent() == 0){
+					d.openDoor();
+				}
+			}
 		}
 		
 		/**
