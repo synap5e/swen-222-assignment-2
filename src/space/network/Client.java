@@ -162,6 +162,9 @@ public class Client {
 		return listeners.remove(listener);
 	}
 
+	//TODO: remove
+	boolean torch = false;
+	
 	/**
 	 * Updates the game world with changes from the server and local input.
 	 * 
@@ -180,6 +183,16 @@ public class Client {
 					if (viewed != null){
 						interactWith(viewed);
 					}
+				}
+				
+				//TODO: Temp code for toggle torch
+				if (Keyboard.isKeyDown(Keyboard.KEY_F)){
+					if (!torch){
+						localPlayer.setTorch(!localPlayer.isTorchOn());
+						torch = true;
+					}
+				} else {
+					torch = false;
 				}
 			}
 		} catch (IOException e) {
