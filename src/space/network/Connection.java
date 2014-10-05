@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+
 import space.network.message.DisconnectMessage;
+import space.network.message.DropPickupMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
+import space.network.message.sync.DoorSyncMessage;
 
 /**
  * 
@@ -26,6 +30,9 @@ public class Connection {
 	private static final int DISCONNECT = 4;
 	private static final int SHUTDOWN = 5;
 	private static final int JUMP = 6;
+	private static final int INTERACTION = 7;
+	private static final int SYNC_DOOR = 8;
+	private static final int DROP_PICKUP = 9;
 	private static final int UNKNOWN = -1;
 
 	private Socket socket;
@@ -71,6 +78,12 @@ public class Connection {
 				return new ShutdownMessage();
 			case JUMP:
 				return new JumpMessage(data);
+			case INTERACTION:
+				return new InteractionMessage(data);
+			case SYNC_DOOR:
+				return new DoorSyncMessage(data);
+			case DROP_PICKUP:
+				return new DropPickupMessage(data);
 			default:
 				//TODO: decide how to deal with format error
 				return null;
@@ -95,6 +108,9 @@ public class Connection {
 		else if (message instanceof DisconnectMessage) return DISCONNECT;
 		else if (message instanceof ShutdownMessage) return SHUTDOWN;
 		else if (message instanceof JumpMessage) return JUMP;
+		else if (message instanceof InteractionMessage) return INTERACTION;
+		else if (message instanceof DoorSyncMessage) return SYNC_DOOR;
+		else if (message instanceof DropPickupMessage) return DROP_PICKUP;
 		else return UNKNOWN;
 	}
 	

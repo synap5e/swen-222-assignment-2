@@ -107,7 +107,7 @@ public class Door extends NonStationary implements ViewableDoor {
 
 	@Override
 	public float getCollisionRadius() {
-		return 0;
+		return 3;
 	}
 
 	/**
@@ -117,6 +117,10 @@ public class Door extends NonStationary implements ViewableDoor {
 	 */
 	public boolean isLocked() {
 		return locked;
+	}
+	
+	public void setLocked(boolean locked){
+		this.locked = locked;
 	}
 
 	@Override

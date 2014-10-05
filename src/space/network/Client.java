@@ -4,18 +4,30 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
+import space.gui.pipeline.viewable.ViewableDoor;
+import space.gui.pipeline.viewable.ViewableWall;
+import space.math.Segment2D;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
+import space.network.message.DropPickupMessage;
 import space.network.message.EntityMovedMessage;
+import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
+import space.network.message.sync.SyncMessage;
+import space.world.Door;
 import space.world.Entity;
+import space.world.Key;
+import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -78,6 +90,7 @@ public class Client {
 			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
 			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 			localPlayer.getRoom().putInRoom(localPlayer);
+			world.addEntity(localPlayer);
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -154,6 +167,9 @@ public class Client {
 		return listeners.remove(listener);
 	}
 
+	//TODO: remove
+	boolean torch = false;
+	
 	/**
 	 * Updates the game world with changes from the server and local input.
 	 * 
@@ -165,10 +181,162 @@ public class Client {
 			synchronized (world) {
 				world.update(delta);
 				updatePlayer(delta);
+				
+				//TODO: Tempory code to test getViewedEntity() works for doors
+				if (Keyboard.isKeyDown(Keyboard.KEY_E)){
+					Entity viewed = getViewedEntity();
+					if (viewed != null){
+						interactWith(viewed);
+					}
+				}
+				
+				//TODO: Tempory code to test dropping entities
+				if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
+					Set<Pickup> inv = localPlayer.getInventory();
+					if (inv.size() > 0){
+						for (Pickup p : inv){
+							drop(p);
+							break;
+						}
+					}
+				}
+				
+				//TODO: Temp code for toggle torch
+				if (Keyboard.isKeyDown(Keyboard.KEY_F)){
+					if (!torch){
+						localPlayer.setTorch(!localPlayer.isTorchOn());
+						torch = true;
+					}
+				} else {
+					torch = false;
+				}
 			}
 		} catch (IOException e) {
 			shutdown();
 			alertListenersOfShutdown("Connection to server has been lost");
+		}
+	}
+	
+	/**
+	 * Gets the entity that the local player is currently looking at in the current room.
+	 * 
+	 * @return The entity being viewed. Is null if no entity is in line of sigh
+	 */
+	public Entity getViewedEntity(){
+		Vector3D look = localPlayer.getLookDirection();
+		Vector2D pos = localPlayer.getPosition();
+		float distance = -localPlayer.getEyeHeight()/look.getY();
+		
+		//If the floor location is in front of the player
+		if (distance >= 0){
+			Vector2D locationOnFloor = new Vector2D(pos.getX()+look.getX()*distance, pos.getY()+look.getZ()*distance);
+			
+			Entity viewed = null;
+			float closest = Float.MAX_VALUE;
+			
+			//Find the closest entity to the floor location
+			for (Entity e : localPlayer.getRoom().getEntities()){
+				float distanceBetween = e.getPosition().sub(locationOnFloor).sqLen();
+				if(distanceBetween < closest && distanceBetween < e.getCollisionRadius()*e.getCollisionRadius()){
+					viewed = e;
+					closest = distanceBetween;
+				}
+			}
+
+			if (viewed != null) return viewed;
+		}
+		
+		//No entity on floor so check doors
+		
+		//Create a line of sight from the player
+		Segment2D lineOfSight = new Segment2D(pos, pos.add(new Vector2D(look.getX()*10, look.getZ()*10)));
+		
+		//For each wall
+		for (ViewableWall w : localPlayer.getRoom().getWalls()){
+			//Find intersection along wall
+			Segment2D line = new Segment2D(w.getStart(), w.getEnd());
+			if (!line.intersects(lineOfSight)) continue;
+			Vector2D intersection = line.getIntersection(lineOfSight);
+			
+			//If there is an intersection then find the door
+			for (ViewableDoor vd : w.getDoors()){
+				Door d = (Door) vd;
+				float distanceBetween = d.getPosition().sub(intersection).sqLen();
+				if(distanceBetween < d.getCollisionRadius()*d.getCollisionRadius()){
+					return d;
+				}
+			}
+		}
+		
+		//No entity found
+		return null;
+	}
+	
+	/**
+	 * Makes the local player interact with the given entity.
+	 * 
+	 * @param e the entity to interact with
+	 * @return Whether the interaction was successful.
+	 */
+	public boolean interactWith(Entity e){
+		/* TODO: Entities need some way to interact.
+		 * For example, interacting with a door might open/close it. 
+		 * An additional constraint might be the player must also hold the key for that door.
+		 * 
+		 * The method could return a boolean whether it was successful 
+		 */
+		
+		boolean interactionSuccessful = false; //e.interact(localPlayer);
+		
+		//TODO: Remove when e.interact is implemented
+		if (e instanceof Door){
+			Door d = (Door) e;
+			if (d.isLocked()){
+				d.unlock(localPlayer);
+			}
+			if (!d.isLocked()){
+				if (d.getOpenPercent() == 1){
+					d.closeDoor();
+					interactionSuccessful = true;
+				} else if (d.getOpenPercent() == 0){
+					d.openDoor();
+					interactionSuccessful = true;
+				}
+			}
+		} else if (e instanceof Key){
+			world.pickUpEntity(localPlayer, e);
+			interactionSuccessful = true;
+		}
+		
+		if (interactionSuccessful){
+			sendMessage(new InteractionMessage(localPlayer.getID(), e.getID()));
+		}
+
+		return interactionSuccessful;
+	}
+	
+	/**
+	 * Drops an entity from the local players inventory.
+	 * 
+	 * @param e the entity to drop
+	 */
+	public void drop(Entity e){
+		Vector3D look = localPlayer.getLookDirection();
+		Vector2D pos = localPlayer.getPosition();
+		float distance = -localPlayer.getEyeHeight()/look.getY();
+		
+		//If the floor location is in front of the player
+		if (distance >= 0){
+			Vector2D locationOnFloor = new Vector2D(pos.getX()+look.getX()*distance, pos.getY()+look.getZ()*distance);
+			
+			synchronized (world) {
+				world.dropEntity(localPlayer, e, locationOnFloor);
+				
+				//If the entity was dropped tell the server
+				if (e.getPosition().equals(locationOnFloor, 0.01f)){
+					sendMessage(new DropPickupMessage(localPlayer.getID(), e.getID(), locationOnFloor));
+				}
+			}
 		}
 	}
 	
@@ -247,6 +415,20 @@ public class Client {
 	}
 	
 	/**
+	 * Sends a message to the server dealing with any connection errors.
+	 * 
+	 * @param message the message to send
+	 */
+	private void sendMessage(Message message){
+		try {
+			connection.sendMessage(message);
+		} catch (IOException e1) {
+			shutdown();
+			alertListenersOfShutdown("Connection to server has been lost");
+		}
+	}
+	
+	/**
 	 * Alerts all client listeners that the client has shutdown.
 	 * 
 	 * @param reason a brief explanation of why the client has shutdown
@@ -289,6 +471,15 @@ public class Client {
 							//Make player jump
 							} else if (message instanceof JumpMessage){
 								handlePlayerJump((JumpMessage) message);
+							//Make player interact with entity
+							} else if (message instanceof InteractionMessage){
+								handleInteraction((InteractionMessage) message);
+							//Sync the world
+							} else if (message instanceof SyncMessage){
+								((SyncMessage) message).applyTo(world);
+							//Drop a pickup from a player
+							} else if (message instanceof DropPickupMessage){
+								handleDrop((DropPickupMessage) message);
 							//Remote shutdown
 							} else if (message instanceof ShutdownMessage){
 								shutdown();
@@ -313,9 +504,10 @@ public class Client {
 		 * @param playerJoined the message containing the information about this player
 		 */
 		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
-			Entity e = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
-			world.addEntity(e);
-			world.getRoomAt(e.getPosition()).putInRoom(e);
+			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+			world.addEntity(p);
+			p.setRoom(world.getRoomAt(p.getPosition()));
+			p.getRoom().putInRoom(p);
 		}
 		
 		/**
@@ -352,6 +544,17 @@ public class Client {
 		}
 		
 		/**
+		 * Handles dropping an entity from a remote player's inventory.
+		 * 
+		 * @param drop the message containing information about the drop
+		 */
+		private void handleDrop(DropPickupMessage drop){
+			Player p = (Player) world.getEntity(drop.getPlayerId());
+			Entity e = world.getEntity(drop.getPickupId());
+			world.dropEntity(p, e, drop.getPosition());
+		}
+		
+		/**
 		 * Handles rotating a remote player's look direction.
 		 * 
 		 * @param playerRotated the message containing the information about the rotation
@@ -359,6 +562,38 @@ public class Client {
 		private void handlePlayerLook(PlayerRotatedMessage playerRotated){
 			Player p = (Player) world.getEntity(playerRotated.getID());
 			p.moveLook(playerRotated.getDelta());
+		}
+		
+		/**
+		 * Handles a remote player interacting with an entity.
+		 * 
+		 * @param interaction the message containing the information about the interaction
+		 */
+		private void handleInteraction(InteractionMessage interaction){
+			Entity e = world.getEntity(interaction.getEntityID());
+			Player p = (Player) world.getEntity(interaction.getPlayerID());
+			
+			//TODO: e.interact(p);
+			//TODO: Remove when e.interact is implemented
+			if (e instanceof Door){
+				Door d = (Door) e;
+				if (d.isLocked()){
+					d.unlock(p);
+				}
+				if (!d.isLocked()){
+					if (d.getOpenPercent() > 0.5){
+						d.closeDoor();
+					} else if (d.getOpenPercent() < 0.5){
+						d.openDoor();
+					}
+				}
+			} else if (e instanceof Pickup){
+				Room r = world.getRoomAt(e.getPosition());
+				if (r.getEntities().contains(e)){
+					r.removeFromRoom(e);
+				}
+				p.pickup((Pickup) e);
+			}
 		}
 		
 		/**
