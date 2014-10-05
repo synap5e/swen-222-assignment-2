@@ -42,6 +42,31 @@ public class Segment2D {
 		return 0 <= t && t <= 1 && 0 <= u && u <= 1;
 	}
 	
+	public Vector2D getIntersection(Segment2D other) {
+		if (start.equals(other.start, EPSILON)) return start;
+		if (end.equals(other.end, EPSILON)) return end;
+		
+		// this line defined as (p, p+r)
+		Vector2D p = start;
+		Vector2D r = end.sub(start);
+		
+		// other line defined as (q, q+s)
+		Vector2D q = other.start;
+		Vector2D s = other.end.sub(other.start);
+
+		// lines intersect if t and u exist in 0...1 for  p + t*r = q + u*s
+	
+		// t = (q - p) x s / (r x s)
+		// u = (q - p) x r / (r x s)
+		
+		float rCrossS = r.cross(s);
+		Vector2D qSubP = q.sub(p);
+		float t = qSubP.cross(s) / rCrossS;
+		float u = qSubP.cross(r) / rCrossS;
+		
+		return p.add(r.mul(t));
+	}
+	
 	public boolean onLine(Vector2D point){
 		float x1 = start.getX();
 		float y1 = start.getY();

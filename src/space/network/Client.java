@@ -8,6 +8,9 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import space.gui.pipeline.viewable.ViewableDoor;
+import space.gui.pipeline.viewable.ViewableWall;
+import space.math.Segment2D;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.message.DisconnectMessage;
@@ -18,6 +21,7 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
+import space.world.Door;
 import space.world.Entity;
 import space.world.Player;
 import space.world.Room;
@@ -168,6 +172,20 @@ public class Client {
 			synchronized (world) {
 				world.update(delta);
 				updatePlayer(delta);
+				
+				//TODO: Tempory code to test getViewedEntity() works for doors
+				if (Keyboard.isKeyDown(Keyboard.KEY_E)){
+					Entity viewed = getViewedEntity();
+					if (viewed instanceof Door){
+						Door d = (Door) viewed;
+						if (d.getOpenPercent() == 1){
+							d.closeDoor();
+						} else if (d.getOpenPercent() == 0){
+							d.openDoor();
+						}
+						
+					}
+				}
 			}
 		} catch (IOException e) {
 			shutdown();
@@ -185,20 +203,49 @@ public class Client {
 		Vector2D pos = localPlayer.getPosition();
 		float distance = -localPlayer.getEyeHeight()/look.getY();
 		
-		if (distance < 0) return null;
+		//If the floor location is in front of the player
+		if (distance >= 0){
+			Vector2D locationOnFloor = new Vector2D(pos.getX()+look.getX()*distance, pos.getY()+look.getZ()*distance);
+			
+			Entity viewed = null;
+			float closest = Float.MAX_VALUE;
+			
+			//Find the closest entity to the floor location
+			for (Entity e : localPlayer.getRoom().getEntities()){
+				float distanceBetween = e.getPosition().sub(locationOnFloor).sqLen();
+				if(distanceBetween < closest && distanceBetween < e.getCollisionRadius()*e.getCollisionRadius()){
+					viewed = e;
+					closest = distanceBetween;
+				}
+			}
+
+			if (viewed != null) return viewed;
+		}
 		
-		Vector2D locationOnFloor = new Vector2D(pos.getX()+look.getX()*distance, pos.getY()+look.getZ()*distance);
+		//No entity on floor so check doors
 		
-		Entity viewed = null;
-		float closest = Float.MAX_VALUE;
-		for (Entity e : localPlayer.getRoom().getEntities()){
-			float distanceBetween = e.getPosition().sub(locationOnFloor).sqLen();
-			if(distanceBetween < closest && distanceBetween < e.getCollisionRadius()*e.getCollisionRadius()){
-				viewed = e;
-				closest = distanceBetween;
+		//Create a line of sight from the player
+		Segment2D lineOfSight = new Segment2D(pos, pos.add(new Vector2D(look.getX()*10, look.getZ()*10)));
+		
+		//For each wall
+		for (ViewableWall w : localPlayer.getRoom().getWalls()){
+			//Find intersection along wall
+			Segment2D line = new Segment2D(w.getStart(), w.getEnd());
+			if (!line.intersects(lineOfSight)) continue;
+			Vector2D intersection = line.getIntersection(lineOfSight);
+			
+			//If there is an intersection then find the door
+			for (ViewableDoor vd : w.getDoors()){
+				Door d = (Door) vd;
+				float distanceBetween = d.getPosition().sub(intersection).sqLen();
+				if(distanceBetween < d.getCollisionRadius()*d.getCollisionRadius()){
+					return d;
+				}
 			}
 		}
-		return viewed;
+		
+		//No entity found
+		return null;
 	}
 	
 	/**
