@@ -14,6 +14,7 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
+import space.network.message.sync.DoorSyncMessage;
 
 /**
  * 
@@ -29,6 +30,7 @@ public class Connection {
 	private static final int SHUTDOWN = 5;
 	private static final int JUMP = 6;
 	private static final int INTERACTION = 7;
+	private static final int SYNC_DOOR = 8;
 	private static final int UNKNOWN = -1;
 
 	private Socket socket;
@@ -76,6 +78,8 @@ public class Connection {
 				return new JumpMessage(data);
 			case INTERACTION:
 				return new InteractionMessage(data);
+			case SYNC_DOOR:
+				return new DoorSyncMessage(data);
 			default:
 				//TODO: decide how to deal with format error
 				return null;
@@ -101,6 +105,7 @@ public class Connection {
 		else if (message instanceof ShutdownMessage) return SHUTDOWN;
 		else if (message instanceof JumpMessage) return JUMP;
 		else if (message instanceof InteractionMessage) return INTERACTION;
+		else if (message instanceof DoorSyncMessage) return SYNC_DOOR;
 		else return UNKNOWN;
 	}
 	

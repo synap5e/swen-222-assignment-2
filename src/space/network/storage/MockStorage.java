@@ -32,7 +32,6 @@ public class MockStorage implements WorldLoader, WorldSaver {
 		r.addDoor(3, d);
 		r2.addDoor(1, d);
 		world.addEntity(d);
-		d.openDoor();
 	}
 
 	@Override

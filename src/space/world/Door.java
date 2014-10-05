@@ -118,6 +118,10 @@ public class Door extends NonStationary implements ViewableDoor {
 	public boolean isLocked() {
 		return locked;
 	}
+	
+	public void setLocked(boolean locked){
+		this.locked = locked;
+	}
 
 	@Override
 	public Room getRoom1() {

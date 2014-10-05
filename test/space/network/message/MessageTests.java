@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import space.math.Vector2D;
+import space.network.message.sync.DoorSyncMessage;
 
 public class MessageTests {
 
@@ -38,7 +39,7 @@ public class MessageTests {
 	}
 
 	@Test
-	public void testPlayerMovedFromByteArray() {
+	public void testPlayerJoinedFromByteArray() {
 		int id = 1234;
 		
 		PlayerJoiningMessage original = new PlayerJoiningMessage(id);
@@ -74,5 +75,33 @@ public class MessageTests {
 		assertEquals(id, message.getEntityID());
 		assertEquals(x, message.getNewPosition().getX(), 0);
 		assertEquals(y, message.getNewPosition().getY() , 0);
+	}
+	
+	@Test
+	public void testDoorSyncKeepID() {
+		int id = 1234;
+		boolean open = true;
+		boolean locked = false;
+		
+		DoorSyncMessage message = new DoorSyncMessage(id, open, locked);
+		
+		assertEquals(id, message.getDoorID());
+		assertEquals(open, message.isOpen());
+		assertEquals(locked, message.isLocked());
+	}
+
+	@Test
+	public void testDoorSyncFromByteArray() {
+		int id = 1234;
+		boolean open = true;
+		boolean locked = false;
+		
+		DoorSyncMessage original = new DoorSyncMessage(id, open, locked);
+		byte[] data = original.toByteArray();
+		DoorSyncMessage message = new DoorSyncMessage(data);
+		
+		assertEquals(id, message.getDoorID());
+		assertEquals(open, message.isOpen());
+		assertEquals(locked, message.isLocked());
 	}
 }

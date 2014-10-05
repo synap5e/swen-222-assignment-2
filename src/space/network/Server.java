@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.Sys;
@@ -20,9 +21,11 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.storage.WorldLoader;
 import space.network.message.ShutdownMessage;
+import space.network.message.sync.DoorSyncMessage;
 import space.world.Door;
 import space.world.Entity;
 import space.world.Player;
+import space.world.Room;
 import space.world.World;
 
 //TODO: Work out a way to let the server be shutdown nicely
@@ -304,6 +307,16 @@ public class Server {
 						}
 						
 						sendMessageToAllExcept(id, new PlayerRotatedMessage(id, new Vector2D((-180)*8, 0)));
+						
+						//Sync the doors
+						for (Room room : world.getRooms().values()){
+							for (List<Door> doors : room.getDoors().values()){
+								for (Door door : doors){
+									//TODO: Might need a more reliable way of checking whether the door is open
+									newClient.sendMessage(new DoorSyncMessage(door.getID(), door.canGoThrough(), door.isLocked()));
+								}
+							}
+						}
 					}
 				} catch (SocketException se){
 					if (!se.getMessage().equals("socket closed")){

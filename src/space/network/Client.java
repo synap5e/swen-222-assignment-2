@@ -21,6 +21,7 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
+import space.network.message.sync.SyncMessage;
 import space.world.Door;
 import space.world.Entity;
 import space.world.Player;
@@ -402,6 +403,9 @@ public class Client {
 							//Make player interact with entity
 							} else if (message instanceof InteractionMessage){
 								handleInteraction((InteractionMessage) message);
+							//Sync the world
+							} else if (message instanceof SyncMessage){
+								((SyncMessage) message).applyTo(world);
 							//Remote shutdown
 							} else if (message instanceof ShutdownMessage){
 								shutdown();
