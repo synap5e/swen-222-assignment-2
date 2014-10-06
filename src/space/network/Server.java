@@ -5,9 +5,13 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import org.lwjgl.Sys;
 
@@ -21,8 +25,10 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.storage.WorldLoader;
+import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
 import space.network.message.sync.DoorSyncMessage;
+import space.serialization.ModelToJson;
 import space.world.Door;
 import space.world.Entity;
 import space.world.Key;
@@ -31,30 +37,38 @@ import space.world.Player;
 import space.world.Room;
 import space.world.World;
 
-//TODO: Work out a way to let the server be shutdown nicely
 /**
  * 
  * @author James Greenwood-Thessman (300289004)
  */
 public class Server {
 	
+	/**
+	 * The time between when the server saves the game. Set to 5 minutes.
+	 */
+	private static final int TIME_BETWEEN_SAVES = 300000;
+	
 	private Thread connectionHandler;
 	private Thread gameLoop;
+	private Thread saveRoutine;
 	
 	private boolean stillAlive;
 	private ServerSocket socket;
 	private Map<Integer, Connection> connections;
 	
 	private World world;
-	private Map<Integer, Player> unactivePlayers;
+	private Map<Integer, Player> inactivePlayers;
 	
-	//TODO: Work out better way of coming up with an ID
-	private int availableId = 9001;
+	private Set<Integer> usedIds;
+	private Random idGenerator;
 	
-	public Server(String host, int port, WorldLoader loader, String savePath){
+	private WorldSaver saver;
+	private String savePath;
+	
+	public Server(String host, int port, WorldLoader loader, WorldSaver saver, String savePath){
 		//Create the list of client connections
 		connections = new HashMap<Integer, Connection>();
-		unactivePlayers = new HashMap<Integer, Player>();
+		inactivePlayers = new HashMap<Integer, Player>();
 		
 		//Create the socket for clients to connect to
 		try {
@@ -64,15 +78,36 @@ public class Server {
 			throw new RuntimeException(e);
 		}
 		
+		//Keep track of how to save the world
+		this.saver = saver;
+		this.savePath = savePath;
+		
+		//Create set of used IDs
+		usedIds = new HashSet<Integer>();
+		idGenerator = new Random();
+		
 		//Create Connection Handler
 		stillAlive = true;
 		connectionHandler = new Thread(new ConnectionHandler());
 		
 		//Load the World
-		
-		//TODO: Load world from file
 		loader.loadWorld(savePath);
 		world = loader.getWorld();
+		//Mark the IDs of all the entities in the world as used
+		for (Room r : world.getRooms().values()){
+			for (Entity e : r.getEntities()){
+				usedIds.add(e.getID());
+			}
+		}
+		//Load previous players
+		for (Player p : loader.getPlayers()){
+			inactivePlayers.put(p.getID(), p);
+			usedIds.add(p.getID());
+			//Mark the IDs of the contents of the players inventory as used
+			for (Pickup pu : p.getInventory()){
+				usedIds.add(pu.getID());
+			}
+		}
 		
 		//Start accepting connections
 		connectionHandler.start();
@@ -80,12 +115,20 @@ public class Server {
 		//Start the game logic
 		gameLoop = new Thread(new ServerGameLoop());
 		gameLoop.start();
+		
+		//Start
+		saveRoutine = new Thread(new WorldSaveRoutine());
+		saveRoutine.start();
 	}
 	
 	public void shutdown(){
 		//Stop the connection handler
 		stillAlive = false;
 		connectionHandler.interrupt();
+		saveRoutine.interrupt();
+		
+		//Save the state of the world
+		saver.saveWorld(savePath, world, new ArrayList<Player>(inactivePlayers.values()));
 		
 		try {
 			socket.close();
@@ -112,7 +155,7 @@ public class Server {
 		//world.removeEntity(p); TODO add world.removeEntity(Entity e)
 		
 		//Keep track of the player allowing for reconnects
-		unactivePlayers.put(disconnectedID, p);
+		inactivePlayers.put(disconnectedID, p);
 		
 		//Close the connection to the client
 		connections.get(disconnectedID).close();
@@ -296,10 +339,25 @@ public class Server {
 					//Get the previous ID of the client
 					int id = ((PlayerJoiningMessage) newClient.readMessage()).getPlayerID();
 					
+					Player p = null;
+					
+					//If the client already has an ID
+					if (id != -1){
+						//Retrieve the player
+						p = inactivePlayers.remove(id);
+						
+						//If no such player, ensure a new ID is assigned
+						if (p == null){
+							id = -1;
+						}
+					}
+					
 					//If the client didn't have an ID previously
 					if (id == -1){
 						//Assign a new ID
-						id = availableId++;
+						while (usedIds.contains(id = idGenerator.nextInt(1000)));
+						usedIds.add(id);
+						p = new Player(new Vector2D(0, 0), id);
 					}
 					
 					//Add the client the map of connections
@@ -308,16 +366,20 @@ public class Server {
 					}
 					
 					synchronized (world){
-						//TODO load from map if player already exists
-						Player p = new Player(new Vector2D(0, 0), id);
+						//Add the player to the world
 						world.addEntity(p);
-						p.setRoom(world.getRoomAt(new Vector2D(0, 0)));
+						p.setRoom(world.getRoomAt(p.getPosition()));
 						p.getRoom().putInRoom(p);
 						
 						//Tell clients about new player. The new client will use the id given.
 						Message playerJoined = new PlayerJoiningMessage(id);
 						for (Connection con : connections.values()){
 							con.sendMessage(playerJoined);
+							
+							//Send the inventory of the player
+							for (Pickup pickup : p.getInventory()){
+								con.sendMessage(new InteractionMessage(id, pickup.getID()));
+							}
 						}
 						
 						//Add the other players to the client
@@ -327,11 +389,21 @@ public class Server {
 								Player other = (Player) world.getEntity(otherId);
 								newClient.sendMessage(new PlayerJoiningMessage(otherId));
 								newClient.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
-							}
-							for (Pickup pickup : ((Player) world.getEntity(otherId)).getInventory()){
-								newClient.sendMessage(new InteractionMessage(otherId, pickup.getID()));
+								
+								for (Pickup pickup : other.getInventory()){
+									newClient.sendMessage(new InteractionMessage(otherId, pickup.getID()));
+								}
 							}
 						}
+						
+						//Remove entities from the new clients world that are in inactive player's inventory 
+						for (Player inactive : inactivePlayers.values()){
+							for (Pickup pickup : inactive.getInventory()){
+								newClient.sendMessage(new InteractionMessage(inactive.getID(), pickup.getID()));
+							}
+						}
+						
+						
 						
 						sendMessageToAllExcept(id, new PlayerRotatedMessage(id, new Vector2D((-180)*8, 0)));
 						
@@ -355,6 +427,29 @@ public class Server {
 					}
 				} catch (IOException e) {
 					System.err.println("Connection Attempt Failed");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @author James Greenwood-Thessman (300289004)
+	 */
+	private class WorldSaveRoutine implements Runnable {
+		
+		@Override
+		public void run() {
+			while (stillAlive){
+				//Sleep for the required time
+				try {
+					Thread.sleep(TIME_BETWEEN_SAVES);
+				} catch (InterruptedException e) {
+					continue;
+				}
+				
+				synchronized (world){
+					saver.saveWorld(savePath, world, new ArrayList<Player>(inactivePlayers.values()));
 				}
 			}
 		}

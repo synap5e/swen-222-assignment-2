@@ -13,6 +13,7 @@ import space.network.Client;
 import space.network.Server;
 import space.network.storage.MockStorage;
 import space.network.storage.WorldLoader;
+import space.serialization.ModelToJson;
 import space.world.World;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.GUI;
@@ -77,7 +78,7 @@ public class GameApplication {
 		
 		switch(state){
 			case 1:
-				server = new Server("localhost", 1234, new MockStorage(), "temp");
+				server = new Server("localhost", 1234, new MockStorage(), new ModelToJson(), "temp");
 			case 2:
 				startGame();
 			default:
