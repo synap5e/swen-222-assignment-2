@@ -48,7 +48,7 @@ public class Server {
 	private Map<Integer, Connection> connections;
 	
 	private World world;
-	private Map<Integer, Player> unactivePlayers;
+	private Map<Integer, Player> inactivePlayers;
 	
 	//TODO: Work out better way of coming up with an ID
 	private int availableId = 9001;
@@ -56,7 +56,7 @@ public class Server {
 	public Server(String host, int port, WorldLoader loader, String savePath){
 		//Create the list of client connections
 		connections = new HashMap<Integer, Connection>();
-		unactivePlayers = new HashMap<Integer, Player>();
+		inactivePlayers = new HashMap<Integer, Player>();
 		
 		//Create the socket for clients to connect to
 		try {
@@ -76,7 +76,7 @@ public class Server {
 		
 		//Load previous players
 		for (Player p : loader.getPlayers()){
-			unactivePlayers.put(p.getID(), p);
+			inactivePlayers.put(p.getID(), p);
 		}
 		
 		//Start accepting connections
@@ -93,7 +93,7 @@ public class Server {
 		connectionHandler.interrupt();
 		
 		
-		new ModelToJson().saveWorld("temp", world, new ArrayList<Player>(unactivePlayers.values()));
+		new ModelToJson().saveWorld("temp", world, new ArrayList<Player>(inactivePlayers.values()));
 		
 		
 		try {
@@ -121,7 +121,7 @@ public class Server {
 		//world.removeEntity(p); TODO add world.removeEntity(Entity e)
 		
 		//Keep track of the player allowing for reconnects
-		unactivePlayers.put(disconnectedID, p);
+		inactivePlayers.put(disconnectedID, p);
 		
 		//Close the connection to the client
 		connections.get(disconnectedID).close();
@@ -310,7 +310,7 @@ public class Server {
 					//If the client already has an ID
 					if (id != -1){
 						//Retrieve the player
-						p = unactivePlayers.remove(id);
+						p = inactivePlayers.remove(id);
 						
 						//If no such player, ensure a new ID is assigned
 						if (p == null){
