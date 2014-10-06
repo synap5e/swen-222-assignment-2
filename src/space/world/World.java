@@ -38,11 +38,11 @@ public class World implements ViewableWorld{
 		for(Door door : room.getAllDoors()){
 			Room otherRoom = door.otherRoom(room);
 
-			if (door.getPosition().sub(newPos).sqLen() < 3 && door.canGoThrough()){
+			if (door.getPosition().sub(newPos).sqLen() < door.getCollisionRadius() && door.canGoThrough()){
 				byOpenDoor = true;
 			}
 
-			if(byOpenDoor && otherRoom.contains(newPos) && otherRoom.isPositionVacant(newPos, c.getCollisionRadius())){
+			if(otherRoom != null && byOpenDoor && otherRoom.contains(newPos) && otherRoom.isPositionVacant(newPos, c.getCollisionRadius())){
 				c.setPosition(newPos);
 				room.removeFromRoom(c);
 				otherRoom.putInRoom(c);
@@ -50,12 +50,9 @@ public class World implements ViewableWorld{
 			}
 		}
 
-		if(byOpenDoor){
+		if((byOpenDoor || room.contains(newPos, c.getCollisionRadius()))
+				&& room.isPositionVacant(newPos, c.getCollisionRadius())){
 			c.setPosition(newPos);
-		} else if(room.contains(newPos, c.getCollisionRadius())){//moving around same room
-			if(room.isPositionVacant(newPos, c.getCollisionRadius())){
-				c.setPosition(newPos);
-			}
 		}
 	}
 
@@ -90,6 +87,30 @@ public class World implements ViewableWorld{
 		
 	}
 	
+	/**Lets the character to put something from their inventory into a container
+	 * @param character The character trying to put the entity in the container
+	 * @param cont the container the entity will be put into
+	 * @param entity The entity being put into the container*/
+	public void putInContainer(Character character, Container cont, Entity entity){
+		if(!(entity instanceof Pickup)){return;}
+		if(character.withinReach(entity.getPosition())
+				&& character.getInventory().contains(entity)
+				&&character.getRoom().containsEntity(cont)){
+			cont.putInside((Pickup) entity);
+			character.drop(entity);
+		}
+	}
+
+	/**Lets the character add the entity which is inside the container into their inventory
+	 * @param character The character getting the entity
+	 * @param cont The container being emptied*/
+	public void removeFromContainer(Character character, Container cont){
+		if(cont.getOpenAmount() == 1 && character.withinReach(cont.getPosition()) && character.getRoom().containsEntity(cont)){
+			Pickup itemContained = cont.removeContainedItem();
+			character.pickup(itemContained);
+		}
+	}
+
 	/**Updates all rooms
 	 * @param delta the amount of time since the previous update*/
 	public void update(int delta){
