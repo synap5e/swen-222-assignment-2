@@ -45,6 +45,7 @@ public class Server {
 	
 	private Thread connectionHandler;
 	private Thread gameLoop;
+	private Thread saveRoutine;
 	
 	private boolean stillAlive;
 	private ServerSocket socket;
@@ -109,12 +110,17 @@ public class Server {
 		//Start the game logic
 		gameLoop = new Thread(new ServerGameLoop());
 		gameLoop.start();
+		
+		//Start
+		saveRoutine = new Thread(new WorldSaveRoutine());
+		saveRoutine.start();
 	}
 	
 	public void shutdown(){
 		//Stop the connection handler
 		stillAlive = false;
 		connectionHandler.interrupt();
+		saveRoutine.interrupt();
 		
 		//Save the state of the world
 		saver.saveWorld(savePath, world, new ArrayList<Player>(inactivePlayers.values()));
@@ -416,6 +422,29 @@ public class Server {
 					}
 				} catch (IOException e) {
 					System.err.println("Connection Attempt Failed");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @author James Greenwood-Thessman (300289004)
+	 */
+	private class WorldSaveRoutine implements Runnable {
+		
+		@Override
+		public void run() {
+			while (stillAlive){
+				//Sleep for five minutes
+				try {
+					Thread.sleep(300000);
+				} catch (InterruptedException e) {
+					continue;
+				}
+				
+				synchronized (world){
+					saver.saveWorld(savePath, world, new ArrayList<Player>(inactivePlayers.values()));
 				}
 			}
 		}
