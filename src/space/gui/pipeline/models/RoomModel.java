@@ -95,8 +95,8 @@ public class RoomModel {
 		);
 
 		try {
-			wallTexture = TextureLoader.loadTexture(new File("./assets/shiphull.png"));
-			floorTexture = TextureLoader.loadTexture(new File("./assets/shiphull.png"));
+			wallTexture = TextureLoader.loadTexture(new File("./assets/wall textured evened.png"));
+			floorTexture = TextureLoader.loadTexture(new File("./assets/floor maybs.png"));
 			ceilingTexture = TextureLoader.loadTexture(new File("./assets/shiphull.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -244,6 +244,7 @@ public class RoomModel {
 			float wallBottom = 0;
 			if (quadInDoor){
 				wallBottom = DoorFrameModel.DOOR_HEIGHT;
+				top_tex -= tex_step * DoorFrameModel.DOOR_HEIGHT;
 			}
 			for (float y=wallBottom;y<WALL_HEIGHT;y+=TESSELLATION_SIZE){
 				if (y+TESSELLATION_SIZE > WALL_HEIGHT) yStep = WALL_HEIGHT % TESSELLATION_SIZE;
