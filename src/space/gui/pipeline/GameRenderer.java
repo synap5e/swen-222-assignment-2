@@ -202,42 +202,44 @@ public class GameRenderer {
 		
 		for (ViewableRoom room : roomsToRender){
 			if (room != null){
-				if (room != currentRoom){
-					setLight(player, room);
-					roomModels.get(room).render();
+				setLight(player, room);
+				roomModels.get(room).render();
+				for (ViewableObject vob : room.getContainedObjects()){
+					if (vob instanceof ViewableNonStationary){
+						drawObject(vob, models);
+					}
 				}
 			}
 		}
 		
-		setLight(player, currentRoom);
-		roomModels.get(currentRoom).render();
-		for (ViewableObject vob : currentRoom.getContainedObjects()){
-			if (vob instanceof ViewableNonStationary){
-				drawObject(vob, models);
-			}
-		}
 		
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glDisable(GL_LIGHTING);
 		glEnable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		for (ViewableBeam beam : currentRoom.getBeams()){
-			Vector3D kUnit = new Vector3D(0, 0, 1);
-			Vector3D beamDirection = beam.getBeamDirection();
-			
-			Vector3D axis = kUnit.cross(beamDirection);
-			float angle = kUnit.angleTo(beamDirection);
-			
-			Cylinder c = new Cylinder();
-			
-			glColor4f(1,0,0, 0.4f * Math.max(0, Math.min(1, beam.getRemainingLife())));
-			glPushMatrix();
-			glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
-			glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
-			c.draw(0.02f, 0.02f, 50, 10, 10);
-			glPopMatrix();
+
+		for (ViewableRoom room : roomsToRender){
+			if (room != null){
+				for (ViewableBeam beam : room.getBeams()){
+					Vector3D kUnit = new Vector3D(0, 0, 1);
+					Vector3D beamDirection = beam.getBeamDirection();
+					
+					Vector3D axis = kUnit.cross(beamDirection);
+					float angle = kUnit.angleTo(beamDirection);
+					
+					Cylinder c = new Cylinder();
+					
+					glColor4f(1,0,0, 0.4f * Math.max(0, Math.min(1, beam.getRemainingLife())));
+					glPushMatrix();
+					glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
+					glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
+					c.draw(0.02f, 0.02f, 50, 10, 10);
+					glPopMatrix();
+				}
+			}
 		}
+		
 		glPopAttrib();
 
 		glPopMatrix();
@@ -276,36 +278,4 @@ public class GameRenderer {
 		Display.create();
 	}
 
-	/*public static void main(String[] args) throws LWJGLException{
-		int windowWidth = 1800;
-		int windowHeight = 900;
-
-		Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-		Display.create();
-
-		GameRenderer r = new GameRenderer(windowWidth, windowHeight);
-		MockPlayer mockPlayer = new MockPlayer();
-		ViewableWord mockWorld = new MockWorld();
-
-
-		long last = getTime();
-		while (!Display.isCloseRequested()) {
-			long now = getTime();
-			int delta = (int)(now - last);
-			last = now;
-
-			mockPlayer.update(delta);
-			r.renderTick(delta, mockPlayer, mockWorld);
-
-			Display.update();
-			Display.sync(60);
-
-		}
-		Display.destroy();
-
-	}
-	public static long getTime() {
-		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-	}
-*/
 }
