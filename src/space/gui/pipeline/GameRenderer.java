@@ -6,7 +6,6 @@ import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,23 +13,22 @@ import java.util.Set;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 
 import space.gui.pipeline.mock.Bullet;
 import space.gui.pipeline.mock.Robot;
-import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.models.BulletModel;
+import space.gui.pipeline.models.RenderModel;
+import space.gui.pipeline.models.RoomModel;
+import space.gui.pipeline.models.WavefrontModel;
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.gui.pipeline.viewable.ViewableRoom;
-import space.gui.pipeline.viewable.ViewableStationary;
-import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
@@ -50,7 +48,7 @@ public class GameRenderer {
 	private int height;
 	private int width;
 
-	private Map<Class<? extends ViewableObject>, RenderModel> models;
+	private ModelFlyweight models;
 	private Map<ViewableRoom, RoomModel> roomModels;
 
 	public GameRenderer(int width, int height) {
@@ -62,19 +60,9 @@ public class GameRenderer {
 	}
 
 	public void loadModels(ViewableWorld world) {
-		this.models = new HashMap<Class<? extends ViewableObject>, RenderModel>();
-		try {
-			models.put(Robot.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
-			models.put(Key.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
-			models.put(Bullet.class, new BulletModel());
-			models.put(Player.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.models = new ModelFlyweight();// new HashMap<Class<? extends ViewableObject>, RenderModel>();
 		
 		RoomModel.loadModels();
-
 		roomModels = new HashMap<>();
 		for (ViewableRoom room : world.getViewableRooms()){
 			roomModels.put(room, new RoomModel(room, models));
@@ -245,7 +233,7 @@ public class GameRenderer {
 		glPopMatrix();
 	}
 
-	public static void drawObject(ViewableObject vob, Map<Class<? extends ViewableObject>, RenderModel> models) {
+	public static void drawObject(ViewableObject vob, ModelFlyweight models) {
 		glPushMatrix();
 		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
 		glRotated(vob.getAngle(), 0, -1, 0);

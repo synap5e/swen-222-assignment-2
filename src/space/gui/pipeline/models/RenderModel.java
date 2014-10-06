@@ -1,4 +1,4 @@
-package space.gui.pipeline;
+package space.gui.pipeline.models;
 
 public interface RenderModel {
 	
