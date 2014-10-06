@@ -7,8 +7,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import org.lwjgl.Sys;
 
@@ -51,7 +54,9 @@ public class Server {
 	private Map<Integer, Player> inactivePlayers;
 	
 	//TODO: Work out better way of coming up with an ID
-	private int availableId = 9001;
+	
+	private Set<Integer> usedIds;
+	private Random idGenerator;
 	
 	public Server(String host, int port, WorldLoader loader, String savePath){
 		//Create the list of client connections
@@ -66,6 +71,9 @@ public class Server {
 			throw new RuntimeException(e);
 		}
 		
+		//Create set of used IDs
+		usedIds = new HashSet<Integer>();
+		
 		//Create Connection Handler
 		stillAlive = true;
 		connectionHandler = new Thread(new ConnectionHandler());
@@ -73,10 +81,12 @@ public class Server {
 		//Load the World
 		loader.loadWorld(savePath);
 		world = loader.getWorld();
+		//TODO: add entity ids to used ids
 		
 		//Load previous players
 		for (Player p : loader.getPlayers()){
 			inactivePlayers.put(p.getID(), p);
+			usedIds.add(p.getID());
 		}
 		
 		//Start accepting connections
@@ -321,7 +331,8 @@ public class Server {
 					//If the client didn't have an ID previously
 					if (id == -1){
 						//Assign a new ID
-						id = availableId++;
+						while (usedIds.contains(id = idGenerator.nextInt(1000)));
+						usedIds.add(id);
 						p = new Player(new Vector2D(0, 0), id);
 					}
 					
