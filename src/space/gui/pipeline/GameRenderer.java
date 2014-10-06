@@ -6,7 +6,6 @@ import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,23 +13,21 @@ import java.util.Set;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 
 import space.gui.pipeline.mock.Bullet;
-import space.gui.pipeline.mock.Robot;
-import space.gui.pipeline.mock.MockWorld;
+import space.gui.pipeline.models.BulletModel;
+import space.gui.pipeline.models.RenderModel;
+import space.gui.pipeline.models.RoomModel;
+import space.gui.pipeline.models.WavefrontModel;
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewablePlayer;
 import space.gui.pipeline.viewable.ViewableRoom;
-import space.gui.pipeline.viewable.ViewableStationary;
-import space.gui.pipeline.viewable.ViewableWall;
 import space.gui.pipeline.viewable.ViewableWorld;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
@@ -50,7 +47,7 @@ public class GameRenderer {
 	private int height;
 	private int width;
 
-	private Map<Class<? extends ViewableObject>, RenderModel> models;
+	private ModelFlyweight models;
 	private Map<ViewableRoom, RoomModel> roomModels;
 
 	public GameRenderer(int width, int height) {
@@ -62,19 +59,9 @@ public class GameRenderer {
 	}
 
 	public void loadModels(ViewableWorld world) {
-		this.models = new HashMap<Class<? extends ViewableObject>, RenderModel>();
-		try {
-			models.put(Robot.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
-			models.put(Key.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
-			models.put(Bullet.class, new BulletModel());
-			models.put(Player.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.models = new ModelFlyweight();// new HashMap<Class<? extends ViewableObject>, RenderModel>();
 		
 		RoomModel.loadModels();
-
 		roomModels = new HashMap<>();
 		for (ViewableRoom room : world.getViewableRooms()){
 			roomModels.put(room, new RoomModel(room, models));
@@ -202,48 +189,50 @@ public class GameRenderer {
 		
 		for (ViewableRoom room : roomsToRender){
 			if (room != null){
-				if (room != currentRoom){
-					setLight(player, room);
-					roomModels.get(room).render();
+				setLight(player, room);
+				roomModels.get(room).render();
+				for (ViewableObject vob : room.getContainedObjects()){
+					if (vob instanceof ViewableNonStationary){
+						drawObject(vob, models);
+					}
 				}
 			}
 		}
 		
-		setLight(player, currentRoom);
-		roomModels.get(currentRoom).render();
-		for (ViewableObject vob : currentRoom.getContainedObjects()){
-			if (vob instanceof ViewableNonStationary){
-				drawObject(vob, models);
-			}
-		}
 		
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glDisable(GL_LIGHTING);
 		glEnable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		for (ViewableBeam beam : currentRoom.getBeams()){
-			Vector3D kUnit = new Vector3D(0, 0, 1);
-			Vector3D beamDirection = beam.getBeamDirection();
-			
-			Vector3D axis = kUnit.cross(beamDirection);
-			float angle = kUnit.angleTo(beamDirection);
-			
-			Cylinder c = new Cylinder();
-			
-			glColor4f(1,0,0, 0.4f * Math.max(0, Math.min(1, beam.getRemainingLife())));
-			glPushMatrix();
-			glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
-			glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
-			c.draw(0.02f, 0.02f, 50, 10, 10);
-			glPopMatrix();
+
+		for (ViewableRoom room : roomsToRender){
+			if (room != null){
+				for (ViewableBeam beam : room.getBeams()){
+					Vector3D kUnit = new Vector3D(0, 0, 1);
+					Vector3D beamDirection = beam.getBeamDirection();
+					
+					Vector3D axis = kUnit.cross(beamDirection);
+					float angle = kUnit.angleTo(beamDirection);
+					
+					Cylinder c = new Cylinder();
+					
+					glColor4f(1,0,0, 0.4f * Math.max(0, Math.min(1, beam.getRemainingLife())));
+					glPushMatrix();
+					glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
+					glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
+					c.draw(0.02f, 0.02f, 50, 10, 10);
+					glPopMatrix();
+				}
+			}
 		}
+		
 		glPopAttrib();
 
 		glPopMatrix();
 	}
 
-	public static void drawObject(ViewableObject vob, Map<Class<? extends ViewableObject>, RenderModel> models) {
+	public static void drawObject(ViewableObject vob, ModelFlyweight models) {
 		glPushMatrix();
 		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
 		glRotated(vob.getAngle(), 0, -1, 0);
@@ -276,36 +265,4 @@ public class GameRenderer {
 		Display.create();
 	}
 
-	/*public static void main(String[] args) throws LWJGLException{
-		int windowWidth = 1800;
-		int windowHeight = 900;
-
-		Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-		Display.create();
-
-		GameRenderer r = new GameRenderer(windowWidth, windowHeight);
-		MockPlayer mockPlayer = new MockPlayer();
-		ViewableWord mockWorld = new MockWorld();
-
-
-		long last = getTime();
-		while (!Display.isCloseRequested()) {
-			long now = getTime();
-			int delta = (int)(now - last);
-			last = now;
-
-			mockPlayer.update(delta);
-			r.renderTick(delta, mockPlayer, mockWorld);
-
-			Display.update();
-			Display.sync(60);
-
-		}
-		Display.destroy();
-
-	}
-	public static long getTime() {
-		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-	}
-*/
 }

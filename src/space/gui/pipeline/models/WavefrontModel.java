@@ -1,4 +1,4 @@
-package space.gui.pipeline;
+package space.gui.pipeline.models;
 
 
 import static org.lwjgl.opengl.GL11.*;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.Util;
 import org.lwjgl.util.glu.Sphere;
 
+import space.gui.pipeline.Material;
 import space.math.Vector3D;
 
 /**

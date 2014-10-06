@@ -1,10 +1,11 @@
-package space.gui.pipeline;
+package space.gui.pipeline.models;
 
 import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.Disk;
-import org.lwjgl.util.glu.Sphere;
+
+import space.gui.pipeline.Material;
 
 public class BulletModel implements RenderModel {
 

@@ -2,30 +2,14 @@ package space.gui.pipeline;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
-
-import de.matthiasmann.twl.utils.PNGDecoder;
-
 
 public class TextureLoader {
 
