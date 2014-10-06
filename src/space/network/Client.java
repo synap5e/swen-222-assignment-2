@@ -604,7 +604,9 @@ public class Client {
 				if (r.getEntities().contains(e)){
 					r.removeFromRoom(e);
 				}
-				p.pickup((Pickup) e);
+				if (p != null){
+					p.pickup((Pickup) e);
+				}
 			}
 		}
 		

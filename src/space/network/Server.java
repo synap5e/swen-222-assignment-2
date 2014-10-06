@@ -364,6 +364,11 @@ public class Server {
 						Message playerJoined = new PlayerJoiningMessage(id);
 						for (Connection con : connections.values()){
 							con.sendMessage(playerJoined);
+							
+							//Send the inventory of the player
+							for (Pickup pickup : p.getInventory()){
+								con.sendMessage(new InteractionMessage(id, pickup.getID()));
+							}
 						}
 						
 						//Add the other players to the client
@@ -373,11 +378,21 @@ public class Server {
 								Player other = (Player) world.getEntity(otherId);
 								newClient.sendMessage(new PlayerJoiningMessage(otherId));
 								newClient.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
-							}
-							for (Pickup pickup : ((Player) world.getEntity(otherId)).getInventory()){
-								newClient.sendMessage(new InteractionMessage(otherId, pickup.getID()));
+								
+								for (Pickup pickup : other.getInventory()){
+									newClient.sendMessage(new InteractionMessage(otherId, pickup.getID()));
+								}
 							}
 						}
+						
+						//Remove entities from the new clients world that are in inactive player's inventory 
+						for (Player inactive : inactivePlayers.values()){
+							for (Pickup pickup : inactive.getInventory()){
+								newClient.sendMessage(new InteractionMessage(inactive.getID(), pickup.getID()));
+							}
+						}
+						
+						
 						
 						sendMessageToAllExcept(id, new PlayerRotatedMessage(id, new Vector2D((-180)*8, 0)));
 						
