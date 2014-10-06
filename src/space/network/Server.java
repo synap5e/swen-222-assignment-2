@@ -53,8 +53,6 @@ public class Server {
 	private World world;
 	private Map<Integer, Player> inactivePlayers;
 	
-	//TODO: Work out better way of coming up with an ID
-	
 	private Set<Integer> usedIds;
 	private Random idGenerator;
 	
@@ -73,6 +71,7 @@ public class Server {
 		
 		//Create set of used IDs
 		usedIds = new HashSet<Integer>();
+		idGenerator = new Random();
 		
 		//Create Connection Handler
 		stillAlive = true;
@@ -81,12 +80,20 @@ public class Server {
 		//Load the World
 		loader.loadWorld(savePath);
 		world = loader.getWorld();
-		//TODO: add entity ids to used ids
-		
+		//Mark the IDs of all the entities in the world as used
+		for (Room r : world.getRooms().values()){
+			for (Entity e : r.getEntities()){
+				usedIds.add(e.getID());
+			}
+		}
 		//Load previous players
 		for (Player p : loader.getPlayers()){
 			inactivePlayers.put(p.getID(), p);
 			usedIds.add(p.getID());
+			//Mark the IDs of the contents of the players inventory as used
+			for (Pickup pu : p.getInventory()){
+				usedIds.add(pu.getID());
+			}
 		}
 		
 		//Start accepting connections
