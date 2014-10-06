@@ -18,7 +18,6 @@ import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 
 import space.gui.pipeline.mock.Bullet;
-import space.gui.pipeline.mock.Robot;
 import space.gui.pipeline.models.BulletModel;
 import space.gui.pipeline.models.RenderModel;
 import space.gui.pipeline.models.RoomModel;
