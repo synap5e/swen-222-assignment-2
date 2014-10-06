@@ -67,7 +67,7 @@ public class RoomModel {
 	private static final float TESSELLATION_SIZE = 1;
 
 	/** How many tessellated squares does a wall texture cover */
-	private static final float TEXTURE_TESSELLATION_MULTIPLE = 10;
+	private static final float TEXTURE_TESSELLATION_MULTIPLE = 11;
 
 	private static int wallTexture;
 	private static int floorTexture;
