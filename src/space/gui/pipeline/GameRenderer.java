@@ -95,11 +95,11 @@ public class GameRenderer {
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, zeroBuff);
 
 		FloatBuffer ambient = BufferUtils.createFloatBuffer(4);
-		ambient.put(new float[] { 0.5f, 0.5f, 0.5f, 1f });
+		ambient.put(new float[] { 0.2f, 0.2f, 0.2f, 1f });
 		ambient.flip();    
 
 		FloatBuffer diffuse = BufferUtils.createFloatBuffer(4);
-		diffuse.put(new float[] { 0.7f, 0.7f, 0.7f, 1f });
+		diffuse.put(new float[] { 0.4f, 0.4f, 0.4f, 1f });
 		diffuse.flip();   
 		
 		FloatBuffer position = BufferUtils.createFloatBuffer(4);

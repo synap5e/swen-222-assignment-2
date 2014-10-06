@@ -84,7 +84,7 @@ public class RoomModel {
 		wallMaterial = new Material(
 				new Vector3D(0.2f, 0.2f, 0.2f),
 				new Vector3D(1, 1, 1),
-				new Vector3D(0.3f, 0.3f, 0.3f),
+				new Vector3D(0.6f, 0.6f, 0.6f),
 				0.5f
 		);
 		ceilingMaterial = new Material(
@@ -121,6 +121,7 @@ public class RoomModel {
 		glDisable(GL_COLOR_MATERIAL);
 		glEnable(GL_TEXTURE_2D);
 
+		wallMaterial.apply();
 		glBindTexture(GL_TEXTURE_2D, wallTexture);
 
 		glBegin(GL_QUADS);
