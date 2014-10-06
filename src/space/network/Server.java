@@ -25,6 +25,7 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.storage.WorldLoader;
+import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
 import space.network.message.sync.DoorSyncMessage;
 import space.serialization.ModelToJson;
@@ -36,7 +37,6 @@ import space.world.Player;
 import space.world.Room;
 import space.world.World;
 
-//TODO: Work out a way to let the server be shutdown nicely
 /**
  * 
  * @author James Greenwood-Thessman (300289004)
@@ -56,7 +56,10 @@ public class Server {
 	private Set<Integer> usedIds;
 	private Random idGenerator;
 	
-	public Server(String host, int port, WorldLoader loader, String savePath){
+	private WorldSaver saver;
+	private String savePath;
+	
+	public Server(String host, int port, WorldLoader loader, WorldSaver saver, String savePath){
 		//Create the list of client connections
 		connections = new HashMap<Integer, Connection>();
 		inactivePlayers = new HashMap<Integer, Player>();
@@ -68,6 +71,10 @@ public class Server {
 			//Throw the exception again as it is a critical failure
 			throw new RuntimeException(e);
 		}
+		
+		//Keep track of how to save the world
+		this.saver = saver;
+		this.savePath = savePath;
 		
 		//Create set of used IDs
 		usedIds = new HashSet<Integer>();
@@ -109,9 +116,8 @@ public class Server {
 		stillAlive = false;
 		connectionHandler.interrupt();
 		
-		
-		new ModelToJson().saveWorld("temp", world, new ArrayList<Player>(inactivePlayers.values()));
-		
+		//Save the state of the world
+		saver.saveWorld(savePath, world, new ArrayList<Player>(inactivePlayers.values()));
 		
 		try {
 			socket.close();

@@ -119,7 +119,7 @@ public class ModelToJson implements WorldSaver{
 	private MyJsonObject addRoomShape(ConcaveHull roomShape) {
 		MyJsonObject hull = new MyJsonObject();
 		//TO DO ASK SIMON ABOOUT CONCAVE HULL
-		return null;
+		return hull;
 	}
 	
 	/**
