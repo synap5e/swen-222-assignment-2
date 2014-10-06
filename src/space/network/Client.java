@@ -74,8 +74,9 @@ public class Client {
 	 * @param host the host name of the server
 	 * @param port the port of the server
 	 * @param world the local instance of the game world
+	 * @param prevId the previous ID used when connecting to the server
 	 */
-	public Client(String host, int port, World world){
+	public Client(String host, int port, World world, int prevId){
 		this.world = world;
 		
 		//Connect to the server
@@ -83,7 +84,7 @@ public class Client {
 			connection = new Connection(new Socket(host, port));
 			
 			//Request to join the game
-			connection.sendMessage(new PlayerJoiningMessage(-1)); //TODO use previous ID if one exists 
+			connection.sendMessage(new PlayerJoiningMessage(prevId));
 			
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
@@ -102,6 +103,17 @@ public class Client {
 		listeners = new ArrayList<ClientListener>();
 		
 		new Thread(new MessageHandler()).start();
+	}
+	
+	/**
+	 * Creates a game client that connects to a server as a new player.
+	 * 
+	 * @param host the host name of the server
+	 * @param port the port of the server
+	 * @param world the local instance of the game world
+	 */
+	public Client(String host, int port, World world){
+		this(host, port, world, -1);
 	}
 	
 	/**

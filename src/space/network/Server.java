@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import space.network.message.PlayerRotatedMessage;
 import space.network.storage.WorldLoader;
 import space.network.message.ShutdownMessage;
 import space.network.message.sync.DoorSyncMessage;
+import space.serialization.ModelToJson;
 import space.world.Door;
 import space.world.Entity;
 import space.world.Key;
@@ -69,10 +71,13 @@ public class Server {
 		connectionHandler = new Thread(new ConnectionHandler());
 		
 		//Load the World
-		
-		//TODO: Load world from file
 		loader.loadWorld(savePath);
 		world = loader.getWorld();
+		
+		//Load previous players
+		for (Player p : loader.getPlayers()){
+			unactivePlayers.put(p.getID(), p);
+		}
 		
 		//Start accepting connections
 		connectionHandler.start();
@@ -86,6 +91,10 @@ public class Server {
 		//Stop the connection handler
 		stillAlive = false;
 		connectionHandler.interrupt();
+		
+		
+		new ModelToJson().saveWorld("temp", world, new ArrayList<Player>(unactivePlayers.values()));
+		
 		
 		try {
 			socket.close();
@@ -296,10 +305,24 @@ public class Server {
 					//Get the previous ID of the client
 					int id = ((PlayerJoiningMessage) newClient.readMessage()).getPlayerID();
 					
+					Player p = null;
+					
+					//If the client already has an ID
+					if (id != -1){
+						//Retrieve the player
+						p = unactivePlayers.remove(id);
+						
+						//If no such player, ensure a new ID is assigned
+						if (p == null){
+							id = -1;
+						}
+					}
+					
 					//If the client didn't have an ID previously
 					if (id == -1){
 						//Assign a new ID
 						id = availableId++;
+						p = new Player(new Vector2D(0, 0), id);
 					}
 					
 					//Add the client the map of connections
@@ -308,10 +331,9 @@ public class Server {
 					}
 					
 					synchronized (world){
-						//TODO load from map if player already exists
-						Player p = new Player(new Vector2D(0, 0), id);
+						//Add the player to the world
 						world.addEntity(p);
-						p.setRoom(world.getRoomAt(new Vector2D(0, 0)));
+						p.setRoom(world.getRoomAt(p.getPosition()));
 						p.getRoom().putInRoom(p);
 						
 						//Tell clients about new player. The new client will use the id given.
