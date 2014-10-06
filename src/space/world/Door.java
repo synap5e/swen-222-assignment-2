@@ -107,11 +107,7 @@ public class Door extends NonStationary implements ViewableDoor {
 
 	@Override
 	public float getCollisionRadius() {
-<<<<<<< HEAD
-		return 3;
-=======
 		return COL_RADIUS;
->>>>>>> Added Container & Box 
 	}
 
 	/**
