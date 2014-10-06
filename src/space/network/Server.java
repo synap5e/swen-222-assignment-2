@@ -43,6 +43,11 @@ import space.world.World;
  */
 public class Server {
 	
+	/**
+	 * The time between when the server saves the game. Set to 5 minutes.
+	 */
+	private static final int TIME_BETWEEN_SAVES = 300000;
+	
 	private Thread connectionHandler;
 	private Thread gameLoop;
 	private Thread saveRoutine;
@@ -436,9 +441,9 @@ public class Server {
 		@Override
 		public void run() {
 			while (stillAlive){
-				//Sleep for five minutes
+				//Sleep for the required time
 				try {
-					Thread.sleep(300000);
+					Thread.sleep(TIME_BETWEEN_SAVES);
 				} catch (InterruptedException e) {
 					continue;
 				}
