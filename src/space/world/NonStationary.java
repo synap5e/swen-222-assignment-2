@@ -10,6 +10,7 @@ import space.math.Vector2D;
  * @author Maria Libunao
  */
 public abstract class NonStationary extends Entity implements ViewableNonStationary {
+	public enum OpeningState {OPEN, OPENING, CLOSED, CLOSING};
 	/**
 	 * Constructs a new non-stationary entity
 	 * 

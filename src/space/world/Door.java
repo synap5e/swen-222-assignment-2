@@ -16,10 +16,10 @@ public class Door extends NonStationary implements ViewableDoor {
 
 	private float amtOpen = 0; // the amount the door is open. 1 is fully open &
 								// 0 is fully closed
-	private enum DoorState {OPEN, OPENING, CLOSED, CLOSING};
-	private DoorState state = DoorState.CLOSED;
+	private OpeningState state = OpeningState.CLOSED;
 
-	private static final float LENGTH = 500;
+	private static final float COL_RADIUS = 3; // the collision radius
+	private static final float OPEN_DURATION = 500; //amount of time it will take to fully open or close
 
 	/**
 	 * Creates new Door
@@ -75,31 +75,31 @@ public class Door extends NonStationary implements ViewableDoor {
 
 	/** Closes the door if it is not already closed */
 	public void closeDoor() {
-		if (state != DoorState.CLOSED) {
-			state = DoorState.CLOSING;
+		if (state != OpeningState.CLOSED) {
+			state = OpeningState.CLOSING;
 		}
 	}
 
 	/** Opens the door if it is not already open & is unlocked */
 	public void openDoor() {
-		if (state != DoorState.OPEN && !locked) {
-			state = DoorState.OPENING;
+		if (state != OpeningState.OPEN && !locked) {
+			state = OpeningState.OPENING;
 		}
 	}
 
 	@Override
 	public void update(int delta) {
-		if (state == DoorState.CLOSING) {
-			amtOpen -= delta / LENGTH;
+		if (state == OpeningState.CLOSING) {
+			amtOpen -= delta / OPEN_DURATION;
 			if (amtOpen <= 0) {
 				amtOpen = 0;
-				state = DoorState.CLOSED;
+				state = OpeningState.CLOSED;
 			}
-		} else if (state == DoorState.OPENING) {
-			amtOpen += delta / LENGTH;
+		} else if (state == OpeningState.OPENING) {
+			amtOpen += delta / OPEN_DURATION;
 			if (amtOpen >= 1) {
 				amtOpen = 1;
-				state = DoorState.OPEN;
+				state = OpeningState.OPEN;
 			}
 		}
 
@@ -107,7 +107,11 @@ public class Door extends NonStationary implements ViewableDoor {
 
 	@Override
 	public float getCollisionRadius() {
+<<<<<<< HEAD
 		return 3;
+=======
+		return COL_RADIUS;
+>>>>>>> Added Container & Box 
 	}
 
 	/**
