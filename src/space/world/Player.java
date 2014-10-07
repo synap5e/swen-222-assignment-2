@@ -26,11 +26,9 @@ public class Player extends Character implements ViewablePlayer {
 	 * @param id
 	 *            The id
 	 * @param name
-	 * @param r
-	 *            The room the player is in
 	 */
-	public Player(Vector2D position, int id, String name/* , Room r */) {
-		super(position, id, name/* ,r */);
+	public Player(Vector2D position, int id, String name) {
+		super(position, id, name);
 	}
 
 	/**

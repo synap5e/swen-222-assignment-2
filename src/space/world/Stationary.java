@@ -26,14 +26,6 @@ public abstract class Stationary extends Entity implements ViewableStationary {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean canClip() {
-		return true;
-	}
-
-	/**
 	 * This method does nothing since stationary entities cannot be moved
 	 * 
 	 * @param
