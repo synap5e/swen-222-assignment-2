@@ -1,5 +1,8 @@
 package space.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import space.math.Vector2D;
 import space.world.NonStationary.OpeningState;
 
@@ -8,7 +11,7 @@ them. The player should be able to open and close containers, put objects inside
 them out. You must be able to put one container (like a wallet) inside another container (like a
 suitcase).*/
 public abstract class Container extends NonStationary {
-	private Pickup itemContained; //the object inside this container
+	private List<Pickup> itemsContained = new ArrayList<Pickup>(); //the object inside this container
 	private float amtOpen = 0;
 	private OpeningState state = OpeningState.CLOSED;
 	private static final float OPEN_DURATION = 400;
@@ -31,29 +34,25 @@ public abstract class Container extends NonStationary {
 
 	/**Whether or not a Pickup can be placed inside this container
 	 * @return*/
-	public boolean canPutInside(Pickup item){
-		return itemContained == null && state == OpeningState.OPEN && item.getCollisionRadius() < this.getCollisionRadius();
+	public boolean canPutInside(Entity item){
+		return item instanceof Pickup && state == OpeningState.OPEN && item.getHeight() < this.getHeight();
 	}
 
 	/**Puts the Pickup inside this container
 	 * @param item The Pickup that will be put into this*/
-	public void putInside(Pickup item){
+	public void putInside(Entity item){
 		if(canPutInside(item)){
-			itemContained = item;
-			itemContained.setPosition(getPosition());
+			itemsContained.add((Pickup)item);
 		}
 	}
 
-	/**Removes the Pickup from of this container.
-	 * Returns null if there is nothing inside or if this is not open
-	 * @return The Pickup that was in this container*/
-	public Pickup removeContainedItem(){
+	/**Removes the specified item from inside the container
+	 * @param item the entity to be removed*/
+	public boolean removeContainedItem(Entity item){
 		if(state == OpeningState.OPEN){
-			Pickup item = itemContained;
-			itemContained = null;
-			return item;
+			return itemsContained.remove(item);
 		}
-		return null;
+		return false;
 	}
 
 	@Override
@@ -76,8 +75,8 @@ public abstract class Container extends NonStationary {
 
 	/**Returns the Pickup which is contained in this
 	 * @return*/
-	public Pickup getItemContained() {
-		return itemContained;
+	public List<Pickup> getItemsContained() {
+		return itemsContained;
 	}
 
 	public float getOpenAmount(){
