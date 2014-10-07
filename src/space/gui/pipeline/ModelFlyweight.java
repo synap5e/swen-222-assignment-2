@@ -69,7 +69,6 @@ public class ModelFlyweight {
 				return closedContainer;
 			}
 		}
-		return models.get(type);
 		return models.get(type.getName());
 	}
 
