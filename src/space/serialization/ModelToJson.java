@@ -30,7 +30,7 @@ import space.world.World;
  * used to store the game data of the current player - and the state of the 
  * world that the current player was in 
  * 
- * Written like a parser
+ * Written like a parser - Recursive Descent
  * 
  * @author Shweta Barapatre
  *
@@ -140,6 +140,7 @@ public class ModelToJson implements WorldSaver{
 	private MyJsonList addWall(Map<Integer, List<Door>> doors) {
 		MyJsonList walls = new MyJsonList();
 		for (Entry<Integer, List<Door>> entry : doors.entrySet()) {
+			//PRETTY SURE THIS NEEDS FIXING
 			MyJsonObject wall = new MyJsonObject();
 			wall.put(entry.getKey().toString(),addDoors(entry.getValue()));
 			walls.add(wall);
@@ -156,9 +157,9 @@ public class ModelToJson implements WorldSaver{
 		MyJsonList doors = new MyJsonList();
 		MyJsonObject d = new MyJsonObject();
 		for(Door dr: value){
-			doors.add(dr.getID());
+			doors.add(AddDoor(dr));
 		}
-		d.put("doors id", doors);
+		d.put("doors", doors);
 		return d;
 	}
 	
@@ -196,7 +197,9 @@ public class ModelToJson implements WorldSaver{
 	 */
 	private MyJsonObject addNonStationary(Entity e) {
 		if(e instanceof Door){
-			return AddDoor((Door) e);
+			MyJsonObject door = new MyJsonObject();
+			door.put("door id", e.getID());
+			return door;
 		}
 		if(e instanceof Pickup){
 			return AddPickup((Pickup) e);
