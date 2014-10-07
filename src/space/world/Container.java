@@ -7,7 +7,7 @@ import space.world.NonStationary.OpeningState;
 them. The player should be able to open and close containers, put objects inside them or get
 them out. You must be able to put one container (like a wallet) inside another container (like a
 suitcase).*/
-public abstract class Container extends Pickup {
+public abstract class Container extends NonStationary {
 	private Pickup itemContained; //the object inside this container
 	private float amtOpen = 0;
 	private OpeningState state = OpeningState.CLOSED;
@@ -25,9 +25,8 @@ public abstract class Container extends Pickup {
 	 * @param description
 	 *            The description
 	 */
-	public Container(Vector2D position, int id, float elevation,
-			String description) {
-		super(position, id, elevation, description);
+	public Container(Vector2D position, int id, float elevation, String description, String name) {
+		super(position, id, elevation, description, name);
 	}
 
 	/**Whether or not a Pickup can be placed inside this container

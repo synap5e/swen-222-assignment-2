@@ -2,7 +2,7 @@ package space.world;
 
 import space.math.Vector2D;
 
-public class Key extends Pickup {
+public class Key extends NonStationary implements Pickup {
 	private Door door; // the door it unlocks
 	private static final float COL_RADIUS = 1; // the collision radius
 
@@ -20,8 +20,8 @@ public class Key extends Pickup {
 	 * @param door
 	 *            The door it unlocks
 	 */
-	public Key(Vector2D position, int id, String description, float elevation, Door door) {
-		super(position, id, elevation, description);
+	public Key(Vector2D position, int id, float elevation, Door door, String description, String name) {
+		super(position, id, elevation, description,name);
 		this.door = door;
 	}
 	
@@ -55,6 +55,12 @@ public class Key extends Pickup {
 	 */
 	public Door getDoor() {
 		return door;
+	}
+
+	@Override
+	public float getHeight() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

@@ -22,8 +22,9 @@ public abstract class NonStationary extends Entity implements ViewableNonStation
 	 *            The elevation
 	 * @param description
 	 *            The description
+	 * @param name
 	 */
-	public NonStationary(Vector2D position, int id, float elevation, String description) {
-		super(position, id, elevation, description);
+	public NonStationary(Vector2D position, int id, float elevation, String description, String name) {
+		super(position, id, elevation, description,name);
 	}
 }

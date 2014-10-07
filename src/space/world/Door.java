@@ -38,9 +38,9 @@ public class Door extends NonStationary implements ViewableDoor {
 	 * @param isLocked
 	 *            Whether or not the door is locked
 	 */
-	public Door(Vector2D position, int id, String description, Room room1, Room room2, boolean isOneWay,
+	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
 			boolean isLocked) {
-		super(position, id, 0, description);
+		super(position, id, 0, description,name);
 		this.room1 = room1;
 		this.room2 = room2;
 		this.oneWay = isOneWay;
@@ -173,6 +173,13 @@ public class Door extends NonStationary implements ViewableDoor {
 	@Override
 	public float getOpenPercent() {
 		return amtOpen;
+	}
+
+
+	@Override
+	public float getHeight() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
