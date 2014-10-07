@@ -64,10 +64,10 @@ public class RoomModel {
 	 * Walls must be tessellated for secular light to display
 	 * correctly.
 	 */
-	private static final float TESSELLATION_SIZE = 1;
+	private static final float TESSELLATION_SIZE = 0.5f;
 
 	/** How many tessellated squares does a wall texture cover */
-	private static final float TEXTURE_TESSELLATION_MULTIPLE = 11;
+	private static final float TEXTURE_TESSELLATION_MULTIPLE = 22;
 
 	private static int wallTexture;
 	private static int floorTexture;
@@ -215,7 +215,7 @@ public class RoomModel {
 				end = r.getEnd();
 				drawEnd = r.getEnd();
 			}
-			float xtc = end.sub(start).len() / TEXTURE_TESSELLATION_MULTIPLE;
+			float xtc = end.sub(start).len() / TEXTURE_TESSELLATION_MULTIPLE / TESSELLATION_SIZE;
 
 			
 			boolean quadInDoor = false;
@@ -245,7 +245,7 @@ public class RoomModel {
 			float wallBottom = 0;
 			if (quadInDoor){
 				wallBottom = DoorFrameModel.DOOR_HEIGHT;
-				top_tex -= tex_step * DoorFrameModel.DOOR_HEIGHT;
+				top_tex -= tex_step * DoorFrameModel.DOOR_HEIGHT / TESSELLATION_SIZE;
 			}
 			for (float y=wallBottom;y<WALL_HEIGHT;y+=TESSELLATION_SIZE){
 				if (y+TESSELLATION_SIZE > WALL_HEIGHT) yStep = WALL_HEIGHT % TESSELLATION_SIZE;
