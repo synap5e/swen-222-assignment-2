@@ -13,7 +13,9 @@ import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.Material;
 import space.gui.pipeline.ModelFlyweight;
 import space.gui.pipeline.TextureLoader;
+import space.gui.pipeline.viewable.OpenableContainer;
 import space.gui.pipeline.viewable.ViewableDoor;
+import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableStationary;
@@ -30,12 +32,15 @@ import space.math.Vector3D;
 public class RoomModel {
 
 	private int displayList;
-	private HashMap<ViewableDoor, Float> doorRotations = new HashMap<ViewableDoor, Float>();;
+	private HashMap<ViewableDoor, Float> doorRotations = new HashMap<ViewableDoor, Float>();
+	private ViewableRoom room;;
 	public RoomModel(ViewableRoom room, ModelFlyweight models){
 		// pre-compile the viewmodel for all static models, the walls and the ceiling
 		this.displayList = createDisplayList(room, models);
+		this.room = room;
 	}
-	public void render() {
+
+	public void render(ModelFlyweight models) {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glCallList(this.displayList);
 		
@@ -52,6 +57,13 @@ public class RoomModel {
 			glPopMatrix();
 			
 		}
+		// draw all nonstationary objects and openable containers dynamically
+		for (ViewableObject vob : room.getContainedObjects()){
+			if (vob instanceof ViewableNonStationary || vob instanceof OpenableContainer){
+				drawObject(vob, models);
+			}
+		}
+
 		glPopAttrib();
 	}
 
@@ -64,10 +76,10 @@ public class RoomModel {
 	 * Walls must be tessellated for secular light to display
 	 * correctly.
 	 */
-	private static final float TESSELLATION_SIZE = 1;
+	private static final float TESSELLATION_SIZE = 0.5f;
 
 	/** How many tessellated squares does a wall texture cover */
-	private static final float TEXTURE_TESSELLATION_MULTIPLE = 11;
+	private static final float TEXTURE_TESSELLATION_MULTIPLE = 22;
 
 	private static int wallTexture;
 	private static int floorTexture;
@@ -169,11 +181,11 @@ public class RoomModel {
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_COLOR_MATERIAL);
 		for (ViewableObject viewableObject : room.getContainedObjects()){
-			if (viewableObject instanceof ViewableStationary){
-				GameRenderer.drawObject(viewableObject, models);
+			if (viewableObject instanceof ViewableStationary && !(viewableObject instanceof OpenableContainer)){
+				drawObject(viewableObject, models);
 			}
 		}
-		
+
 		for (Entry<ViewableDoor, Float> e : doorRotations.entrySet()) {
 			ViewableDoor door = e.getKey();
 			float angle = e.getValue();
@@ -189,7 +201,15 @@ public class RoomModel {
 
 		return displayList;
 	}
-	
+
+	private void drawObject(ViewableObject viewableObject, ModelFlyweight models) {
+		glPushMatrix();
+		glTranslatef(viewableObject.getPosition().getX(), viewableObject.getElevation(), viewableObject.getPosition().getY());
+		glRotated(viewableObject.getAngle(), 0, -1, 0);
+		models.get(viewableObject).render();
+		glPopMatrix();
+
+	}
 	private static void renderWall(ViewableWall r, List<? extends ViewableDoor> doors) {
 		// we need to tessellate the wall into squares of TESSELLATION_SIZE * TESSELLATION_SIZE
 		// for the length of the wall the vector 'delta' is added to the start vector until
@@ -215,7 +235,7 @@ public class RoomModel {
 				end = r.getEnd();
 				drawEnd = r.getEnd();
 			}
-			float xtc = end.sub(start).len() / TEXTURE_TESSELLATION_MULTIPLE;
+			float xtc = end.sub(start).len() / TEXTURE_TESSELLATION_MULTIPLE / TESSELLATION_SIZE;
 
 			
 			boolean quadInDoor = false;
@@ -245,7 +265,7 @@ public class RoomModel {
 			float wallBottom = 0;
 			if (quadInDoor){
 				wallBottom = DoorFrameModel.DOOR_HEIGHT;
-				top_tex -= tex_step * DoorFrameModel.DOOR_HEIGHT;
+				top_tex -= tex_step * DoorFrameModel.DOOR_HEIGHT / TESSELLATION_SIZE;
 			}
 			for (float y=wallBottom;y<WALL_HEIGHT;y+=TESSELLATION_SIZE){
 				if (y+TESSELLATION_SIZE > WALL_HEIGHT) yStep = WALL_HEIGHT % TESSELLATION_SIZE;

@@ -40,12 +40,15 @@ public class WavefrontModel implements RenderModel{
 	
 	private int displayList;
 
-	public WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale, Material mat) throws IOException {
+	private Vector3D color;
+
+	public WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale, Vector3D color, Material mat) throws IOException {
 		this.offset = offset;
 		this.eulerRotation = eulerRotation;
 		this.scale = scale;
 		this.mat = mat;
-		
+		this.color = color;
+
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		String line;
 		while ((line = br.readLine()) != null) {
@@ -135,6 +138,9 @@ public class WavefrontModel implements RenderModel{
 			s.draw(0.1f, 10, 10);
 			glPopAttrib();
 		}
+
+		glColor3f(color.getX(), color.getY(), color.getZ());
+
 		
 		glTranslatef(offset.getX(), offset.getY(), offset.getZ());
 		
