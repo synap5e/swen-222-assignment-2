@@ -1,8 +1,11 @@
 package space.serialization;
 
-import org.json.simple.JSONArray;
+import java.util.Iterator;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import com.sun.org.apache.bcel.internal.generic.Type;
 
 /**
  * Represents a MyJsonList for classes and entities in the game
@@ -14,7 +17,7 @@ import org.json.simple.JSONObject;
  *
  */
 
-public class MyJsonList {
+public class MyJsonList implements Iterable<JSONObject>{
 	JSONArray list;
 	
 	public MyJsonList(){
@@ -41,7 +44,7 @@ public class MyJsonList {
 		 list.add(toAdd.getRawObject());
 	}
 	
-	public void put(MyJsonList toAdd){
+	public void  add(MyJsonList toAdd){
 		list.add(toAdd.getRawList());
 	}
 
@@ -63,6 +66,12 @@ public class MyJsonList {
 		}
 		return (E) value;
 	}
+
+	@Override
+	public Iterator<JSONObject> iterator() {
+		return list.iterator();
+	}
+
 
 
 }
