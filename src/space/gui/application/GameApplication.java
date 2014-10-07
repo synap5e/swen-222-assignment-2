@@ -1,5 +1,7 @@
 package space.gui.application;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import java.io.IOException;
 
 import org.lwjgl.LWJGLException;
@@ -10,6 +12,7 @@ import org.lwjgl.opengl.DisplayMode;
 
 import space.gui.pipeline.GameRenderer;
 import space.network.Client;
+import space.network.ClientListener;
 import space.network.Server;
 import space.network.storage.MockStorage;
 import space.network.storage.WorldLoader;
@@ -20,9 +23,12 @@ import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
 
-public class GameApplication {
+public class GameApplication implements ClientListener{
 	protected static final int QUIT = 0;
+	
 	protected static final int SINGLEPLAYER = 1;
+	protected static final int MAINMENU = 1;
+	
 	protected static final int MULTIPLAYER = 2;
 	
 	int width;
@@ -42,7 +48,7 @@ public class GameApplication {
 	GUI gui;
 	GUIWrapper guiWrapper;
 	
-	HeadsUpDisplay hud;
+	HeadsUpDisplay headsUpDisplay;
 	
 	MainMenu mainMenu;
 	IngameMenu ingameMenu;
@@ -62,28 +68,7 @@ public class GameApplication {
 		renderer = new LWJGLRenderer();
 		gui = new GUI(renderer);
 		
-		mainMenu = new MainMenu(this);
-		gui.setRootPane(mainMenu);
-		
-		ThemeManager theme = ThemeManager.createThemeManager(Bootstrap.class.getResource("resources/gameui.xml"), renderer);
-        gui.applyTheme(theme);
-        
-		while (!Display.isCloseRequested() && !end) {
-			
-			gui.update();
-			
-			Display.update();
-			Display.sync(60);
-		}
-		
-		switch(state){
-			case 1:
-				server = new Server("localhost", 1234, new MockStorage(), new ModelToJson(), "temp");
-			case 2:
-				startGame();
-			default:
-				break;
-		}
+		mainMenu();
 		
 		quit();
 	}
@@ -96,6 +81,41 @@ public class GameApplication {
 		return height;
 	}
 	
+	public void mainMenu() throws IOException, LWJGLException{
+		this.end = false;
+		this.state = 0;
+		
+		mainMenu = new MainMenu(this);
+		gui.setRootPane(mainMenu);
+		
+		ThemeManager theme = ThemeManager.createThemeManager(Bootstrap.class.getResource("resources/gameui.xml"), renderer);
+        gui.applyTheme(theme);
+        
+
+        clearGLBuffer();
+        Display.swapBuffers();
+        clearGLBuffer();
+        
+		while (!Display.isCloseRequested() && !end) {
+			clearGLBuffer();
+			
+			mainMenu.update();
+			gui.update();
+		
+			Display.update();
+			Display.sync(60);
+		}
+		
+		switch(state){
+			case SINGLEPLAYER:
+				server = new Server("localhost", 1234, new MockStorage(), new ModelToJson(), "temp");
+			case MULTIPLAYER:
+				startGame();
+			default:
+				break;
+		}
+	}
+	
 	public void startGame() throws LWJGLException, IOException{
 		
 		//Load World TODO Load from json
@@ -105,11 +125,13 @@ public class GameApplication {
 		
 		//Create the client TODO use program arguments for host and port
 		client = new Client("localhost", 1234, world);
+		client.addListener(this);
 		
 		guiWrapper = new GUIWrapper(this);
 		
 		//Load GUI
-		guiWrapper.add(new HeadsUpDisplay(this));
+		headsUpDisplay = new HeadsUpDisplay(this);
+		guiWrapper.add(headsUpDisplay);
 		
 		ingameMenu = new IngameMenu(this);
 		guiWrapper.add(ingameMenu);
@@ -123,6 +145,7 @@ public class GameApplication {
 		gameRenderer.loadModels(world);
 		
 		this.end = false;
+		this.state = 0;
 		this.lastTick = getTime();
 		
 		//setMenuVisible(false);
@@ -132,6 +155,17 @@ public class GameApplication {
 		while (!Display.isCloseRequested() && !end) {
 			gameTick();
 		}
+		
+		closeConnections();
+		
+		switch(state){
+			case MAINMENU:
+				mainMenu();
+			default:
+				break;
+		}
+		
+		
 	}
 	
 	public void gameTick(){
@@ -146,8 +180,8 @@ public class GameApplication {
 		gameRenderer.renderTick(delta, client.getLocalPlayer(), world);
 		
 		// update gui
+		headsUpDisplay.update(client.getLocalPlayer());
 		gui.update();
-		
 		
 		Display.update();
 		Display.sync(60);
@@ -166,7 +200,9 @@ public class GameApplication {
 	
 	public void quit(){
 		Display.destroy();
-		
+	}
+	
+	public void closeConnections(){
 		if(client != null){
 			client.shutdown();
 		}
@@ -188,7 +224,7 @@ public class GameApplication {
 	}
 
 	public void openPopup(Event evt) {
-		hud.createRadialMenu().openPopup(evt);
+		headsUpDisplay.createRadialMenu().openPopup(evt);
 	}
 
 	public void setMenuVisible(boolean flag) {
@@ -198,6 +234,16 @@ public class GameApplication {
 
 	public boolean isMenuVisible() {
 		return ingameMenu.isVisible();
+	}
+	
+	public void clearGLBuffer(){
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);	
+	}
+
+	@Override
+	public void onConnectionClose(String reason) {
+		setGameState(MAINMENU);
 	}
 	
 }

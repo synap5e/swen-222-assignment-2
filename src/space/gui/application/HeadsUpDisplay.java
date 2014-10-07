@@ -3,6 +3,7 @@ package space.gui.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import space.world.Player;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.Label;
@@ -26,9 +27,6 @@ public class HeadsUpDisplay extends NestedWidget {
     };
     
 	private List<ToggleButton> actionButtons;
-	private List<ToggleButton> menuButtons;
-    private ToggleButton buttonPause;
-    private ToggleButton buttonMenu;
     
     private FPSCounter fpsCounter;
     private Label labelExample;
@@ -37,7 +35,6 @@ public class HeadsUpDisplay extends NestedWidget {
 		super(gameApplication);
 		
         this.actionButtons = new ArrayList<ToggleButton>();
-        this.menuButtons = new ArrayList<ToggleButton>();
         
         for(int i=0 ; i<BUTTON_ITEM_THEMES.length ; i++) {
         	ToggleButton actionButton = new ToggleButton();
@@ -45,17 +42,6 @@ public class HeadsUpDisplay extends NestedWidget {
             actionButtons.add(actionButton);
             add(actionButton);
         }
-
-        buttonPause = new ToggleButton();
-        buttonPause.setTheme("pause");
-        menuButtons.add(buttonPause);
-        add(buttonPause);
-        
-
-        buttonMenu = new ToggleButton();
-        buttonMenu.setTheme("menu");
-        menuButtons.add(buttonMenu);
-        add(buttonMenu);
 
         fpsCounter = new FPSCounter();
         add(fpsCounter);
@@ -68,8 +54,6 @@ public class HeadsUpDisplay extends NestedWidget {
     @Override
     protected void layout() {
         layoutItems();
-        
-        layoutMenu();
 
         layoutFPS();
         
@@ -95,17 +79,6 @@ public class HeadsUpDisplay extends NestedWidget {
         }
     }
     
-    private void layoutMenu(){
-        int x = getInnerWidth() - PADDING - 80;
-        int y = PADDING;
-
-        for(ToggleButton button : menuButtons) {
-            button.setPosition(x, y);
-            button.adjustSize();
-            x -= button.getWidth() + SPACING;
-        }
-    }
-    
     private void layoutFPS(){
         fpsCounter.adjustSize();
         fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(), 0);
@@ -128,4 +101,9 @@ public class HeadsUpDisplay extends NestedWidget {
         }
         return rpm;
     }
+
+	public void update(Player localPlayer) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -11,9 +11,10 @@ public class IngameMenu extends NestedWidget{
 	
 	private static final int PADDING_LEFT = 150;
 	private static final int PADDING_TOP = 180;
-	private static final int SPACING = 5;
+	private static final int SPACING = 15;
 
 	private List<Label> menuItems;
+	Label title;
 
 	public IngameMenu(final GameApplication gameApplication) {
 		super(gameApplication);
@@ -21,6 +22,10 @@ public class IngameMenu extends NestedWidget{
 		setVisible(false);
 		
 		this.menuItems = new ArrayList<Label>();
+		
+		title = new Label();
+		title.setText("Paused");
+		add(title);
 		
 		Label menuItem = new Label(){
 			@Override
@@ -43,6 +48,15 @@ public class IngameMenu extends NestedWidget{
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
+				gameApplication.setGameState(GameApplication.MAINMENU);
+			}
+		};
+		menuItem.setText("Main Menu");
+		menuItems.add(menuItem);
+		
+		menuItem = new Label(){
+			@Override
+			protected void handleClick(boolean doubleClick){
 				gameApplication.stop();
 			}
 		};
@@ -59,6 +73,12 @@ public class IngameMenu extends NestedWidget{
 	protected void layout() {
 	    int x = PADDING_LEFT;
 	    int y = PADDING_TOP;
+
+	    title.setPosition(x, y);
+	    title.adjustSize();
+	    
+	    x += 20;
+	    y += title.getHeight() + SPACING;
 	    
 	    for(Label item : menuItems) {
 	        item.setPosition(x, y);
