@@ -2,10 +2,12 @@ package space.world;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableObject;
@@ -30,12 +32,12 @@ public class Room implements ViewableRoom{
 	 *@param description The room's description
 	 *@param points The list of points which make up the room's shape
 	 *@param doors The list of doors in the room which maps to which wall it belongs to*/
-	public Room(LightMode lightMode, int id, String description, List<Vector2D> points,Map<Integer,List<Door>> doors){
+	public Room(LightMode lightMode, int id, String description, List<Vector2D> points){
 		mode = lightMode;
 		this.id = id;
 		this.description = description;
 		this.roomShape = new ConcaveHull(points);
-		this.doors = doors;
+		this.doors = new HashMap<Integer,List<Door>>();
 	}
 
 	/**Whether or not a particular position in the room is vacant
@@ -75,19 +77,19 @@ public class Room implements ViewableRoom{
 	public boolean contains(Vector2D position) {
 		return roomShape.contains(position);
 	}
-	
+
 
 	public boolean contains(Vector2D position, float radius) {
 		return roomShape.contains(position,radius);
 	}
-	
+
 	/**Returns whether or not the entity is in the room
 	 * @param e the entity that will be checked
 	 * @return*/
 	public boolean containsEntity(Entity e){
 		return entities.contains(e);
 	}
-	
+
 	/**Adds the entity to the room
 	 * @param e the entity that will be put in the room*/
 	public void putInRoom(Entity e){
@@ -99,7 +101,7 @@ public class Room implements ViewableRoom{
 	public void removeFromRoom(Entity e){
 		entities.remove(e);
 	}
-	
+
 	/**Adds a door to the room.
 	 * @param i the wall the door belongs to
 	 * @param d the door that will be added*/
@@ -112,7 +114,7 @@ public class Room implements ViewableRoom{
 			doors.get(i).add(d);
 		}
 	}
-	
+
 	@Override
 	public Vector2D getCentre() {
 		return roomShape.getCentre();
@@ -155,18 +157,18 @@ public class Room implements ViewableRoom{
 	public Set<Entity> getEntities() {
 		return entities;
 	}
-	
+
 	/**Returns which door is on which wall. The integer is the wall index
 	 * @return*/
 	public Map<Integer, List<Door>> getDoors(){
 		return doors;
 	}
-	
+
 	@Override
 	public List<Entity> getContainedObjects() {
 		return new ArrayList<Entity>(entities);
 	}
-	
+
 	@Override
 	public List<Door> getAllDoors() {
 		List<Door> allDoors = new ArrayList<Door>();
@@ -180,7 +182,7 @@ public class Room implements ViewableRoom{
 	public Vector2D getAABBTopLeft() {
 		return roomShape.getAABBTopLeft();
 	}
-	
+
 	@Override
 	public Vector2D getAABBBottomRight() {
 		return roomShape.getAABBBottomRight();
@@ -191,12 +193,12 @@ public class Room implements ViewableRoom{
 		// TODO Auto-generated method stub
 		return new ArrayList<ViewableBeam>();
 	}
-	
+
 	/**Represents a wall in the room. It contains doors and is represented by a line segment*/
 	private class Wall implements ViewableWall{
 		private Segment2D lineSeg;
 		private List<Door> wallDoors;
-		
+
 		/**Constructs a new wall
 		 * @param lineSeg the line segment
 		 * @param doors the list of doors belonging to the wall*/
@@ -204,7 +206,7 @@ public class Room implements ViewableRoom{
 			this.lineSeg = lineSeg;
 			this.wallDoors = doors;
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -220,7 +222,7 @@ public class Room implements ViewableRoom{
 		public Vector2D getEnd() {
 			return lineSeg.end;
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */

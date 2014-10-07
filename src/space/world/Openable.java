@@ -7,16 +7,26 @@ public abstract class Openable extends NonStationary {
 	private boolean locked;
 	private float amtOpen = 0; // the amount the door is open. 1 is fully open &
 								// 0 is fully closed
-	private OpeningState state = OpeningState.CLOSED;
+	private OpeningState state;
 	private Key key;
 	private final float openDuration;
-	
+
 	public Openable(Vector2D position, int id, float elevation,
 			String description, String name, float openTime, boolean isLocked, Key key) {
 		super(position, id, elevation, description, name);
 		this.openDuration = openTime;
 		this.locked = isLocked;
 		this.key = key;
+		state = OpeningState.CLOSED;
+	}
+
+	public Openable(Vector2D position, String state,int id, float elevation,
+			String description, String name, float openTime, boolean isLocked, Key key) {
+		super(position, id, elevation, description, name);
+		this.openDuration = openTime;
+		this.locked = isLocked;
+		this.key = key;
+		this.state = OpeningState.valueOf(state);
 	}
 
 	@Override
@@ -36,12 +46,12 @@ public abstract class Openable extends NonStationary {
 		}
 
 	}
-	
+
 	@Override
 	public boolean canInteract(){
 		return true;
 	}
-	
+
 	@Override
 	public boolean interact(Character c,World w){
 		if(locked){
@@ -53,8 +63,8 @@ public abstract class Openable extends NonStationary {
 			return open();
 		}
 	}
-	
-	/** Opens this if it is not already open & is unlocked 
+
+	/** Opens this if it is not already open & is unlocked
 	 * @return if this has been opened*/
 	public boolean open() {
 		if (state != OpeningState.OPEN && !locked) {
@@ -63,8 +73,8 @@ public abstract class Openable extends NonStationary {
 		}
 		return false;
 	}
-	
-	/** Closes this if it is not already closed 
+
+	/** Closes this if it is not already closed
 	 * @return if this has been closed*/
 	public boolean close() {
 		if (state != OpeningState.CLOSED) {
@@ -73,10 +83,10 @@ public abstract class Openable extends NonStationary {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Unlocks this if the player has the key to unlock it
-	 * 
+	 *
 	 * @param c
 	 *            The player trying to unlock
 	 */
@@ -87,20 +97,24 @@ public abstract class Openable extends NonStationary {
 			}
 		}
 	}
-	
+
 	public float getOpenPercent() {
 		return amtOpen;
 	}
-	
+
 	/**
 	 * Returns whether or not this is locked
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isLocked() {
 		return locked;
 	}
-	
-	
+
+	public String getState(){
+		return state.toString();
+	}
+
+
 
 }

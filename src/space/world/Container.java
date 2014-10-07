@@ -11,7 +11,6 @@ them out. You must be able to put one container (like a wallet) inside another c
 suitcase).*/
 public abstract class Container extends Openable {
 	private List<Pickup> itemsContained = new ArrayList<Pickup>(); //the object inside this container
-	private float amtOpen = 0;
 
 	/**
 	 * Constructs a new container
@@ -56,10 +55,6 @@ public abstract class Container extends Openable {
 	 * @return*/
 	public List<Pickup> getItemsContained() {
 		return itemsContained;
-	}
-
-	public float getOpenAmount(){
-		return amtOpen;
 	}
 
 }
