@@ -64,6 +64,7 @@ public class ModelFlyweight {
 			}
 		}
 		return models.get(type);
+		return models.get(type.getName());
 	}
 
 }
