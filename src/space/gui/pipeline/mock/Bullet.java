@@ -9,12 +9,12 @@ public class Bullet implements ViewableObject, ViewableNonStationary{
 
 	Vector3D pos;
 	private Vector3D vel;
-	
+
 	public Bullet(Vector3D pos, Vector3D vel) {
 		this.pos = pos;
 		this.vel = vel;
 	}
-	
+
 	@Override
 	public Vector2D getPosition() {
 		return new Vector2D(pos.getX(), pos.getZ());
@@ -32,6 +32,11 @@ public class Bullet implements ViewableObject, ViewableNonStationary{
 
 	public void update(int delta) {
 		pos.addLocal(vel.mul(1f/delta));
+	}
+
+	@Override
+	public String getName() {
+		return "bullet";
 	}
 
 }

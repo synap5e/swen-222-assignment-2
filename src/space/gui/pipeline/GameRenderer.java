@@ -241,7 +241,7 @@ public class GameRenderer {
 		getAssignedColor(vob);
 
 
-		models.get(vob.getClass()).render();
+		models.get(vob).render();
 		glPopMatrix();
 	}
 
