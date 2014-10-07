@@ -19,4 +19,5 @@ public interface ViewableObject {
 
 	public float getElevation();
 	
+	public String getName();
 }
