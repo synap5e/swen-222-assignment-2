@@ -190,12 +190,7 @@ public class GameRenderer {
 		for (ViewableRoom room : roomsToRender){
 			if (room != null){
 				setLight(player, room);
-				roomModels.get(room).render();
-				for (ViewableObject vob : room.getContainedObjects()){
-					if (vob instanceof ViewableNonStationary){
-						drawObject(vob, models);
-					}
-				}
+				roomModels.get(room).render(models);
 			}
 		}
 		
@@ -227,42 +222,11 @@ public class GameRenderer {
 			}
 		}
 		
+
 		glPopAttrib();
 
 		glPopMatrix();
 	}
 
-	public static void drawObject(ViewableObject vob, ModelFlyweight models) {
-		glPushMatrix();
-		glTranslatef(vob.getPosition().getX(), vob.getElevation(), vob.getPosition().getY());
-		glRotated(vob.getAngle(), 0, -1, 0);
-
-		// TODO remove this when we have textures
-		getAssignedColor(vob);
-
-
-		models.get(vob).render();
-		glPopMatrix();
-	}
-
-	private static HashMap<ViewableObject, Vector3D> colors = new HashMap<ViewableObject, Vector3D>();
-	private static void getAssignedColor(ViewableObject vob) {
-		if (!colors.containsKey(vob)){
-			float r = (float) Math.random();
-			float b = (float) Math.random();
-			float g = (float) Math.random();
-			
-			//colors.put(vob, new Vector3D(r,g,b));
-			colors.put(vob, new Vector3D(0.35f,0.3f,0.15f));
-		}
-		Vector3D c = colors.get(vob);
-		glColor3f(c.getX(), c.getY(), c.getZ());
-	}
-
-
-	public void setParent(Canvas c) throws LWJGLException {
-		Display.setParent(c);
-		Display.create();
-	}
 
 }

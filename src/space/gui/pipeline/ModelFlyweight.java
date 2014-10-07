@@ -24,29 +24,35 @@ public class ModelFlyweight {
 		models = new HashMap<>();
 		try {
 			//models.put(Robot.class, new WavefrontModel(new File("./assets/models/character_model.obj"), new Vector3D(-0.5f,0,0.160f), new Vector3D(0,270,0), 0.23f, Material.bronze));
-			models.put("Key", new WavefrontModel(	new File("./assets/models/character_model.obj"),
-													new Vector3D(-0.5f,0,0.160f),
-													new Vector3D(0,270,0), 0.23f,
-													Material.bronze
+
+			models.put("Key", new WavefrontModel(		new File("./assets/models/character_model.obj"), 	// model
+														new Vector3D(-0.5f,0,0.160f),						// model offset
+														new Vector3D(0,270,0), 								// model rotation
+														0.23f,												// model scale
+														new Vector3D(0.65f,0.3f,0.15f),						// model color
+														Material.bronze										// model material properties
 												));
 			models.put("Player", new WavefrontModel(	new File("./assets/models/character_model.obj"),
 														new Vector3D(-0.5f,0,0.160f),
 														new Vector3D(0,270,0), 0.23f,
+														new Vector3D(0.35f,0.3f,0.15f),
 														Material.bronze
 													));
 			models.put("Bullet", new BulletModel());
 
-			openContainer = new WavefrontModel(	new File("./assets/models/teapot.obj"),
-												new Vector3D(-0.5f,0,0.160f),
-												new Vector3D(0,270,0), 0.23f,
-												Material.bronze
+			openContainer = new WavefrontModel(			new File("./assets/models/teapot.obj"),
+														new Vector3D(-0.5f,0,0.160f),
+														new Vector3D(0,270,0), 0.23f,
+														new Vector3D(0.15f,0.6f,0.15f),
+														Material.bronze
 											   );
 
-			closedContainer = new WavefrontModel(	new File("./assets/models/teapot.obj"),
-					new Vector3D(-0.5f,0,0.160f),
-					new Vector3D(0,270,0), 0.23f,
-					Material.bronze
-				   );
+			closedContainer = new WavefrontModel(		new File("./assets/models/teapot.obj"),
+														new Vector3D(-0.5f,0,0.160f),
+														new Vector3D(0,270,0), 0.23f,
+														new Vector3D(0.65f,0.3f,0.75f),
+														Material.bronze
+												);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
