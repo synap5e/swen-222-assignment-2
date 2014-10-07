@@ -11,6 +11,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import space.math.ConcaveHull;
+import space.math.Vector2D;
 import space.network.storage.WorldSaver;
 import space.world.Door;
 import space.world.Entity;
@@ -118,7 +119,14 @@ public class ModelToJson implements WorldSaver{
 	 */
 	private MyJsonObject addRoomShape(ConcaveHull roomShape) {
 		MyJsonObject hull = new MyJsonObject();
-		//TO DO ASK SIMON ABOOUT CONCAVE HULL
+		MyJsonList points = new MyJsonList();
+		for(Vector2D v:roomShape.getDefiningPoints()){
+			MyJsonList pos = new MyJsonList();
+			pos.add(v.getX());
+			pos.add(v.getY());
+			points.add(pos);
+		}
+		hull.put("points", points);
 		return hull;
 	}
 	
