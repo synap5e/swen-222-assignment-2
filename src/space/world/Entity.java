@@ -8,6 +8,7 @@ public abstract class Entity implements ViewableObject {
 	private int id;
 	private float elevation;
 	private String description;
+	private String name;
 
 	/**
 	 * Constructs new entity
@@ -18,12 +19,14 @@ public abstract class Entity implements ViewableObject {
 	 *            The id
 	 * @param description
 	 *            The description of the entity
+	 * @param name The name of the entity
 	 */
-	public Entity(Vector2D position, int id, float elevation, String description) {
+	public Entity(Vector2D position, int id, float elevation, String description, String name) {
 		this.position = position;
 		this.id = id;
 		this.elevation = elevation;
 		this.description = description;
+		this.name = name;
 	}
 
 	/**
@@ -45,7 +48,7 @@ public abstract class Entity implements ViewableObject {
 	}
 
 	/**
-	 * Returns the entity's elevation
+	 * Returns the entity's elevation, how far off the ground it is
 	 * 
 	 * @return
 	 */
@@ -71,6 +74,24 @@ public abstract class Entity implements ViewableObject {
 	public void setPosition(Vector2D pos) {
 		position = pos;
 	}
+	
+	/**@return The entity's name*/
+	public String getName() {
+		return name;
+	}
+
+	/**Lets the Character interact with the entity. This includes
+	 * trying to unlock the entity or trying to pick it up
+	 * @return whether or not the interaction was successful*/
+	public boolean interact(Character c, World w){
+		return false;
+	}
+	
+	/**Whether or not an entity can be interacted with
+	 * @return*/
+	public boolean canInteract(){
+		return false;
+	}
 
 	/**
 	 * Whether or not something can pass through the entity
@@ -93,4 +114,9 @@ public abstract class Entity implements ViewableObject {
 	 * @return
 	 */
 	public abstract float getCollisionRadius();
+	
+	/**Returns the height of the entity, how tall it is
+	 * @return
+	 */
+	public abstract float getHeight();
 }

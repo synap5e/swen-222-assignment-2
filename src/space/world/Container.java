@@ -1,17 +1,17 @@
 package space.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import space.math.Vector2D;
-import space.world.NonStationary.OpeningState;
 
 /**Containers like bags, backpacks, boxes, chests, or suitcases that can have other objects inside
 them. The player should be able to open and close containers, put objects inside them or get
 them out. You must be able to put one container (like a wallet) inside another container (like a
 suitcase).*/
-public abstract class Container extends Pickup {
-	private Pickup itemContained; //the object inside this container
+public abstract class Container extends Openable {
+	private List<Pickup> itemsContained = new ArrayList<Pickup>(); //the object inside this container
 	private float amtOpen = 0;
-	private OpeningState state = OpeningState.CLOSED;
-	private static final float OPEN_DURATION = 400;
 
 	/**
 	 * Constructs a new container
@@ -25,60 +25,37 @@ public abstract class Container extends Pickup {
 	 * @param description
 	 *            The description
 	 */
-	public Container(Vector2D position, int id, float elevation,
-			String description) {
-		super(position, id, elevation, description);
+	public Container(Vector2D position, int id, float elevation, String description, String name, boolean isLocked,Key key) {
+		super(position, id, elevation, description, name,400,isLocked,key);
 	}
 
 	/**Whether or not a Pickup can be placed inside this container
 	 * @return*/
-	public boolean canPutInside(Pickup item){
-		return itemContained == null && state == OpeningState.OPEN && item.getCollisionRadius() < this.getCollisionRadius();
+	public boolean canPutInside(Entity item){
+		return item instanceof Pickup && super.getOpenPercent() == 1 && item.getHeight() < this.getHeight();
 	}
 
 	/**Puts the Pickup inside this container
 	 * @param item The Pickup that will be put into this*/
-	public void putInside(Pickup item){
+	public void putInside(Entity item){
 		if(canPutInside(item)){
-			itemContained = item;
-			itemContained.setPosition(getPosition());
+			itemsContained.add((Pickup)item);
 		}
 	}
 
-	/**Removes the Pickup from of this container.
-	 * Returns null if there is nothing inside or if this is not open
-	 * @return The Pickup that was in this container*/
-	public Pickup removeContainedItem(){
-		if(state == OpeningState.OPEN){
-			Pickup item = itemContained;
-			itemContained = null;
-			return item;
+	/**Removes the specified item from inside the container
+	 * @param item the entity to be removed*/
+	public boolean removeContainedItem(Entity item){
+		if(super.getOpenPercent() == 1){
+			return itemsContained.remove(item);
 		}
-		return null;
-	}
-
-	@Override
-	public void update(int delta) {
-		if (state == OpeningState.CLOSING) {
-			amtOpen -= delta / OPEN_DURATION;
-			if (amtOpen <= 0) {
-				amtOpen = 0;
-				state = OpeningState.CLOSED;
-			}
-		} else if (state == OpeningState.OPENING) {
-			amtOpen += delta / OPEN_DURATION;
-			if (amtOpen >= 1) {
-				amtOpen = 1;
-				state = OpeningState.OPEN;
-			}
-		}
-
+		return false;
 	}
 
 	/**Returns the Pickup which is contained in this
 	 * @return*/
-	public Pickup getItemContained() {
-		return itemContained;
+	public List<Pickup> getItemsContained() {
+		return itemsContained;
 	}
 
 	public float getOpenAmount(){

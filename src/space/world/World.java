@@ -96,7 +96,7 @@ public class World implements ViewableWorld{
 		if(character.withinReach(entity.getPosition())
 				&& character.getInventory().contains(entity)
 				&&character.getRoom().containsEntity(cont)){
-			cont.putInside((Pickup) entity);
+			cont.putInside(entity);
 			character.drop(entity);
 		}
 	}
@@ -104,10 +104,12 @@ public class World implements ViewableWorld{
 	/**Lets the character add the entity which is inside the container into their inventory
 	 * @param character The character getting the entity
 	 * @param cont The container being emptied*/
-	public void removeFromContainer(Character character, Container cont){
+	public void removeFromContainer(Character character, Container cont,Entity entity){
 		if(cont.getOpenAmount() == 1 && character.withinReach(cont.getPosition()) && character.getRoom().containsEntity(cont)){
-			Pickup itemContained = cont.removeContainedItem();
-			character.pickup(itemContained);
+			if(cont.removeContainedItem(entity)){
+				character.pickup((Pickup) entity);
+			}
+			
 		}
 	}
 
@@ -156,6 +158,16 @@ public class World implements ViewableWorld{
 	 * @param e entity to be added*/
 	public void addEntity(Entity e){
 		entities.put(e.getID(), e);
+	}
+	
+	/**Removes entity from the world & room it was in
+	 * @param e entity to be removed*/
+	public void removeEntity(Entity e){
+		entities.remove(e.getID());
+		Room room = getRoomAt(e.getPosition());
+		if(room!=null){
+			room.removeFromRoom(e);
+		}
 	}
 
 	@Override

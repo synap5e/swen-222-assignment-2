@@ -8,18 +8,12 @@ import space.math.Vector2D;
  * 
  * @author Maria Libunao
  */
-public class Door extends NonStationary implements ViewableDoor {
+public class Door extends Openable implements ViewableDoor {
 	private Room room1;
 	private Room room2;
 	private boolean oneWay; // if one way, can only get from room1 to room2
-	private boolean locked;
-
-	private float amtOpen = 0; // the amount the door is open. 1 is fully open &
-								// 0 is fully closed
-	private OpeningState state = OpeningState.CLOSED;
 
 	private static final float COL_RADIUS = 3; // the collision radius
-	private static final float OPEN_DURATION = 500; //amount of time it will take to fully open or close
 
 	/**
 	 * Creates new Door
@@ -38,29 +32,20 @@ public class Door extends NonStationary implements ViewableDoor {
 	 * @param isLocked
 	 *            Whether or not the door is locked
 	 */
-	public Door(Vector2D position, int id, String description, Room room1, Room room2, boolean isOneWay,
-			boolean isLocked) {
-		super(position, id, 0, description);
+	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
+			boolean isLocked, Key key) {
+		super(position, id, 0, description,name,500, isLocked, key);
 		this.room1 = room1;
 		this.room2 = room2;
 		this.oneWay = isOneWay;
-		this.locked = isLocked;
 	}
-
-
-	/**
-	 * Unlocks the door if the player has the key to unlock it
-	 * 
-	 * @param p
-	 *            The player trying to unlock the door
-	 */
-	public void unlock(Player p) {
-		for (Pickup i : p.getInventory()) {
-			if (i instanceof Key && ((Key) i).getDoor().equals(this)) { //player has key to unlock this door
-				locked = false;
-				return;
-			}
-		}
+	
+	public boolean canInteract(){
+		return true;
+	}
+	
+	public boolean interact(Character c){
+		return false;
 	}
 
 	/**
@@ -70,57 +55,12 @@ public class Door extends NonStationary implements ViewableDoor {
 	 * @return
 	 */
 	public boolean canGoThrough() {
-		return !locked && amtOpen == 1;
-	}
-
-	/** Closes the door if it is not already closed */
-	public void closeDoor() {
-		if (state != OpeningState.CLOSED) {
-			state = OpeningState.CLOSING;
-		}
-	}
-
-	/** Opens the door if it is not already open & is unlocked */
-	public void openDoor() {
-		if (state != OpeningState.OPEN && !locked) {
-			state = OpeningState.OPENING;
-		}
-	}
-
-	@Override
-	public void update(int delta) {
-		if (state == OpeningState.CLOSING) {
-			amtOpen -= delta / OPEN_DURATION;
-			if (amtOpen <= 0) {
-				amtOpen = 0;
-				state = OpeningState.CLOSED;
-			}
-		} else if (state == OpeningState.OPENING) {
-			amtOpen += delta / OPEN_DURATION;
-			if (amtOpen >= 1) {
-				amtOpen = 1;
-				state = OpeningState.OPEN;
-			}
-		}
-
+		return !super.isLocked() && super.getOpenPercent() == 1;
 	}
 
 	@Override
 	public float getCollisionRadius() {
 		return COL_RADIUS;
-	}
-
-	/**
-	 * Returns whether or not the door is locked
-	 * 
-	 * @return
-	 */
-	public boolean isLocked() {
-		return locked;
-	}
-	
-	public void setLocked(boolean locked){
-		this.locked = locked;
 	}
 
 	@Override
@@ -170,9 +110,11 @@ public class Door extends NonStationary implements ViewableDoor {
 		return true;
 	}
 
+
 	@Override
-	public float getOpenPercent() {
-		return amtOpen;
+	public float getHeight() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

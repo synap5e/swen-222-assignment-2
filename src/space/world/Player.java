@@ -25,11 +25,10 @@ public class Player extends Character implements ViewablePlayer {
 	 *            The position
 	 * @param id
 	 *            The id
-	 * @param r
-	 *            The room the player is in
+	 * @param name
 	 */
-	public Player(Vector2D position, int id/* , Room r */) {
-		super(position, id/* ,r */);
+	public Player(Vector2D position, int id, String name) {
+		super(position, id, name);
 	}
 
 	/**
@@ -183,6 +182,12 @@ public class Player extends Character implements ViewablePlayer {
 	 */
 	private static float DEGREES_TO_RADIANS(float degrees) {
 		return (float) ((degrees) * (Math.PI / 180.0));
+	}
+
+	@Override
+	public float getHeight() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

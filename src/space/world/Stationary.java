@@ -21,16 +21,8 @@ public abstract class Stationary extends Entity implements ViewableStationary {
 	 * @param description
 	 *            The description
 	 */
-	public Stationary(Vector2D position, int id, float elevation, String description) {
-		super(position, id, elevation, description);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean canClip() {
-		return true;
+	public Stationary(Vector2D position, int id, float elevation, String description, String name) {
+		super(position, id, elevation, description,name);
 	}
 
 	/**
