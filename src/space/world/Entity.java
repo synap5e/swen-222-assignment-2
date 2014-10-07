@@ -83,7 +83,7 @@ public abstract class Entity implements ViewableObject {
 	/**Lets the Character interact with the entity. This includes
 	 * trying to unlock the entity or trying to pick it up
 	 * @return whether or not the interaction was successful*/
-	public boolean interact(Character c){
+	public boolean interact(Character c, World w){
 		return false;
 	}
 	
