@@ -84,6 +84,9 @@
     <fontDef name="font.title" filename="font/code.fnt" color="white">
     </fontDef>
 
+    <fontDef name="font.gametitle" filename="font/font.fnt" color="white">
+    </fontDef>
+
     <inputMapDef name="-defaultInputMap">
         <action name="selectAll">ctrl A</action>
         <action name="cut">ctrl X</action>
@@ -159,7 +162,7 @@
         <param name="radius"><int>55</int></param>
         <param name="border"><border>5</border></param>
     </theme>
-     
+
     <theme name="guiwrapper" ref="-defaults">
         <theme name="" ref="*"/>
 
@@ -167,7 +170,7 @@
         <theme name="headsupdisplay" ref="-defaults" >
             <param name="maxWidth"><int>1</int></param>
             <param name="maxHeight"><int>1</int></param>
-        
+
             <theme name="item-placeholder" ref="item-button">
                 <param name=""><image>button.item-placeholder.*</image></param>
                 <param name="border"><border>background.border</border></param>
@@ -199,10 +202,18 @@
         <theme name="menuitem" ref="label">
             <param name="font"><font>font.menu</font></param>
         </theme>
+        <theme name="instructionswidget" ref="-defaults">
+	        <theme name="instructions" ref="label">
+	            <param name="font"><font>normal</font></param>
+	        </theme>
+	    </theme>
     </theme>
 
     <theme name="ingamemenu" ref="-defaults">
         <param name="background"><image>ingamemenu.background</image></param>
+        <theme name="title" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
         <theme name="menuitem" ref="label">
             <param name="font"><font>font.menu</font></param>
         </theme>

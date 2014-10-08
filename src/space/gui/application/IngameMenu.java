@@ -8,7 +8,7 @@ import de.matthiasmann.twl.Label;
 
 
 public class IngameMenu extends NestedWidget{
-	
+
 	private static final int PADDING_LEFT = 150;
 	private static final int PADDING_TOP = 180;
 	private static final int SPACING = 15;
@@ -18,15 +18,16 @@ public class IngameMenu extends NestedWidget{
 
 	public IngameMenu(final GameApplication gameApplication) {
 		super(gameApplication);
-		
+
 		setVisible(false);
-		
+
 		this.menuItems = new ArrayList<Label>();
-		
+
 		title = new Label();
 		title.setText("Paused");
+		title.setTheme("title");
 		add(title);
-		
+
 		Label menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
@@ -35,7 +36,7 @@ public class IngameMenu extends NestedWidget{
 		};
 		menuItem.setText("Resume");
 		menuItems.add(menuItem);
-		
+
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
@@ -44,16 +45,16 @@ public class IngameMenu extends NestedWidget{
 		};
 		menuItem.setText("Controls");
 		menuItems.add(menuItem);
-		
+
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				gameApplication.setGameState(GameApplication.MAINMENU);
 			}
 		};
-		menuItem.setText("Main Menu");
+		menuItem.setText("Disconnect");
 		menuItems.add(menuItem);
-		
+
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
@@ -68,7 +69,7 @@ public class IngameMenu extends NestedWidget{
 	        add(item);
 	    }
 	}
-	
+
 	@Override
 	protected void layout() {
 	    int x = PADDING_LEFT;
@@ -76,20 +77,20 @@ public class IngameMenu extends NestedWidget{
 
 	    title.setPosition(x, y);
 	    title.adjustSize();
-	    
+
 	    x += 20;
 	    y += title.getHeight() + SPACING;
-	    
+
 	    for(Label item : menuItems) {
 	        item.setPosition(x, y);
 	        item.adjustSize();
 	        y += item.getHeight() + SPACING;
 	    }
 	}
-	
+
 	@Override
 	protected boolean handleEvent(Event evt) {
 		//return evt.isMouseEventNoWheel();
-		return false;
+		return evt.isMouseEventNoWheel();
 	}
 }

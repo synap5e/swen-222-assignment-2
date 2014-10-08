@@ -12,32 +12,37 @@ public class MainMenu extends NestedWidget {
 
 	private List<Label> title;
 	private List<Label> menuItems;
-	
+
 	private List<Integer> timers;
-	
+
+	InstructionsWidget instructionsWidget;
+	ControlsWidget controlsWidget;
+
+	MultiplayerWidget multiplayerWidget;
+
 	public MainMenu(final GameApplication gameApplication){
 		super(gameApplication);
-		
+
 		this.menuItems = new ArrayList<Label>();
 		this.title = new ArrayList<Label>();
-		this.timers = new ArrayList<Integer>(); 
-		
+		this.timers = new ArrayList<Integer>();
+
 		String titleString = "SPACE";
-		
+
 		for(int i = 0; i != titleString.length(); i++){
 			Label letter = new Label();
 			letter.setText(String.valueOf(titleString.charAt(i)));
 			title.add(letter);
 		}
-		
+
 		for(Label label : title){
 			label.setTheme("title");
 			add(label);
-			
+
 			int timer = getVisibleTimer();
 			timers.add(timer);
 		}
-		
+
 		Label menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
@@ -46,7 +51,7 @@ public class MainMenu extends NestedWidget {
 		};
 		menuItem.setText("Play Singleplayer");
 		menuItems.add(menuItem);
-		
+
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
@@ -55,25 +60,27 @@ public class MainMenu extends NestedWidget {
 		};
 		menuItem.setText("Play Multiplayer");
 		menuItems.add(menuItem);
-		
+
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
+				controlsWidget.setVisible(false);
+				instructionsWidget.setVisible(!instructionsWidget.isVisible());
 			}
 		};
 		menuItem.setText("Instructions");
 		menuItems.add(menuItem);
-		
+
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
+				controlsWidget.setVisible(false);
+				instructionsWidget.setVisible(true);
 			}
 		};
 		menuItem.setText("Controls");
 		menuItems.add(menuItem);
-		
+
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
@@ -82,40 +89,58 @@ public class MainMenu extends NestedWidget {
 		};
 		menuItem.setText("Exit");
 		menuItems.add(menuItem);
-		
-		
+
+
 		for(Label item : menuItems) {
 			item.setTheme("menuitem");
             add(item);
         }
+
+		instructionsWidget = new InstructionsWidget(gameApplication);
+		add(instructionsWidget);
+
+		controlsWidget = new ControlsWidget(gameApplication);
+		add(controlsWidget);
+
+		multiplayerWidget = new MultiplayerWidget(gameApplication);
+		add(multiplayerWidget);
 	}
-	
+
     @Override
     protected void layout() {
         int x = 150;
         int y = getHeight() - 200;
-        
+        int midY;
+
         Collections.reverse(menuItems);
         for(Label item : menuItems) {
             item.setPosition(x, y);
             item.adjustSize();
             y -= item.getHeight() + SPACING;
         }
-    	
+
+        midY = y + SPACING * 3;
+
         y -= 112;
         for(Label letter : title){
         	letter.adjustSize();
         	letter.setPosition(x, y);
         	x += letter.getWidth();
         }
-        
+
+        instructionsWidget.adjustSize();
+        instructionsWidget.setPosition((int) (getWidth() * 0.4), midY);
+
+        multiplayerWidget.adjustSize();
+        multiplayerWidget.setPosition((int) (getWidth() * 0.4), midY);
+
     }
-	
+
     @Override
     protected boolean handleEvent(Event evt) {
     	return false;
     }
-    
+
     public void update(){
     	for(int i = 0; i != title.size(); i++){
     		Label letter = title.get(i);
@@ -133,11 +158,11 @@ public class MainMenu extends NestedWidget {
 	    	timers.set(i, timer);
     	}
     }
-    
+
     private int getVisibleTimer(){
     	return 30 + (int) (Math.floor(Math.random() * 120));
     }
-    
+
     private int getHiddenTimer(){
     	return 5;
     }
