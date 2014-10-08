@@ -27,7 +27,10 @@ public class InstructionsWidget extends NestedWidget {
 
 	@Override
 	protected void layout() {
-		text.setPosition(0, 0);
+		int x = startX;
+		int y = startY;
+		
+		text.setPosition(x, y);
 	}
 
 	@Override

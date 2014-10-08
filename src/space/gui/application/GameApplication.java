@@ -53,6 +53,8 @@ public class GameApplication implements ClientListener{
 	MainMenu mainMenu;
 	IngameMenu ingameMenu;
 	
+	String serverAddress;
+	
 	public GameApplication(int width, int height) throws LWJGLException, IOException{
 		this.width = width;
 		this.height = height;
@@ -61,6 +63,8 @@ public class GameApplication implements ClientListener{
 		
 		this.server = null;
 		this.client = null;
+		
+		serverAddress = Client.DEFAULT_HOST;
 		
 		Display.setDisplayMode(new DisplayMode(width, height));
 		Display.create();
@@ -108,7 +112,7 @@ public class GameApplication implements ClientListener{
 		
 		switch(state){
 			case SINGLEPLAYER:
-				server = new Server("localhost", 1234, new MockStorage(), new ModelToJson(), "temp");
+				server = new Server(Client.DEFAULT_HOST, Client.DEFAULT_PORT, new MockStorage(), new ModelToJson(), "temp");
 			case MULTIPLAYER:
 				startGame();
 			default:
@@ -124,7 +128,7 @@ public class GameApplication implements ClientListener{
 		world = loader.getWorld();
 		
 		//Create the client TODO use program arguments for host and port
-		client = new Client("localhost", 1234, world);
+		client = new Client(serverAddress, Client.DEFAULT_PORT, world);
 		client.addListener(this);
 		
 		guiWrapper = new GUIWrapper(this);
@@ -180,7 +184,7 @@ public class GameApplication implements ClientListener{
 		gameRenderer.renderTick(delta, client.getLocalPlayer(), world);
 		
 		// update gui
-		headsUpDisplay.update(client.getLocalPlayer());
+		headsUpDisplay.update(client);
 		gui.update();
 		
 		Display.update();
@@ -244,6 +248,10 @@ public class GameApplication implements ClientListener{
 	@Override
 	public void onConnectionClose(String reason) {
 		setGameState(MAINMENU);
+	}
+
+	public void setupMultiplayer(String address, int id) {
+		serverAddress = address;
 	}
 	
 }

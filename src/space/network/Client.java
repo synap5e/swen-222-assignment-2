@@ -40,6 +40,11 @@ import space.world.World;
  * @author James Greenwood-Thessman (300289004)
  */
 public class Client {
+	
+	
+	public final static String DEFAULT_HOST = "localhost";
+	
+	public final static int DEFAULT_PORT = 1234;
 
 	/**
 	 * The client's connection to the server.

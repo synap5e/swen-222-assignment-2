@@ -55,17 +55,24 @@ public class MainMenu extends NestedWidget {
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setGameState(GameApplication.MULTIPLAYER);
+				boolean isVisible = multiplayerWidget.isVisible();
+				
+				hideWidgets();
+				
+				multiplayerWidget.setVisible(!isVisible);
 			}
 		};
 		menuItem.setText("Play Multiplayer");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){
+		menuItem = new Label(){	
 			@Override
 			protected void handleClick(boolean doubleClick){
-				controlsWidget.setVisible(false);
-				instructionsWidget.setVisible(!instructionsWidget.isVisible());
+				boolean isVisible = instructionsWidget.isVisible();
+				
+				hideWidgets();
+				
+				instructionsWidget.setVisible(!isVisible);
 			}
 		};
 		menuItem.setText("Instructions");
@@ -74,8 +81,11 @@ public class MainMenu extends NestedWidget {
 		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				controlsWidget.setVisible(false);
-				instructionsWidget.setVisible(true);
+				boolean isVisible = controlsWidget.isVisible();
+				
+				hideWidgets();
+				
+				controlsWidget.setVisible(!isVisible);
 			}
 		};
 		menuItem.setText("Controls");
@@ -95,15 +105,15 @@ public class MainMenu extends NestedWidget {
 			item.setTheme("menuitem");
             add(item);
         }
+		
+		multiplayerWidget = new MultiplayerWidget(gameApplication);
+		add(multiplayerWidget);
 
 		instructionsWidget = new InstructionsWidget(gameApplication);
 		add(instructionsWidget);
 
 		controlsWidget = new ControlsWidget(gameApplication);
 		add(controlsWidget);
-
-		multiplayerWidget = new MultiplayerWidget(gameApplication);
-		add(multiplayerWidget);
 	}
 
     @Override
@@ -128,17 +138,25 @@ public class MainMenu extends NestedWidget {
         	x += letter.getWidth();
         }
 
-        instructionsWidget.adjustSize();
-        instructionsWidget.setPosition((int) (getWidth() * 0.4), midY);
-
-        multiplayerWidget.adjustSize();
-        multiplayerWidget.setPosition((int) (getWidth() * 0.4), midY);
+        instructionsWidget.updatePositions((int) (getWidth() * 0.4), midY);
+        controlsWidget.updatePositions((int) (getWidth() * 0.4), midY);
+        multiplayerWidget.updatePositions((int) (getWidth() * 0.4), midY);
 
     }
 
     @Override
     protected boolean handleEvent(Event evt) {
-    	return false;
+    	if(super.handleEvent(evt)){
+    		return true;
+    	}
+
+    	return evt.isMouseEventNoWheel();
+    }
+    
+    private void hideWidgets(){
+		controlsWidget.setVisible(false);
+		multiplayerWidget.setVisible(false);
+		instructionsWidget.setVisible(false);
     }
 
     public void update(){
@@ -158,7 +176,7 @@ public class MainMenu extends NestedWidget {
 	    	timers.set(i, timer);
     	}
     }
-
+    
     private int getVisibleTimer(){
     	return 30 + (int) (Math.floor(Math.random() * 120));
     }
