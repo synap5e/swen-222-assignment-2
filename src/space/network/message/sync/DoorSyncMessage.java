@@ -40,13 +40,15 @@ public class DoorSyncMessage implements SyncMessage {
 	public void applyTo(World world){
 		Door d = (Door) world.getEntity(doorId);
 		
+		//FIXME: make doors sync
 		if (isOpen){
-			d.openDoor();
+			d.open();
 		} else {
-			d.closeDoor();
+			//d.closeDoor();
 		}
 
-		d.setLocked(isLocked);
+		
+		//d.setLocked(isLocked);
 	}
 	
 	@Override

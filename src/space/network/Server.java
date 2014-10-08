@@ -105,7 +105,7 @@ public class Server {
 			usedIds.add(p.getID());
 			//Mark the IDs of the contents of the players inventory as used
 			for (Pickup pu : p.getInventory()){
-				usedIds.add(pu.getID());
+				usedIds.add(((Entity) pu).getID());
 			}
 		}
 		
@@ -279,10 +279,10 @@ public class Server {
 									}
 									if (!d.isLocked()){
 										if (d.getOpenPercent() > 0.5){
-											d.closeDoor();
+											d.close();
 											succesful = true;
 										} else if (d.getOpenPercent() < 0.5){
-											d.openDoor();
+											d.open();
 											succesful = true;
 										}
 									}
@@ -357,7 +357,7 @@ public class Server {
 						//Assign a new ID
 						while (usedIds.contains(id = idGenerator.nextInt(1000)));
 						usedIds.add(id);
-						p = new Player(new Vector2D(0, 0), id);
+						p = new Player(new Vector2D(0, 0), id, "player"); //TODO use name
 					}
 					
 					//Add the client the map of connections
@@ -378,7 +378,7 @@ public class Server {
 							
 							//Send the inventory of the player
 							for (Pickup pickup : p.getInventory()){
-								con.sendMessage(new InteractionMessage(id, pickup.getID()));
+								con.sendMessage(new InteractionMessage(id, ((Entity) pickup).getID()));
 							}
 						}
 						
@@ -391,7 +391,7 @@ public class Server {
 								newClient.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
 								
 								for (Pickup pickup : other.getInventory()){
-									newClient.sendMessage(new InteractionMessage(otherId, pickup.getID()));
+									newClient.sendMessage(new InteractionMessage(otherId, ((Entity) pickup).getID()));
 								}
 							}
 						}
@@ -399,7 +399,7 @@ public class Server {
 						//Remove entities from the new clients world that are in inactive player's inventory 
 						for (Player inactive : inactivePlayers.values()){
 							for (Pickup pickup : inactive.getInventory()){
-								newClient.sendMessage(new InteractionMessage(inactive.getID(), pickup.getID()));
+								newClient.sendMessage(new InteractionMessage(inactive.getID(), ((Entity) pickup).getID()));
 							}
 						}
 						

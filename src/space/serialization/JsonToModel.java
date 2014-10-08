@@ -84,7 +84,7 @@ public class JsonToModel implements WorldLoader{
 		for(JSONObject o : players){
 			MyJsonList pos = new MyJsonList((JSONArray) o.get("positions"));
 			Vector2D position = new Vector2D((float) pos.get(0), (float) pos.get(1));
-			Player p = new Player(position, (int) o.get("id"));
+			Player p = new Player(position, (int) o.get("id"),""); //TODO add name
 			p.setPoints((int) o.get("points"));
 			p.setXRotation((float) o.get("x rotation"));
 			p.setYRotation((float) o.get("y rotation"));

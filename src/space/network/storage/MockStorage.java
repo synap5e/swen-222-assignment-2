@@ -25,15 +25,15 @@ public class MockStorage implements WorldLoader, WorldSaver {
 	@Override
 	public void loadWorld(String savePath) {
 		world = new World();
-		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)), new HashMap<Integer, List<Door>>());
+		Room r = new Room(LightMode.BASIC_LIGHT, 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
 		world.addRoom(r);
-		Room r2 = new Room(LightMode.DARK, 2, "dark", Arrays.asList(new Vector2D(-20, -20), new Vector2D(20, -20), new Vector2D(20, -40), new Vector2D(-20, -40)), new HashMap<Integer, List<Door>>());
+		Room r2 = new Room(LightMode.DARK, 2, "dark", Arrays.asList(new Vector2D(-20, -20), new Vector2D(20, -20), new Vector2D(20, -40), new Vector2D(-20, -40)));
 		world.addRoom(r2);
-		Door d = new Door(new Vector2D(0, -20), 3, "door", r, r2, false, true);
+		Key k = new Key(new Vector2D(5f, 5f), 4, 0, null, "A key", "Key");
+		Door d = new Door(new Vector2D(0, -20), 3, "It can be opened", "Door", r, r2, false, true, k);
 		r.addDoor(3, d);
 		r2.addDoor(1, d);
 		world.addEntity(d);
-		Key k = new Key(new Vector2D(5f, 5f), 4, "A key", 0, d);
 		world.addEntity(k);
 		r.putInRoom(k);
 	}
