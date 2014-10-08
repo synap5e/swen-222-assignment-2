@@ -58,7 +58,16 @@
     <images file="hud/simple.png" format="RGBA">
         <area name="-borderG" border="3" xywh="60,0,9,9" splitx="L3,R3" splity="T3,B3"/>
         <area name="white" xywh="23,3,1,1"/>
-        <alias name="ingamemenu.background" ref="white" tint="#AA000000"/>
+        <alias name="ingamemenu.background" ref="white" tint="#CC000000"/>
+        <alias name="hud.label.background" ref="white" tint="#88000000"/>
+        <alias name="field.background" ref="white" tint="#CCFFFFFF"/>
+
+        <alias name="field.highlight" ref="white" tint="#FFCC9900"/>
+        <alias name="-field.cursor" ref="white" tint="#CC000000"/>
+        <animation name="field.cursor" timeSource="keyboardFocus">
+            <frame ref="-field.cursor" duration="500"/>
+            <frame ref="none" duration="500"/>
+        </animation>
     </images>
 
     <images file="hud/icon-gold-star-small.png">
@@ -77,8 +86,20 @@
         <fontParam if="textSelection" color="blue"/>
     </fontDef>
 
+    <fontDef name="font.field" filename="font/font.fnt" color="#232323">
+        <fontParam if="error" color="red"/>
+        <fontParam if="disabled" color="gray"/>
+        <fontParam if="textSelection" color="blue"/>
+    </fontDef>
+
     <fontDef name="font.menu" filename="font/font.fnt" color="#9F9F9F">
         <fontParam if="hover" color="white"/>
+    </fontDef>
+
+    <fontDef name="font.title" filename="font/code.fnt" color="white">
+    </fontDef>
+
+    <fontDef name="font.gametitle" filename="font/font.fnt" color="white">
     </fontDef>
 
     <inputMapDef name="-defaultInputMap">
@@ -91,13 +112,15 @@
     <theme name="-defaults">
         <param name="background"><image>none</image></param>
         <param name="overlay"><image>none</image></param>
-        <param name="font"><font>normal</font></param>
+        <param name="font"><font>font.field</font></param>
         <param name="textAlignment"><enum type="alignment">left</enum></param>
         <param name="minWidth"><int>0</int></param>
         <param name="minHeight"><int>0</int></param>
         <param name="maxWidth"><int>0</int></param>
         <param name="maxHeight"><int>0</int></param>
         <param name="inputMap"><inputMap>-defaultInputMap</inputMap></param>
+
+        <theme name="" ref="*"/>
     </theme>
 
     <theme name="button" ref="-defaults" allowWildcard="true">
@@ -128,6 +151,7 @@
     </theme>
 
     <theme name="label" ref="-defaults" allowWildcard="true">
+        <param name="font"><font>normal</font></param>
     </theme>
 
     <theme name="tooltipwindow" ref="-defaults">
@@ -156,47 +180,86 @@
         <param name="radius"><int>55</int></param>
         <param name="border"><border>5</border></param>
     </theme>
-     
+
     <theme name="guiwrapper" ref="-defaults">
         <theme name="" ref="*"/>
 
         <theme name="ingamecontroller" ref="-defaults" />
         <theme name="headsupdisplay" ref="-defaults" >
+            <param name="font"><font>normal</font></param>
+
             <param name="maxWidth"><int>1</int></param>
             <param name="maxHeight"><int>1</int></param>
-        
-            <theme name="item-placeholder" ref="item-button">
-                <param name=""><image>button.item-placeholder.*</image></param>
-                <param name="border"><border>background.border</border></param>
-                <param name="tooltip"><string>Placeholder text</string></param>
-            </theme>
-
-            <theme name="pause" ref="menu-button">
-                <param name=""><image>button.pause.*</image></param>
-                <param name="border"><border>background.border</border></param>
-                <param name="tooltip"><string>Pause the game</string></param>
-            </theme>
-
-            <theme name="menu" ref="menu-button">
-                <param name=""><image>button.menu.*</image></param>
-                <param name="border"><border>background.border</border></param>
-                <param name="tooltip"><string>menu !!</string></param>
-            </theme>
 
             <theme name="fpscounter" ref="label"/>
 
-            <theme name="" ref="*"/>
+            <theme name="infolabel" ref="label">
+                <param name="border"><border>5</border></param>
+                <param name="background"><image>hud.label.background</image></param>
+            </theme>
+           
         </theme>
     </theme>
 
     <theme name="mainmenu" ref="-defaults">
+        <theme name="title" ref="label">
+            <param name="font"><font>font.title</font></param>
+        </theme>
         <theme name="menuitem" ref="label">
             <param name="font"><font>font.menu</font></param>
+        </theme>
+
+        <theme name="instructionswidget" ref="-defaults">
+	        <theme name="instructions" ref="label">
+	            <param name="font"><font>normal</font></param>
+	        </theme>
+	    </theme>
+
+        <theme name="controlswidget" ref="-defaults">
+            <theme name="instructions" ref="label">
+                <param name="font"><font>normal</font></param>
+            </theme>
+        </theme>
+
+        <theme name="multiplayerwidget" ref="-defaults">
+            <param name="font"><font>font.field</font></param>
+
+            <theme name="label" ref="label">
+                <param name="font"><font>normal</font></param>
+            </theme>
+
+            <theme name="submit" ref="label">
+                <param name="font"><font>font.menu</font></param>
+            </theme>
+
+            <theme name="editfield">
+                <param name="font"><font>font.field</font></param>
+                <param name="background"><image>field.background</image></param>
+                <param name="border"><border>4</border></param>
+                <param name="minWidth"><int>32767</int></param>
+                <param name="maxWidth"><int>32767</int></param>
+
+                <param name="minHeight"><int>20</int></param>
+                <param name="maxHeight"><int>20</int></param>
+
+                <param name="columns"><int>20</int></param>
+
+                <param name="passwordChar"><int>0x25CF</int></param>
+                <theme name="renderer" ref="-defaults"/>
+                <param name="cursor"><image>field.cursor</image></param>
+                <param name="selection"><image>field.highlight</image></param>
+                <param name="autocompletion-height"><int>150</int></param>
+
+                <param name="overlay"><image>none</image></param>
+            </theme>
         </theme>
     </theme>
 
     <theme name="ingamemenu" ref="-defaults">
         <param name="background"><image>ingamemenu.background</image></param>
+        <theme name="title" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
         <theme name="menuitem" ref="label">
             <param name="font"><font>font.menu</font></param>
         </theme>
