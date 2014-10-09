@@ -1,12 +1,13 @@
 package space.world;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import space.math.Vector2D;
 
 public abstract class Character extends NonStationary {
-	private Set<Pickup> inventory = new HashSet<Pickup>(); // items the character is carrying
+	private List<Pickup> inventory = new ArrayList<Pickup>(); // items the character is carrying
 	private Room room; // the room the character is in
 
 	/**
@@ -66,7 +67,7 @@ public abstract class Character extends NonStationary {
 	 * 
 	 * @return
 	 */
-	public Set<Pickup> getInventory() {
+	public List<Pickup> getInventory() {
 		return inventory;
 	}
 
