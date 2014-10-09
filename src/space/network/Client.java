@@ -40,6 +40,11 @@ import space.world.World;
  * @author James Greenwood-Thessman (300289004)
  */
 public class Client {
+	
+	
+	public final static String DEFAULT_HOST = "localhost";
+	
+	public final static int DEFAULT_PORT = 1234;
 
 	/**
 	 * The client's connection to the server.
@@ -88,7 +93,7 @@ public class Client {
 			
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
-			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID());
+			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID(), "Player"); //TODO have name
 			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 			localPlayer.getRoom().putInRoom(localPlayer);
 			world.addEntity(localPlayer);
@@ -207,7 +212,7 @@ public class Client {
 					Set<Pickup> inv = localPlayer.getInventory();
 					if (inv.size() > 0){
 						for (Pickup p : inv){
-							drop(p);
+							drop((Entity) p);
 							break;
 						}
 					}
@@ -308,10 +313,10 @@ public class Client {
 			}
 			if (!d.isLocked()){
 				if (d.getOpenPercent() == 1){
-					d.closeDoor();
+					d.close();
 					interactionSuccessful = true;
 				} else if (d.getOpenPercent() == 0){
-					d.openDoor();
+					d.open();
 					interactionSuccessful = true;
 				}
 			}
@@ -516,7 +521,7 @@ public class Client {
 		 * @param playerJoined the message containing the information about this player
 		 */
 		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
-			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID());
+			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID(), "Player"); //TODO: use name
 			world.addEntity(p);
 			p.setRoom(world.getRoomAt(p.getPosition()));
 			p.getRoom().putInRoom(p);
@@ -594,9 +599,9 @@ public class Client {
 				}
 				if (!d.isLocked()){
 					if (d.getOpenPercent() > 0.5){
-						d.closeDoor();
+						d.close();
 					} else if (d.getOpenPercent() < 0.5){
-						d.openDoor();
+						d.open();
 					}
 				}
 			} else if (e instanceof Pickup){

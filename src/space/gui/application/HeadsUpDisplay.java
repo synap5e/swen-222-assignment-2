@@ -3,75 +3,49 @@ package space.gui.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import space.network.Client;
+import space.world.Entity;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.Label;
 import de.matthiasmann.twl.RadialPopupMenu;
-import de.matthiasmann.twl.ToggleButton;
 
 public class HeadsUpDisplay extends NestedWidget {
 	
 	private static final int PADDING = 10;
 	private static final int SPACING = 5;
-	
-    private static final String[] BUTTON_ITEM_THEMES = {
-        "item-placeholder",
-        "item-placeholder",
-        "item-placeholder",
-        "item-placeholder",
-        "item-placeholder",
-        "item-placeholder",
-        "item-placeholder",
-        "item-placeholder"
-    };
     
-	private List<ToggleButton> actionButtons;
-	private List<ToggleButton> menuButtons;
-    private ToggleButton buttonPause;
-    private ToggleButton buttonMenu;
+	private List<Label> items;
     
     private FPSCounter fpsCounter;
-    private Label labelExample;
+    private Label roomLabel;
+    
+    private Label viewDescription;
 	
 	public HeadsUpDisplay(GameApplication gameApplication){
 		super(gameApplication);
 		
-        this.actionButtons = new ArrayList<ToggleButton>();
-        this.menuButtons = new ArrayList<ToggleButton>();
-        
-        for(int i=0 ; i<BUTTON_ITEM_THEMES.length ; i++) {
-        	ToggleButton actionButton = new ToggleButton();
-            actionButton.setTheme(BUTTON_ITEM_THEMES[i]);
-            actionButtons.add(actionButton);
-            add(actionButton);
-        }
-
-        buttonPause = new ToggleButton();
-        buttonPause.setTheme("pause");
-        menuButtons.add(buttonPause);
-        add(buttonPause);
-        
-
-        buttonMenu = new ToggleButton();
-        buttonMenu.setTheme("menu");
-        menuButtons.add(buttonMenu);
-        add(buttonMenu);
+        this.items = new ArrayList<Label>();
 
         fpsCounter = new FPSCounter();
         add(fpsCounter);
 
-        labelExample = new Label();
-        labelExample.setText("Lorem Ipsum, Lorem Ipsum, Lorem Ipsum.");
-        add(labelExample);
+        
+        roomLabel = new Label();
+        roomLabel.setTheme("infolabel");
+        add(roomLabel);
+        
+        viewDescription = new Label();
+        viewDescription.setTheme("infolabel");
+        viewDescription.setVisible(false);
+        add(viewDescription);
     }
 
     @Override
     protected void layout() {
-        layoutItems();
-        
-        layoutMenu();
-
         layoutFPS();
+    	
+        layoutItems();
         
         layoutMisc();
     }
@@ -88,32 +62,24 @@ public class HeadsUpDisplay extends NestedWidget {
         int x = PADDING;
         int y = 40;
         
-        for(ToggleButton button : actionButtons) {
-            button.setPosition(x, y);
-            button.adjustSize();
-            y += button.getHeight() + SPACING;
-        }
-    }
-    
-    private void layoutMenu(){
-        int x = getInnerWidth() - PADDING - 80;
-        int y = PADDING;
-
-        for(ToggleButton button : menuButtons) {
-            button.setPosition(x, y);
-            button.adjustSize();
-            x -= button.getWidth() + SPACING;
+        for(Label item : items) {
+        	item.setPosition(x, y);
+        	item.adjustSize();
+            y += item.getHeight() + SPACING;
         }
     }
     
     private void layoutFPS(){
         fpsCounter.adjustSize();
-        fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(), 0);
+        fpsCounter.setPosition(getWidth() - fpsCounter.getWidth(), 0);
     }
     
     private void layoutMisc(){
-        labelExample.adjustSize();
-        labelExample.setPosition(getInnerWidth() / 2 - labelExample.getWidth() / 2, getInnerBottom() - labelExample.getHeight());
+        roomLabel.adjustSize();
+        roomLabel.setPosition((getWidth() - roomLabel.getWidth()) / 2, getHeight() - roomLabel.getHeight() - 20);
+        
+        viewDescription.adjustSize();
+        viewDescription.setPosition((getWidth() - viewDescription.getWidth()) / 2, getHeight() / 2 + 40);
     }
 
 	RadialPopupMenu createRadialMenu() {
@@ -122,10 +88,40 @@ public class HeadsUpDisplay extends NestedWidget {
             final int idx = i;
             rpm.addButton("star", new Runnable() {
                 public void run() {
-                    labelExample.setText("Selected " + idx);
+                    roomLabel.setText("Selected " + idx);
                 }
             });
         }
         return rpm;
     }
+
+	public void update(Client client) {
+		
+		updateLabels(client);
+		
+		updateInventory(client);
+
+	}
+
+	private void updateInventory(Client client) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void updateLabels(Client client) {
+		if(roomLabel.getText() != client.getLocalPlayer().getRoom().getDescription()){
+			roomLabel.setText(client.getLocalPlayer().getRoom().getDescription());
+		}
+		
+		Entity entity = client.getViewedEntity();
+		if(entity == null && viewDescription.isVisible()){
+			viewDescription.setVisible(false);
+			viewDescription.setText("");
+		} else if(entity != null && entity.getDescription() != viewDescription.getText()){
+			viewDescription.setVisible(true);
+			viewDescription.setText(entity.getDescription());
+		}
+	}
+	
+	
 }

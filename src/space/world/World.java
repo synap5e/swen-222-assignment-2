@@ -105,7 +105,7 @@ public class World implements ViewableWorld{
 	 * @param character The character getting the entity
 	 * @param cont The container being emptied*/
 	public void removeFromContainer(Character character, Container cont,Entity entity){
-		if(cont.getOpenAmount() == 1 && character.withinReach(cont.getPosition()) && character.getRoom().containsEntity(cont)){
+		if(cont.getOpenPercent() == 1 && character.withinReach(cont.getPosition()) && character.getRoom().containsEntity(cont)){
 			if(cont.removeContainedItem(entity)){
 				character.pickup((Pickup) entity);
 			}

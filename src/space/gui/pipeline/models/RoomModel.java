@@ -107,7 +107,7 @@ public class RoomModel {
 		);
 
 		try {
-			wallTexture = TextureLoader.loadTexture(new File("./assets/wall textured evened.png"));
+			wallTexture = TextureLoader.loadTexture(new File("./assets/interior_wall.png"));
 			floorTexture = TextureLoader.loadTexture(new File("./assets/floor maybs.png"));
 			ceilingTexture = TextureLoader.loadTexture(new File("./assets/shiphull.png"));
 		} catch (IOException e) {
