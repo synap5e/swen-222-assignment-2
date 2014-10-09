@@ -35,8 +35,8 @@ public class JsonToModel implements WorldLoader{
 
 	private World world;
 	MyJsonObject json;
-	Map<Integer,Entity> entities;
-	Map<Integer,Room> rooms;
+	Set<Entity> entities;
+	Set<Room> rooms;
 
 	@Override
 	public void loadWorld(String savePath) {
@@ -52,14 +52,16 @@ public class JsonToModel implements WorldLoader{
 			System.out.println(e);
 		}
 		MyJsonList roomJsonObjects = new MyJsonList((JSONArray) json.get("rooms"));
-		 entities = new HashMap<Integer,Entity>();
-		 rooms = new HashMap<Integer,Room>();
+		 entities = new HashSet<Entity>();
+		 rooms = new HashSet<Room>();
 		for(JSONObject r : roomJsonObjects){
-			rooms.put((Integer)r.get("id"),(Room)loadRoom(r));
+			rooms.add((Room)loadRoom(r));
 		}
+		
+		world = new World();
 	}
 
-	private Object loadRoom(JSONObject r) {
+	private Room loadRoom(JSONObject r) {
 		LightMode lightmode = (LightMode) r.get("Light Mode");
 		int id = (int) r.get("id");
 		String description = (String) r.get("description");
@@ -85,22 +87,22 @@ public class JsonToModel implements WorldLoader{
 			 if(e.get("name")=="Key"){
 				 Key key = loadKey(e);
 				 contained.add(key);
-				 entities.put(key.getID(),key);
+				 entities.add(key);
 			 }
 			 else if(e.get("name")=="Light"){
 				 Light light = loadLight(e);
 				 contained.add(light);
-				 entities.put(light.getID(),light);
+				 entities.add(light);
 			 }
 			 else if(e.get("name")=="Button"){
 				 Button button = loadButton(e);
 				 contained.add(button);
-				 entities.put(button.getID(),button);
+				 entities.add(button);
 			 }
 			 else if(e.get("name")=="Teleporter"){
 				 Teleporter teleporter = loadTeleporter(e);
 				 contained.add(teleporter);
-				 entities.put(teleporter.getID(),teleporter);
+				 entities.add(teleporter);
 			 }
 		 }
 		return contained;
@@ -150,19 +152,24 @@ public class JsonToModel implements WorldLoader{
 		
 		return new Key(position, id, elevation, null/*where we gonna remove door from here*/, description, name);
 	}
+	
+	private Player loadPlayer(JSONObject e){
+		Vector2D position = loadPoint((MyJsonList) e.get("position"));
+		int id = (int) e.get("id");
+		String name = (String) e.get("name");
+		Player p = new Player(position,id,name);
+		p.setPoints((int) e.get("points"));
+		p.setXRotation((float) e.get("x rotation"));
+		p.setYRotation((float) e.get("y rotation"));
+		return p;
+	}
 
 	@Override
 	public List<Player> getPlayers() {
 		ArrayList<Player> ps = new ArrayList<Player>();
 		MyJsonList players = new MyJsonList((JSONArray) json.get("players"));
 		for(JSONObject o : players){
-			MyJsonList pos = new MyJsonList((JSONArray) o.get("positions"));
-			Vector2D position = new Vector2D((float) pos.get(0), (float) pos.get(1));
-			Player p = new Player(position, (int) o.get("id"),""); //TODO add name
-			p.setPoints((int) o.get("points"));
-			p.setXRotation((float) o.get("x rotation"));
-			p.setYRotation((float) o.get("y rotation"));
-			ps.add(p);
+			ps.add(loadPlayer(o));
 		}
 
 		return ps;
@@ -171,7 +178,6 @@ public class JsonToModel implements WorldLoader{
 
 	@Override
 	public World getWorld() {
-		// TODO Auto-generated method stub
 		return world;
 	}
 
