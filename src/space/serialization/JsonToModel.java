@@ -16,18 +16,27 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.ConcaveHull;
 import space.math.Vector2D;
 import space.network.storage.WorldLoader;
+import space.world.Button;
+import space.world.Container;
 import space.world.Door;
+import space.world.Entity;
+import space.world.Key;
+import space.world.Light;
 import space.world.Player;
 import space.world.Room;
+import space.world.Teleporter;
 import space.world.World;
 
 public class JsonToModel implements WorldLoader{
 
 	private World world;
 	MyJsonObject json;
+	Map<Integer,Entity> entities;
+	Map<Integer,Room> rooms;
 
 	@Override
 	public void loadWorld(String savePath) {
@@ -42,39 +51,104 @@ public class JsonToModel implements WorldLoader{
 		} catch (ParseException e) {
 			System.out.println(e);
 		}
-		MyJsonList rooms = new MyJsonList((JSONArray) json.get("rooms"));
-		
-		
-		world = new World(null,getRooms(rooms)); 
-
+		MyJsonList roomJsonObjects = new MyJsonList((JSONArray) json.get("rooms"));
+		 entities = new HashMap<Integer,Entity>();
+		 rooms = new HashMap<Integer,Room>();
+		for(JSONObject r : roomJsonObjects){
+			rooms.put((Integer)r.get("id"),(Room)loadRoom(r));
+		}
 	}
 
-	private Set<Room> getRooms(MyJsonList rooms) {
-		Set<Room> rm = new HashSet<Room>();
-		for(JSONObject o:rooms){
-			int id = (int) o.get("id");
-			String lightMode = (String) o.get("Light Mode");
-			String description = (String) o.get("description");
-			MyJsonObject hull = (MyJsonObject) o.get("Room Shape");
-			MyJsonList points = (MyJsonList) o.get("points");
-			List<Vector2D> pts = new ArrayList<Vector2D>();
-			for(int i=0; i<points.getSize(); i++){
-				int x = points.get(i);
-				i++;
-				int y = points.get(i);
-				Vector2D vector = new Vector2D(x,y);
-				pts.add(vector);
-			}
-			ConcaveHull concaveHull = new ConcaveHull(pts);
-			Map<Integer,List<Door>> doors = new HashMap<Integer,List<Door>>();
-			MyJsonList walls = (MyJsonList) o.get("walls");//FINISH THIS
-			
-
-//			r.put("contains", addContains(room));
-//			r.put("walls", addWall(room.getDoors()));
+	private Object loadRoom(JSONObject r) {
+		LightMode lightmode = (LightMode) r.get("Light Mode");
+		int id = (int) r.get("id");
+		String description = (String) r.get("description");
+		List<Vector2D> points = new ArrayList<Vector2D>();
+		MyJsonObject RoomShape = (MyJsonObject) r.get("RoomShape");
+		MyJsonList pointFloats = (MyJsonList) RoomShape.get("points");
+		for(int i = 0; i<pointFloats.getSize();i++){
+			float x = pointFloats.get(i);
+			i++;
+			float y = pointFloats.get(i);
+			points.add(new Vector2D(x,y));
 		}
 		
+		Room rm = new Room(lightmode, id, description, points);
+		Set<Entity>entitiesInRoom = loadEntities((MyJsonList)r.get("contains"));
+		rm.setEntities(entitiesInRoom);
 		return rm;
+	}
+
+	private Set<Entity> loadEntities(MyJsonList contains) {
+		Set<Entity> contained = new HashSet<Entity>();
+		 for(JSONObject e: contains){
+			 if(e.get("name")=="Key"){
+				 Key key = loadKey(e);
+				 contained.add(key);
+				 entities.put(key.getID(),key);
+			 }
+			 else if(e.get("name")=="Light"){
+				 Light light = loadLight(e);
+				 contained.add(light);
+				 entities.put(light.getID(),light);
+			 }
+			 else if(e.get("name")=="Button"){
+				 Button button = loadButton(e);
+				 contained.add(button);
+				 entities.put(button.getID(),button);
+			 }
+			 else if(e.get("name")=="Teleporter"){
+				 Teleporter teleporter = loadTeleporter(e);
+				 contained.add(teleporter);
+				 entities.put(teleporter.getID(),teleporter);
+			 }
+		 }
+		return contained;
+	}
+
+	private Teleporter loadTeleporter(JSONObject e) {
+		Vector2D position = loadPoint((MyJsonList) e.get("position"));
+		Vector2D teleportstoPos = loadPoint((MyJsonList) e.get("teleportstoPos"));
+		int id = (int) e.get("id");
+		String description = (String) e.get("description");
+		float elevation = (float) e.get("elevation");
+		String name = (String) e.get("name");
+		
+		return new Teleporter(position,teleportstoPos, id, elevation, description, name);
+	}
+	
+	public Vector2D loadPoint(MyJsonList e){
+		return new Vector2D((float)e.get(0),(float)e.get(1));
+	}
+	
+	private Button loadButton(JSONObject e) {
+		Vector2D position = loadPoint((MyJsonList) e.get("position"));
+		int id = (int) e.get("id");
+		String description = (String) e.get("description");
+		float elevation = (float) e.get("elevation");
+		String name = (String) e.get("name");
+		
+		return new Button(position, id, elevation, description, name);
+	}
+
+	private Light loadLight(JSONObject e) {
+		Vector2D position = loadPoint((MyJsonList) e.get("position"));
+		int id = (int) e.get("id");
+		String description = (String) e.get("description");
+		float elevation = (float) e.get("elevation");
+		String name = (String) e.get("name");
+		
+		return new Light(position, id, elevation, description, name);
+	}
+
+	private Key loadKey(JSONObject e) {
+		Vector2D position = loadPoint((MyJsonList) e.get("position"));
+		int id = (int) e.get("id");
+		String description = (String) e.get("description");
+		float elevation = (float) e.get("elevation");
+		String name = (String) e.get("name");
+		
+		return new Key(position, id, elevation, null/*where we gonna remove door from here*/, description, name);
 	}
 
 	@Override
