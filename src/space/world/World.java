@@ -62,7 +62,7 @@ public class World implements ViewableWorld{
 	public void pickUpEntity(Character character, Entity entity){
 		if(!(entity instanceof Pickup)){return;}
 		if(character.withinReach(entity.getPosition()) && character.getRoom().containsEntity(entity)){
-			character.pickup((Pickup) entity);
+			character.pickup(entity);
 			character.getRoom().removeFromRoom(entity);
 		}
 	}
@@ -107,7 +107,7 @@ public class World implements ViewableWorld{
 	public void removeFromContainer(Character character, Container cont,Entity entity){
 		if(cont.getOpenPercent() == 1 && character.withinReach(cont.getPosition()) && character.getRoom().containsEntity(cont)){
 			if(cont.removeContainedItem(entity)){
-				character.pickup((Pickup) entity);
+				character.pickup(entity);
 			}
 			
 		}

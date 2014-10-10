@@ -29,8 +29,10 @@ public abstract class Character extends NonStationary {
 	 * @param p
 	 *            The entity that will be added
 	 */
-	public void pickup(Pickup p) {
-		inventory.add(p);
+	public void pickup(Entity p) {
+		if(p instanceof Pickup){
+			inventory.add((Pickup)p);
+		}
 	}
 
 	/**

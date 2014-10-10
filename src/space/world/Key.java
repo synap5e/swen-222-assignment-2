@@ -3,7 +3,7 @@ package space.world;
 import space.math.Vector2D;
 
 public class Key extends NonStationary implements Pickup {
-	private static final float COL_RADIUS = 1; // the collision radius
+	private static final float COL_RADIUS = 2.2f; // the collision radius
 
 	/**
 	 * Creates a new Key entity

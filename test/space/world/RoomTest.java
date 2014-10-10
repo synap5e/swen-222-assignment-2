@@ -21,7 +21,7 @@ public class RoomTest {
 	@Test
 	public void postitionVacant2(){//with some entity but it isnt in the position
 		Room r  = createRoom(new Vector2D(0,10),new Vector2D(10,10),new Vector2D(10,0),new Vector2D(0,0));
-		Key k = new Key(new Vector2D(5,5), 1, "", 0, null);
+		Key k = new Key(new Vector2D(5,5), 1, 0, "","");
 		r.putInRoom(k);
 		assertTrue(r.isPositionVacant(new Vector2D(2,2), 1));
 	}
@@ -30,7 +30,7 @@ public class RoomTest {
 	public void positionNotVacant1(){//an entity is in the position specified
 		Room r  = createRoom(new Vector2D(0,10),new Vector2D(10,10),new Vector2D(10,0),new Vector2D(0,0));
 		Vector2D pos = new Vector2D(5,5);
-		Key k = new Key(pos, 1, "", 0, null);
+		Key k = new Key(pos, 1, 0, "","");
 		r.putInRoom(k);
 		assertFalse(r.isPositionVacant(pos, 1));
 	}
@@ -38,12 +38,12 @@ public class RoomTest {
 	@Test
 	public void positionNotVacant2(){//an entity is not on the position but it will collide with something
 		Room r  = createRoom(new Vector2D(0,10),new Vector2D(10,10),new Vector2D(10,0),new Vector2D(0,0));
-		Key k = new Key(new Vector2D(5,5), 1, "", 0, null);
+		Key k = new Key(new Vector2D(5,5), 1, 0,"","");
 		r.putInRoom(k);
 		assertFalse(r.isPositionVacant(new Vector2D(3,2), 5));
 	}
 
 	private Room createRoom(Vector2D ... roomPoints){
-		return new Room(LightMode.BASIC_LIGHT, 0, "" , Arrays.asList(roomPoints), new HashMap<Integer,List<Door>>());
+		return new Room(LightMode.BASIC_LIGHT, 0, "" , Arrays.asList(roomPoints));
 	}
 }

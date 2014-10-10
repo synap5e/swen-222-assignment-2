@@ -113,6 +113,17 @@ public class ConcaveHullTests {
 				));
 	}
 	
+	@Test
+	public void containsCircleFalse3(){
+		assertFalse(hullContains(createHull(
+					0,	1, 	
+					1,	1,
+					1,	0,
+					0,	0
+				), 
+					100, 100, 1
+				));
+	}
 	
 
 	private boolean hullContains(ConcaveHull hull, float x, float y, float radius) {
