@@ -209,7 +209,7 @@ public class Client {
 				
 				//TODO: Tempory code to test dropping entities
 				if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
-					Set<Pickup> inv = localPlayer.getInventory();
+					List<Pickup> inv = localPlayer.getInventory();
 					if (inv.size() > 0){
 						for (Pickup p : inv){
 							drop((Entity) p);
