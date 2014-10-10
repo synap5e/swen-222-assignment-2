@@ -12,15 +12,22 @@ import space.world.World;
 public interface WorldLoader {
 	
 	/**
-	 * Load the world from a save file.
+	 * Load the world from a save file. The world must not contain any players.
 	 * 
 	 * @param savePath the path of the save file
 	 */
 	public void loadWorld(String savePath);
 	
 	/**
-	 * Get the world that has been loaded. The world must not contain any players.
-	 * The loadWorld method must be called before calling this method.
+	 * Load the world from a string representation the world. The world can contain players.
+	 * 
+	 * @param world the string representation of the world
+	 */
+	public void loadWorldFromString(String world);
+	
+	/**
+	 * Get the world that has been loaded.
+	 * One of the loadWorld methods must be called before calling this method.
 	 * 
 	 * @return The loaded world.
 	 */

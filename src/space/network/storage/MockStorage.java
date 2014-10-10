@@ -3,6 +3,7 @@ package space.network.storage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.world.Door;
@@ -50,6 +51,18 @@ public class MockStorage implements WorldLoader, WorldSaver {
 	@Override
 	public void saveWorld(String savePath, World world, List<Player> players) {
 		//Not implemented in this mock object
+	}
+
+	@Override
+	public void loadWorldFromString(String world) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String representWorldAsString(World world) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

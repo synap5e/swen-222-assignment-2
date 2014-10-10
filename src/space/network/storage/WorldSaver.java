@@ -19,4 +19,12 @@ public interface WorldSaver {
 	 * @param players any additional players that need to be saved but don't exist in the world
 	 */
 	public void saveWorld(String savePath, World world, List<Player> players);
+	
+	/**
+	 * Creates a string representation of the world.
+	 * 
+	 * @param world the world to represent
+	 * @return The string representation of the world.
+	 */
+	public String representWorldAsString(World world);
 }

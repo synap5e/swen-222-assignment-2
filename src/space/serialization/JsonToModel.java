@@ -250,4 +250,10 @@ public class JsonToModel implements WorldLoader{
 		return world;
 	}
 
+	@Override
+	public void loadWorldFromString(String world) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

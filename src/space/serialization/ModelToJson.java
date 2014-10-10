@@ -280,4 +280,10 @@ public class ModelToJson implements WorldSaver {
 		return hull;
 	}
 
+	@Override
+	public String representWorldAsString(World world) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
