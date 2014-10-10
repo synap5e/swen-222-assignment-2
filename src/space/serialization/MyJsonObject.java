@@ -80,6 +80,11 @@ public class MyJsonObject {
 			return obj.toJSONString();
 		}
 
+		public MyJsonList getMyJsonList(String string) {
+			// TODO Auto-generated method stub
+			return value;
+		}
+
 			
 		
 }
