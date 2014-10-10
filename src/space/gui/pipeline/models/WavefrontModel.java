@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.Util;
 import org.lwjgl.util.glu.Sphere;
 
+import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.Material;
 import space.math.Vector3D;
 
@@ -26,8 +27,6 @@ public class WavefrontModel implements RenderModel{
 		int v1, v2, v3;
 		int n1, n2, n3;
 	}
-
-	private static final boolean DEBUG_MODEL_CENTER = false;
 
 	private ArrayList<Vector3D> vertices = new ArrayList<Vector3D>();
 	private ArrayList<Vector3D> normals = new ArrayList<Vector3D>();
@@ -129,7 +128,7 @@ public class WavefrontModel implements RenderModel{
 		glNewList(displayList, GL_COMPILE);
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		
-		if (DEBUG_MODEL_CENTER){
+		if (GameRenderer.DEBUG_MODELS){
 			glPushAttrib(GL_ALL_ATTRIB_BITS);
 			glDisable(GL_TEXTURE_2D);
 			glEnable(GL_COLOR_MATERIAL);

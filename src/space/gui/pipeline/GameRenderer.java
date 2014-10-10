@@ -44,6 +44,8 @@ public class GameRenderer {
 
 	private static final float VERTICAL_FIELD_OF_VIEW = 50.0f;
 
+	public static final boolean DEBUG_MODELS = true;
+
 	private int height;
 	private int width;
 

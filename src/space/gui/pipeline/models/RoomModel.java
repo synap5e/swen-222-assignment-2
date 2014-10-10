@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.lwjgl.util.glu.Cylinder;
+import org.lwjgl.util.glu.Disk;
+import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.glu.Sphere;
+
 import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.Material;
 import space.gui.pipeline.ModelFlyweight;
@@ -205,6 +210,22 @@ public class RoomModel {
 	private void drawObject(ViewableObject viewableObject, ModelFlyweight models) {
 		glPushMatrix();
 		glTranslatef(viewableObject.getPosition().getX(), viewableObject.getElevation(), viewableObject.getPosition().getY());
+		
+		if (GameRenderer.DEBUG_MODELS){
+			glPushAttrib(GL_ALL_ATTRIB_BITS);
+			glDisable(GL_CULL_FACE);
+			glDisable(GL_TEXTURE_2D);
+			glEnable(GL_COLOR_MATERIAL);
+			glColor3f(1,0,0);
+			glPushMatrix();
+			Cylinder d = new Cylinder();
+			glTranslated(0, 1, 0);
+			glRotated(90, 1, 0, 0);
+			d.draw(viewableObject.getCollisionRadius(), viewableObject.getCollisionRadius(), 3, 20, 20);
+			glPopMatrix();
+			glPopAttrib();
+		}
+		
 		glRotated(viewableObject.getAngle(), 0, -1, 0);
 		models.get(viewableObject).render();
 		glPopMatrix();
