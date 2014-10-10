@@ -134,7 +134,7 @@ public class ConcaveHull implements Iterable<Segment2D>{
 	}
 
 	public boolean contains(Vector2D position, float radius) {
-		return getClosestPointOnHull(position).sub(position).sqLen() > radius*radius;
+		return contains(position) && getClosestPointOnHull(position).sub(position).sqLen() < radius*radius;
 	}
 	
 	public Vector2D getClosestPointOnHull(Vector2D p){
