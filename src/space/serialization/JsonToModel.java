@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,8 +36,10 @@ public class JsonToModel implements WorldLoader{
 
 	private World world;
 	MyJsonObject json;
-	Set<Entity> entities;
-	Set<Room> rooms;
+	Set<Entity> entities = new HashSet<Entity>();
+	Set<Room> rooms = new HashSet<Room>();
+	List<Door> doors = new ArrayList<Door>();
+	Map <RoomWrapper, Door> roomidstodoor;
 
 	@Override
 	public void loadWorld(String savePath) {
@@ -52,13 +55,78 @@ public class JsonToModel implements WorldLoader{
 			System.out.println(e);
 		}
 		MyJsonList roomJsonObjects = new MyJsonList((JSONArray) json.get("rooms"));
-		 entities = new HashSet<Entity>();
-		 rooms = new HashSet<Room>();
 		for(JSONObject r : roomJsonObjects){
-			rooms.add((Room)loadRoom(r));
+			rooms.add(loadRoom(r));
 		}
-		
-		world = new World();
+
+		MyJsonList doorJsonObjects = new MyJsonList( (JSONArray) json.get("doors"));
+		for(JSONObject d:doorJsonObjects){
+			doors.add(loadDoor(d));
+		}
+
+		for(JSONObject r:roomJsonObjects){
+			MyJsonList walls = (MyJsonList) r.get("walls and door ids");
+			Room toPlaceDoor = null;
+			for(Room rm : rooms){
+				if (rm.getID()==(int)r.get("id")){
+					toPlaceDoor = rm;
+				}
+			}
+
+			for(int i=0; i<walls.getSize(); i++){
+				MyJsonObject wall = walls.get(i);
+				String key = wall.getName();
+				MyJsonList drs = wall.get(key);
+				for(int j = 0; j<drs.getSize(); j++){
+					int doorid = drs.get(j);
+					Door doorToAdd = null;
+					for(Door d : doors){
+						if(d.getID()==doorid){
+							doorToAdd = d;
+						}
+					}
+					toPlaceDoor.addDoor(Integer.parseInt(key), doorToAdd);
+
+
+				}
+
+
+			}
+
+
+		}
+
+		world = new World(entities, rooms);
+	}
+
+	private Door loadDoor(JSONObject d) {
+		int id = (int) d.get("id");
+		Vector2D position =loadPoint((MyJsonList) d.get("position"));
+		Room room1 = null;
+		Room room2 = null;
+		for(Room r: rooms){
+			if((int)d.get("room1")==r.getID()){
+				room1=r;
+			}
+			if((int)d.get("room2")==r.getID()){
+				room2=r;
+			}
+		}
+		String description = (String) d.get("description");
+		String name = (String) d.get("name");
+		String state = (String) d.get("state");
+		boolean isOneWay = (boolean) d.get("is oneway");
+		float amtOpen = (float)d.get("amt open");
+		boolean isLocked = (boolean) d.get("isLocked");
+		Key key=null;
+		for(Entity e : entities){
+			if(e instanceof Key){
+				if(e.getID()==(int)d.get("key")){
+					key=(Key) e;
+				}
+			}
+		}
+		return new Door(position, id, description,name,room1, room2, isOneWay, isLocked,key,state,amtOpen);
 	}
 
 	private Room loadRoom(JSONObject r) {
@@ -77,7 +145,9 @@ public class JsonToModel implements WorldLoader{
 		
 		Room rm = new Room(lightmode, id, description, points);
 		Set<Entity>entitiesInRoom = loadEntities((MyJsonList)r.get("contains"));
-		rm.setEntities(entitiesInRoom);
+		for (Entity e: entitiesInRoom){
+			rm.putInRoom(e);
+		}
 		return rm;
 	}
 
@@ -150,7 +220,7 @@ public class JsonToModel implements WorldLoader{
 		float elevation = (float) e.get("elevation");
 		String name = (String) e.get("name");
 		
-		return new Key(position, id, elevation, null/*where we gonna remove door from here*/, description, name);
+		return new Key(position, id, elevation, description, name);
 	}
 	
 	private Player loadPlayer(JSONObject e){

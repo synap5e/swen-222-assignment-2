@@ -14,6 +14,8 @@ import org.json.simple.JSONObject;
 
 public class MyJsonObject {
 	JSONObject obj;
+	String key;
+	
 		/**
 		 * Constructor - creates a new Json object
 		 */
@@ -25,6 +27,10 @@ public class MyJsonObject {
 		 * Second constructor that takes a loaded 
 		 * @param loadedObject JSONObject with data
 		 */
+		
+		public String getName(){
+			return key;
+		}
 		
 		public MyJsonObject(JSONObject loadedObject){
 			obj = loadedObject;
@@ -39,6 +45,10 @@ public class MyJsonObject {
 		}
 		
 		public void put(String key, boolean value){
+			obj.put(key, value);
+		}
+		
+		public void put(String key, int value){
 			obj.put(key, value);
 		}
 		
