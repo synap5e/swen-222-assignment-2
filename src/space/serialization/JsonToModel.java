@@ -39,7 +39,6 @@ public class JsonToModel implements WorldLoader{
 	Set<Entity> entities = new HashSet<Entity>();
 	Set<Room> rooms = new HashSet<Room>();
 	List<Door> doors = new ArrayList<Door>();
-	Map <RoomWrapper, Door> roomidstodoor;
 
 	@Override
 	public void loadWorld(String savePath) {
