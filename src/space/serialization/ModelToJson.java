@@ -67,8 +67,10 @@ public class ModelToJson implements WorldSaver {
 				for(Door dr: d){
 					boolean alreadyIn = false;
 					if(listofDoors.getSize()!=0){
-						for(JSONObject door : listofDoors){
-							int one = (int) door.get("id");
+						//for(JSONObject door : listofDoors){
+						for (int i=0;i<listofDoors.getSize();i++){
+							MyJsonObject door = listofDoors.getMyJsonObject(i);
+							double one = door.getNumber("id");
 							int two = dr.getID();
 							if(one==two){
 								alreadyIn = true;

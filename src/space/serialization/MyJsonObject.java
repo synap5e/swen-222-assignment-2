@@ -48,9 +48,6 @@ public class MyJsonObject {
 			obj.put(key, value);
 		}
 		
-		public void put(String key, int value){
-			obj.put(key, value);
-		}
 		
 		public void put(String key, MyJsonObject value){
 			 obj.put(key, value.getRawObject());
@@ -64,16 +61,6 @@ public class MyJsonObject {
 			return obj;
 		}
 		
-		public <E> E get(String key){
-			Object value = obj.get(key);
-			if (value instanceof JSONArray){
-				value = new MyJsonList((JSONArray)value);
-			}
-			else if (value instanceof JSONObject){
-				value = new MyJsonObject((JSONObject)value);
-			}
-			return (E) value;
-		}
 
 		@Override
 		public String toString() {
@@ -81,10 +68,21 @@ public class MyJsonObject {
 		}
 
 		public MyJsonList getMyJsonList(String string) {
-			// TODO Auto-generated method stub
-			return value;
+			return new MyJsonList((JSONArray) obj.get(string));
+		}
+		public String getString(String string) {
+			return (String) obj.get(string);
+		}
+		public boolean getBoolean(String string) {
+			return (boolean) obj.get(string);
+		}
+		public double getNumber(String string) {
+			return (double) obj.get(string);
 		}
 
+		public MyJsonObject getMyJsonObject(String string) {
+			return new MyJsonObject((JSONObject) obj.get(string));
+		}
 			
 		
 }
