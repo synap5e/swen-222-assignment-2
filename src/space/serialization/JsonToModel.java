@@ -71,15 +71,17 @@ public class JsonToModel implements WorldLoader{
 			MyJsonList walls = r.getMyJsonList("walls and door ids");
 			Room toPlaceDoor = null;
 			for(Room rm : rooms){
-				if (rm.getID()==r.getNumber("id")){
+				if ((double)rm.getID()==r.getNumber("id")){
 					toPlaceDoor = rm;
 				}
 			}
 
 			for(int i=0; i<walls.getSize(); i++){
 				MyJsonObject wall = walls.getMyJsonObject(i);
-				String key = wall.getName();
+				System.out.println(wall.key);
+				String key = wall.getName();//NOT WORKING
 				MyJsonList drs = wall.getMyJsonList(key);
+				System.out.println(key);
 				for(int j = 0; j<drs.getSize(); j++){
 					int doorid = (int) drs.getNumber(j);
 					Door doorToAdd = null;
@@ -103,15 +105,17 @@ public class JsonToModel implements WorldLoader{
 	}
 
 	private Door loadDoor(MyJsonObject d) {
+		
 		double id = d.getNumber("id");
 		Vector2D position =loadPoint(d.getMyJsonList("position"));
 		Room room1 = null;
 		Room room2 = null;
 		for(Room r: rooms){
-			if(d.getNumber("room1")==r.getID()){
+			
+			if(d.getNumber("room1")==(double)r.getID()){
 				room1=r;
 			}
-			if(d.getNumber("room2")==r.getID()){
+			if(d.getNumber("room2")==(double)r.getID()){
 				room2=r;
 			}
 		}

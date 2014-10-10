@@ -221,7 +221,7 @@ public class ModelToJson implements WorldSaver {
 					constructHeldItems(cont.getItemsContained()));
 		} else if (e instanceof Door) {
 			Door door = (Door) e;
-			object.put("room 1", door.getRoom1().getID());
+			object.put("room1", door.getRoom1().getID());
 			object.put("room2", door.getRoom2().getID());
 			object.put("is oneway", door.isOneWay());
 			object.put("key", door.getKey().getID());
