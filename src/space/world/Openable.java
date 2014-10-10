@@ -20,12 +20,13 @@ public abstract class Openable extends NonStationary {
 		state = OpeningState.CLOSED;
 	}
 
-	public Openable(Vector2D position, String state,int id, float elevation,
-			String description, String name, float openTime, boolean isLocked, Key key) {
+	public Openable(Vector2D position,int id, float elevation,
+			String description, String name, float openTime, boolean isLocked, Key key, String state, float amtOpened) {
 		super(position, id, elevation, description, name);
 		this.openDuration = openTime;
 		this.locked = isLocked;
 		this.key = key;
+		this.amtOpen = amtOpened;
 		this.state = OpeningState.valueOf(state);
 	}
 
@@ -115,6 +116,11 @@ public abstract class Openable extends NonStationary {
 		return state.toString();
 	}
 
+	public Key getKey() {
+		return key;
+	}
 
+	
+	
 
 }

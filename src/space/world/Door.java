@@ -39,6 +39,13 @@ public class Door extends Openable implements ViewableDoor {
 		this.room2 = room2;
 		this.oneWay = isOneWay;
 	}
+	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
+			boolean isLocked, Key key, String state, float amtOpened) {
+		super(position, id, 0, description,name,500, isLocked, key,state,amtOpened);
+		this.room1 = room1;
+		this.room2 = room2;
+		this.oneWay = isOneWay;
+	}
 	
 	public boolean canInteract(){
 		return true;

@@ -16,10 +16,8 @@ public class Key extends NonStationary implements Pickup {
 	 *            The elevation
 	 * @param description
 	 *            The description of the key
-	 * @param door
-	 *            The door it unlocks
 	 */
-	public Key(Vector2D position, int id, float elevation, Door door, String description, String name) {
+	public Key(Vector2D position, int id, float elevation, String description, String name) {
 		super(position, id, elevation, description,name);
 	}
 
