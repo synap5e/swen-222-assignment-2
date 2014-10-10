@@ -95,11 +95,14 @@ public class GameRenderer {
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, zeroBuff);
 
 		FloatBuffer ambient = BufferUtils.createFloatBuffer(4);
-		ambient.put(new float[] { 0.2f, 0.2f, 0.2f, 1f });
+		float r = currentRoom.getLight().getX();
+		float g = currentRoom.getLight().getY();
+		float b = currentRoom.getLight().getZ();
+		ambient.put(new float[] { r/2.f, g/2.f, b/2.f, 1f });
 		ambient.flip();    
 
 		FloatBuffer diffuse = BufferUtils.createFloatBuffer(4);
-		diffuse.put(new float[] { 0.4f, 0.4f, 0.4f, 1f });
+		diffuse.put(new float[] { r, g, b, 1f });
 		diffuse.flip();   
 		
 		FloatBuffer position = BufferUtils.createFloatBuffer(4);
@@ -110,11 +113,7 @@ public class GameRenderer {
 		glLight(GL_LIGHT0, GL_DIFFUSE, diffuse);
 		glLight(GL_LIGHT0, GL_AMBIENT, ambient);
 
-		if (currentRoom.getLightMode() == LightMode.BASIC_LIGHT){
-			glEnable(GL_LIGHT0);
-		} else if (currentRoom.getLightMode() == LightMode.DARK){
-			glDisable(GL_LIGHT0);
-		}
+		glEnable(GL_LIGHT0);
 
 		if (player != null){
 			Vector3D dir = player.getLookDirection().normalized();
