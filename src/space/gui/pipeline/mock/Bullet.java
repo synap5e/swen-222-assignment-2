@@ -39,4 +39,9 @@ public class Bullet implements ViewableObject, ViewableNonStationary{
 		return "bullet";
 	}
 
+	@Override
+	public float getCollisionRadius() {
+		return 0;
+	}
+
 }

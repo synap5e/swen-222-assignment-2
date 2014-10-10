@@ -3,6 +3,7 @@ package space.gui.pipeline.viewable;
 import java.util.List;
 
 import space.math.Vector2D;
+import space.math.Vector3D;
 
 /**
  * 
@@ -12,12 +13,6 @@ import space.math.Vector2D;
 public interface ViewableRoom {
 
 	public enum LightMode{ BASIC_LIGHT, DARK };
-
-	/** Gets the lighting mode for a room. Currently this can only return BASIC_LIGHT
-	 *
-	 * @return LightMode.BASIC_LIGHT
-	 */
-	public LightMode getLightMode();
 
 	/** Gets the center coordinate of this room
 	 *
@@ -48,4 +43,13 @@ public interface ViewableRoom {
 	public Vector2D getAABBBottomRight();
 
 	public List<? extends ViewableBeam> getBeams();
+	
+	/** Get the amount and color of light in a room. 
+	 * the x,y and z components are red, green and blue respectively.
+	 * 
+	 * Note that values of over 0.7 for a color can cause the exposure to look odd
+	 * 
+	 * @return the light intensity and color of a room
+	 */
+	public Vector3D getLight();
 }

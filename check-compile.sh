@@ -1,5 +1,5 @@
 #!/bin/sh
-
+exit
 compiledir=`mktemp -d`
 cp src $compiledir/src -R
 cp lib/lwjgl/jar $compiledir/lib -R
