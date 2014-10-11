@@ -10,7 +10,9 @@ import org.junit.Test;
 import space.math.Vector2D;
 import space.network.storage.MockStorage;
 import space.network.storage.WorldLoader;
+import space.world.Container;
 import space.world.Entity;
+import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
 import space.world.World;
@@ -28,6 +30,20 @@ public class StorageTests {
 		
 		WorldLoader loader = new JsonToModel();
 		loader.loadWorld(savepath);
+		World loaded = loader.getWorld();
+		List<Player> ps = loader.getPlayers();
+		assertEquals(1, ps.size());
+		assertEquals(PLAYER_ID, ps.get(0).getID());
+		match(w, loaded, false);
+	}
+	
+	@Test
+	public void testStringRepresentionSaveAndLoad() {
+		World w = createTestWorld();
+		String json = new ModelToJson().representWorldAsString(w);
+		
+		WorldLoader loader = new JsonToModel();
+		loader.loadWorldFromString(json);
 		World loaded = loader.getWorld();
 		List<Player> ps = loader.getPlayers();
 		assertEquals(1, ps.size());
@@ -55,6 +71,18 @@ public class StorageTests {
 				if (!(e instanceof Player) || allowPlayers){
 					Entity oe = loaded.getEntity(e.getID());
 					assertTrue(other.containsEntity(oe));
+					assertEquals(e.getClass(), oe.getClass());
+					if (e instanceof Container){
+						Container c = (Container) e;
+						Container oc = (Container) oe;
+						assertEquals(c.getItemsContained().size(), oc.getItemsContained().size());
+						for (int i = 0; i < c.getItemsContained().size(); ++i){
+							Entity p = (Entity) c.getItemsContained().get(i);
+							Entity op = (Entity) oc.getItemsContained().get(i);
+							assertEquals(p.getID(), op.getID());
+							assertEquals(p.getClass(), op.getClass());
+						}
+					}
 				}
 			}
 		}
