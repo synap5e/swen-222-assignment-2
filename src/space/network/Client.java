@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -23,10 +22,11 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
+import space.network.message.TransferMessage;
 import space.network.message.sync.SyncMessage;
+import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
-import space.world.Key;
 import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
@@ -93,7 +93,7 @@ public class Client {
 			
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
-			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID(), "Player"); //TODO have name
+			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID(), "Player");
 			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 			localPlayer.getRoom().putInRoom(localPlayer);
 			world.addEntity(localPlayer);
@@ -186,6 +186,7 @@ public class Client {
 
 	//TODO: remove
 	boolean torch = false;
+	boolean interact = false;
 	
 	/**
 	 * Updates the game world with changes from the server and local input.
@@ -201,10 +202,26 @@ public class Client {
 				
 				//TODO: Tempory code to test getViewedEntity() works for doors
 				if (Keyboard.isKeyDown(Keyboard.KEY_E)){
-					Entity viewed = getViewedEntity();
-					if (viewed != null){
-						interactWith(viewed);
+					if (!interact){
+						interact = true;
+						Entity viewed = getViewedEntity();
+						if (viewed != null){
+							interactWith(viewed);
+							
+							if (viewed instanceof Container){
+								Container c = (Container) viewed;
+								if (c.isOpen()){
+									if (c.getItemsContained().size() > 0){
+										transfer((Entity) c.getItemsContained().get(0), c, localPlayer);
+									} else if (localPlayer.getInventory().size() > 0){
+										transfer((Entity) localPlayer.getInventory().get(0), localPlayer, c);
+									}
+								}
+							}
+						}
 					}
+				} else {
+					interact = false;
 				}
 				
 				//TODO: Tempory code to test dropping entities
@@ -296,34 +313,7 @@ public class Client {
 	 * @return Whether the interaction was successful.
 	 */
 	public boolean interactWith(Entity e){
-		/* TODO: Entities need some way to interact.
-		 * For example, interacting with a door might open/close it. 
-		 * An additional constraint might be the player must also hold the key for that door.
-		 * 
-		 * The method could return a boolean whether it was successful 
-		 */
-		
-		boolean interactionSuccessful = false; //e.interact(localPlayer);
-		
-		//TODO: Remove when e.interact is implemented
-		if (e instanceof Door){
-			Door d = (Door) e;
-			if (d.isLocked()){
-				d.unlock(localPlayer);
-			}
-			if (!d.isLocked()){
-				if (d.getOpenPercent() == 1){
-					d.close();
-					interactionSuccessful = true;
-				} else if (d.getOpenPercent() == 0){
-					d.open();
-					interactionSuccessful = true;
-				}
-			}
-		} else if (e instanceof Key){
-			world.pickUpEntity(localPlayer, e);
-			interactionSuccessful = true;
-		}
+		boolean interactionSuccessful = e.interact(localPlayer, world);
 		
 		if (interactionSuccessful){
 			sendMessage(new InteractionMessage(localPlayer.getID(), e.getID()));
@@ -354,6 +344,26 @@ public class Client {
 					sendMessage(new DropPickupMessage(localPlayer.getID(), e.getID(), locationOnFloor));
 				}
 			}
+		}
+	}
+	
+	public void transfer(Entity pickup, Container from, Player to){
+		if (from.getItemsContained().contains(pickup)){
+			from.removeContainedItem(pickup);
+			to.pickup(pickup);
+
+			//Tell the server
+			sendMessage(new TransferMessage(pickup.getID(), to.getID(), from.getID(), false));
+		}
+	}
+
+	public void transfer(Entity pickup, Player from, Container to){
+		if (from.getInventory().contains(pickup) && to.canPutInside(pickup)){
+			from.getInventory().remove(pickup);
+			to.putInside(pickup);
+
+			//Tell the server
+			sendMessage(new TransferMessage(pickup.getID(), from.getID(), to.getID(), true));
 		}
 	}
 	
@@ -497,6 +507,9 @@ public class Client {
 							//Drop a pickup from a player
 							} else if (message instanceof DropPickupMessage){
 								handleDrop((DropPickupMessage) message);
+							//Transfer an entity between player and a container
+							} else if (message instanceof TransferMessage){
+								handleTransfer((TransferMessage) message);
 							//Remote shutdown
 							} else if (message instanceof ShutdownMessage){
 								shutdown();
@@ -521,7 +534,7 @@ public class Client {
 		 * @param playerJoined the message containing the information about this player
 		 */
 		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
-			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID(), "Player"); //TODO: use name
+			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID(), "Player");
 			world.addEntity(p);
 			p.setRoom(world.getRoomAt(p.getPosition()));
 			p.getRoom().putInRoom(p);
@@ -590,28 +603,8 @@ public class Client {
 			Entity e = world.getEntity(interaction.getEntityID());
 			Player p = (Player) world.getEntity(interaction.getPlayerID());
 			
-			//TODO: e.interact(p);
-			//TODO: Remove when e.interact is implemented
-			if (e instanceof Door){
-				Door d = (Door) e;
-				if (d.isLocked()){
-					d.unlock(p);
-				}
-				if (!d.isLocked()){
-					if (d.getOpenPercent() > 0.5){
-						d.close();
-					} else if (d.getOpenPercent() < 0.5){
-						d.open();
-					}
-				}
-			} else if (e instanceof Pickup){
-				Room r = world.getRoomAt(e.getPosition());
-				if (r.getEntities().contains(e)){
-					r.removeFromRoom(e);
-				}
-				if (p != null){
-					p.pickup(e);
-				}
+			if (e.canInteract()){
+				e.interact(p, world);
 			}
 		}
 		
@@ -623,6 +616,30 @@ public class Client {
 		private void handlePlayerJump(JumpMessage jumpingPlayer){
 			Player p = (Player) world.getEntity(jumpingPlayer.getPlayerID());
 			p.jump();
+		}
+		
+		/**
+		 * Handles the transfer of an entity between a player and a container.
+		 * 
+		 * @param transfer the message containing the information about the transfer
+		 */
+		private void handleTransfer(TransferMessage transfer){
+			//Get the entities involved
+			Entity e = world.getEntity(transfer.getEntityID());
+			Player p = (Player) world.getEntity(transfer.getPlayerID());
+			Container c = (Container) world.getEntity(transfer.getContainerID());
+
+			if (transfer.fromPlayer()){
+				if (p.getInventory().contains(e) && c.canPutInside(e)){
+					p.getInventory().remove(e);
+					c.putInside(e);
+				}
+			} else {
+				if (c.getItemsContained().contains(e)){
+					c.removeContainedItem(e);
+					p.pickup(e);
+				}
+			}
 		}
 	}
 }
