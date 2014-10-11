@@ -46,6 +46,7 @@ public class Door extends NonStationary implements ViewableDoor {
 		this.locked = isLocked;
 		this.key = key;
 		this.canInteract = canInteract;
+		this.state = OpeningState.CLOSED;
 	}
 	
 	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
