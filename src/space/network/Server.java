@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 import org.lwjgl.Sys;
-
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
@@ -28,10 +26,8 @@ import space.network.storage.WorldLoader;
 import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
 import space.network.message.sync.DoorSyncMessage;
-import space.serialization.ModelToJson;
 import space.world.Door;
 import space.world.Entity;
-import space.world.Key;
 import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
@@ -269,31 +265,7 @@ public class Server {
 								Player p = (Player) world.getEntity(interaction.getPlayerID());
 								
 								//Make them interact
-								boolean succesful = false;//TODO: replace with e.interact(p);
-								
-								//TODO: Remove when e.interact is implemented
-								if (e instanceof Door){
-									Door d = (Door) e;
-									if (d.isLocked()){
-										d.unlock(p);
-									}
-									if (!d.isLocked()){
-										if (d.getOpenPercent() > 0.5){
-											d.close();
-											succesful = true;
-										} else if (d.getOpenPercent() < 0.5){
-											d.open();
-											succesful = true;
-										}
-									}
-								} else if (e instanceof Pickup){
-									Room r = world.getRoomAt(e.getPosition());
-									if (r.getEntities().contains(e)){
-										r.removeFromRoom(e);
-									}
-									p.pickup(e);
-									succesful = true;
-								}
+								boolean succesful = e.interact(p, world);
 								
 								//If the interaction succeeded, forward the message
 								if (succesful){

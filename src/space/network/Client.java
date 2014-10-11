@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Segment2D;
@@ -26,7 +23,6 @@ import space.network.message.ShutdownMessage;
 import space.network.message.sync.SyncMessage;
 import space.world.Door;
 import space.world.Entity;
-import space.world.Key;
 import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
@@ -93,7 +89,7 @@ public class Client {
 			
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
-			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID(), "Player"); //TODO have name
+			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID(), "Player");
 			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
 			localPlayer.getRoom().putInRoom(localPlayer);
 			world.addEntity(localPlayer);
@@ -296,34 +292,7 @@ public class Client {
 	 * @return Whether the interaction was successful.
 	 */
 	public boolean interactWith(Entity e){
-		/* TODO: Entities need some way to interact.
-		 * For example, interacting with a door might open/close it. 
-		 * An additional constraint might be the player must also hold the key for that door.
-		 * 
-		 * The method could return a boolean whether it was successful 
-		 */
-		
-		boolean interactionSuccessful = false; //e.interact(localPlayer);
-		
-		//TODO: Remove when e.interact is implemented
-		if (e instanceof Door){
-			Door d = (Door) e;
-			if (d.isLocked()){
-				d.unlock(localPlayer);
-			}
-			if (!d.isLocked()){
-				if (d.getOpenPercent() == 1){
-					d.close();
-					interactionSuccessful = true;
-				} else if (d.getOpenPercent() == 0){
-					d.open();
-					interactionSuccessful = true;
-				}
-			}
-		} else if (e instanceof Key){
-			world.pickUpEntity(localPlayer, e);
-			interactionSuccessful = true;
-		}
+		boolean interactionSuccessful = e.interact(localPlayer, world);
 		
 		if (interactionSuccessful){
 			sendMessage(new InteractionMessage(localPlayer.getID(), e.getID()));
@@ -521,7 +490,7 @@ public class Client {
 		 * @param playerJoined the message containing the information about this player
 		 */
 		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
-			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID(), "Player"); //TODO: use name
+			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID(), "Player");
 			world.addEntity(p);
 			p.setRoom(world.getRoomAt(p.getPosition()));
 			p.getRoom().putInRoom(p);
@@ -590,28 +559,8 @@ public class Client {
 			Entity e = world.getEntity(interaction.getEntityID());
 			Player p = (Player) world.getEntity(interaction.getPlayerID());
 			
-			//TODO: e.interact(p);
-			//TODO: Remove when e.interact is implemented
-			if (e instanceof Door){
-				Door d = (Door) e;
-				if (d.isLocked()){
-					d.unlock(p);
-				}
-				if (!d.isLocked()){
-					if (d.getOpenPercent() > 0.5){
-						d.close();
-					} else if (d.getOpenPercent() < 0.5){
-						d.open();
-					}
-				}
-			} else if (e instanceof Pickup){
-				Room r = world.getRoomAt(e.getPosition());
-				if (r.getEntities().contains(e)){
-					r.removeFromRoom(e);
-				}
-				if (p != null){
-					p.pickup(e);
-				}
+			if (e.canInteract()){
+				e.interact(p, world);
 			}
 		}
 		
