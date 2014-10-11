@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.json.simple.JSONObject;
-
 import space.math.ConcaveHull;
 import space.math.Vector2D;
 import space.math.Vector3D;
@@ -54,34 +52,33 @@ public class ModelToJson implements WorldSaver {
 	@Override
 	public void saveWorld(String savePath, World world, List<Player> players) {
 
-
 		Map<Integer, Room> rooms = world.getRooms();
 		for (Entry<Integer, Room> entry : rooms.entrySet()) {
 			listOfRooms.add(constructRoom(entry.getKey(), entry.getValue()));
 		}
 		fileobject.put("rooms", listOfRooms);
-		
-		for(Player p : players){
-			listOfPlayers.add(constructEntity(p,null));
+
+		for (Player p : players) {
+			listOfPlayers.add(constructEntity(p, null));
 		}
 
-		for(Room r : world.getRooms().values()){
-			Collection<List<Door>> doors =  r.getDoors().values();
-			for(List<Door> d : doors){
-				for(Door dr: d){
+		for (Room r : world.getRooms().values()) {
+			Collection<List<Door>> doors = r.getDoors().values();
+			for (List<Door> d : doors) {
+				for (Door dr : d) {
 					boolean alreadyIn = false;
-					if(listofDoors.getSize()!=0){
-						for (int i=0;i<listofDoors.getSize();i++){
+					if (listofDoors.getSize() != 0) {
+						for (int i = 0; i < listofDoors.getSize(); i++) {
 							MyJsonObject door = listofDoors.getMyJsonObject(i);
 							double one = door.getNumber("id");
 							double two = dr.getID();
-							if(one==two){
+							if (one == two) {
 								alreadyIn = true;
 							}
 						}
 					}
-					if(!alreadyIn){
-						listofDoors.add(constructEntity(dr,null));
+					if (!alreadyIn) {
+						listofDoors.add(constructEntity(dr, null));
 					}
 				}
 			}
@@ -89,43 +86,39 @@ public class ModelToJson implements WorldSaver {
 
 		fileobject.put("doors", listofDoors);
 		fileobject.put("players", listOfPlayers);
-		
+		fileobject.put("keys", listOfKeys);
+
 		FileWriter file = null;
 		try {
-			file = new FileWriter(savePath+".json");
+			file = new FileWriter(savePath + ".json");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		try {
-            file.write(fileobject.toString());
-            System.out.println("Successfully Copied JSON Object to File...");
-            System.out.println("\nJSON Object: " + fileobject);
- 
-        } catch (IOException e) {
-            e.printStackTrace();
- 
-        } finally {
-            try {
+			file.write(fileobject.toString());
+			System.out.println("Successfully Copied JSON Object to File...");
+			System.out.println("\nJSON Object: " + fileobject);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
+		} finally {
+			try {
 				file.flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-            try {
+			try {
 				file.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        }
-		
-		
-	}
+		}
 
-	public String ModeltoString() {
-		return fileobject.toString();
 	}
 
 	/**
@@ -163,8 +156,8 @@ public class ModelToJson implements WorldSaver {
 		pos.add(v.getY());
 		return pos;
 	}
-	
-	private MyJsonList construct3DVector(Vector3D v){
+
+	private MyJsonList construct3DVector(Vector3D v) {
 		MyJsonList vector = new MyJsonList();
 		vector.add(v.getX());
 		vector.add(v.getY());
@@ -185,13 +178,15 @@ public class ModelToJson implements WorldSaver {
 		for (Entity e : entities) {
 			if (e instanceof Player) {
 				listOfPlayers.add(constructEntity(e, null));
-			} 
-			else if(e instanceof Key){
-				listOfKeys.add(constructEntity(e, null));
-				entitiesInRoom.add(constructEntity(e, null));
 			}
+			else if (e instanceof Key) {
+				listOfKeys.add(constructEntity(e, null));
+				MyJsonObject key = new MyJsonObject();
+				key.put("name", "Key");
+				key.put("keyId", e.getID());
+			} 
 			else {
-				entitiesInRoom.add(constructEntity(e,room));
+				entitiesInRoom.add(constructEntity(e, room));
 			}
 
 		}
@@ -201,7 +196,7 @@ public class ModelToJson implements WorldSaver {
 	private MyJsonObject constructEntity(Entity e, Room room) {
 		MyJsonObject object = new MyJsonObject();
 		object.put("position", constructPoint(e.getPosition()));
-		object.put("id",e.getID());
+		object.put("id", e.getID());
 		object.put("elevation", e.getElevation());
 		object.put("description", e.getDescription());
 		object.put("name", e.getName());
@@ -211,20 +206,19 @@ public class ModelToJson implements WorldSaver {
 			addFields((Character) e, object);
 		} else if (e instanceof Container) {
 			addFields((Container) e, object);
-		}
-		else if (e instanceof Door){
-			addFields((Door)e, object);
-		}
-		else if(e instanceof Button){
-			addFields((Button)e, object,room);
+		} else if (e instanceof Door) {
+			addFields((Door) e, object);
+		} 
+		else if (e instanceof Button) {
+			//addFields((Button) e, object, room);
 		}
 		return object;
 	}
 
 	private void addFields(Button e, MyJsonObject object, Room room) {
-		object.put("entity", e.getEntity().getID());
+		object.put("entityId", e.getEntity().getID());
 		object.put("roomButtonIsIn", room.getID());
-		
+
 	}
 
 	private void addFields(Door door, MyJsonObject object) {
@@ -232,10 +226,10 @@ public class ModelToJson implements WorldSaver {
 		Room room1 = door.getRoom1();
 		int room1Wall = 0;
 		Map<Integer, List<Door>> wallstodoors = room1.getDoors();
-		for (Entry<Integer, List<Door>> entry : wallstodoors.entrySet()){
+		for (Entry<Integer, List<Door>> entry : wallstodoors.entrySet()) {
 
-			for(Door d: entry.getValue()){
-				if(d==door){
+			for (Door d : entry.getValue()) {
+				if (d == door) {
 					room1Wall = entry.getKey();
 				}
 			}
@@ -245,10 +239,10 @@ public class ModelToJson implements WorldSaver {
 		Room room2 = door.getRoom1();
 		int room2Wall = 0;
 		Map<Integer, List<Door>> wallstodoors2 = room2.getDoors();
-		for (Entry<Integer, List<Door>> entry : wallstodoors2.entrySet()){
+		for (Entry<Integer, List<Door>> entry : wallstodoors2.entrySet()) {
 
-			for(Door d: entry.getValue()){
-				if(d==door){
+			for (Door d : entry.getValue()) {
+				if (d == door) {
 					room1Wall = entry.getKey();
 				}
 			}
@@ -261,13 +255,19 @@ public class ModelToJson implements WorldSaver {
 		object.put("canInteract", door.canInteract());
 		object.put("amtOpen", door.getOpenPercent());
 	}
-		
 
 	private void addFields(Container e, MyJsonObject object) {
 		object.put("isLocked", e.isLocked());
 		object.put("isOpen", e.isOpen());
-		object.put("itemsContained",constructHeldItems(e.getItemsContained()));
-		object.put("key", e.getKey().getID());
+		object.put("itemsContained", constructHeldItems(e.getItemsContained()));
+		if (e instanceof Chest) {
+			if(e.getKey().getID()!=null){//need to change the id getter in key to allow this null check
+			object.put("keyId", e.getKey().getID());
+			}
+			else {
+				object.put("keyId", "null");
+			}
+		}
 	}
 
 	private void addFields(Character e, MyJsonObject object) {
@@ -286,7 +286,17 @@ public class ModelToJson implements WorldSaver {
 	private MyJsonList constructHeldItems(List<Pickup> itemsHeld) {
 		MyJsonList items = new MyJsonList();
 		for (Pickup p : itemsHeld) {
-			items.add(constructEntity((Entity) p, null));
+			if (p instanceof Key) {
+				listOfKeys.add(constructEntity((Entity) p, null));
+				MyJsonObject key = new MyJsonObject();
+				key.put("name", "Key");
+				key.put("keyId", ((Key) p).getID());
+				items.add(key);
+			} 
+			else
+			{
+				items.add(constructEntity((Entity) p, null));
+			}
 		}
 		return items;
 	}
@@ -327,8 +337,7 @@ public class ModelToJson implements WorldSaver {
 
 	@Override
 	public String representWorldAsString(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return fileobject.toString();
 	}
 
 }
