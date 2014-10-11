@@ -291,7 +291,7 @@ public class Server {
 									if (r.getEntities().contains(e)){
 										r.removeFromRoom(e);
 									}
-									p.pickup((Pickup) e);
+									p.pickup(e);
 									succesful = true;
 								}
 								
