@@ -1,6 +1,7 @@
 package space.world;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import space.gui.pipeline.viewable.OpenableContainer;
@@ -33,7 +34,7 @@ public abstract class Container extends NonStationary implements OpenableContain
 		this.key = key;
 	}
 	
-	public Container(Vector2D position, int id, float elevation, String description, String name, boolean isLocked, boolean isOpen,Key key, List<Pickup> itemsContained) {
+	public Container(Vector2D position, int id, float elevation, String description, String name, boolean isLocked, boolean isOpen,Key key, Collection<Pickup> itemsContained) {
 		super(position, id, elevation, description, name);
 		this.locked = isLocked;
 		this.isOpen = isOpen;

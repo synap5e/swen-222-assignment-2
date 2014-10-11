@@ -1,5 +1,6 @@
 package space.world;
 
+import java.util.Collection;
 import java.util.List;
 
 import space.math.Vector2D;
@@ -12,7 +13,7 @@ public class Wallet extends Container implements Pickup {
 	}
 	
 	public Wallet(Vector2D position, int id, float elevation,
-			String description, String name, boolean isOpen, List<Pickup> itemsContained) {
+			String description, String name, boolean isOpen, Collection<Pickup> itemsContained) {
 		super(position, id, elevation, description, name, false,isOpen, null,itemsContained);
 	}
 
