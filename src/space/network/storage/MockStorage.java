@@ -7,6 +7,7 @@ import java.util.List;
 import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.world.Chest;
 import space.world.Container;
 import space.world.Door;
 import space.world.Key;
@@ -31,34 +32,8 @@ public class MockStorage implements WorldLoader, WorldSaver {
 		Room r2 = new Room(new Vector3D(.1f, .01f, .01f), 2, "dark", Arrays.asList(new Vector2D(-20, -20), new Vector2D(20, -20), new Vector2D(20, -40), new Vector2D(-20, -40)));
 		world.addRoom(r2);
 		Key k = new Key(new Vector2D(5f, 5f), 4, 0, "A key", "Key");
-		Container c = new Container(new Vector2D(-5,-5), 90, 0, "holds the key", "teapot", false, null){
-
-			@Override
-			public float getAngle() {
-				return 45;
-			}
-
-			@Override
-			public boolean canClip() {
-				return true;
-			}
-			
-			@Override
-			public void update(int delta) {
-			}
-
-			@Override
-			public float getCollisionRadius() {
-				return 3;
-			}
-
-			@Override
-			public float getHeight() {
-				return 100;
-			}
-			
-		};
-		Door d = new Door(new Vector2D(0, -20), 3, "It can be opened", "Door", r, r2, false, true, k);
+		Chest c = new Chest(new Vector2D(-5,-5), 90, 0, "holds the key", "teapot", false, null);
+		Door d = new Door(new Vector2D(0, -20), 3, "It can be opened", "Door", r, r2, false, true, k, true);
 		r.addDoor(3, d);
 		r2.addDoor(1, d);
 		world.addEntity(d);
