@@ -24,14 +24,14 @@ import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
+import space.network.message.TransferMessage;
 import space.network.storage.WorldLoader;
 import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
 import space.network.message.sync.DoorSyncMessage;
-import space.serialization.ModelToJson;
+import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
-import space.world.Key;
 import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
@@ -269,35 +269,40 @@ public class Server {
 								Player p = (Player) world.getEntity(interaction.getPlayerID());
 								
 								//Make them interact
-								boolean succesful = false;//TODO: replace with e.interact(p);
-								
-								//TODO: Remove when e.interact is implemented
-								if (e instanceof Door){
-									Door d = (Door) e;
-									if (d.isLocked()){
-										d.unlock(p);
-									}
-									if (!d.isLocked()){
-										if (d.getOpenPercent() > 0.5){
-											d.close();
-											succesful = true;
-										} else if (d.getOpenPercent() < 0.5){
-											d.open();
-											succesful = true;
-										}
-									}
-								} else if (e instanceof Pickup){
-									Room r = world.getRoomAt(e.getPosition());
-									if (r.getEntities().contains(e)){
-										r.removeFromRoom(e);
-									}
-									p.pickup(e);
-									succesful = true;
-								}
+								boolean succesful = e.interact(p, world);
 								
 								//If the interaction succeeded, forward the message
 								if (succesful){
 									sendMessageToAllExcept(id, message);
+								}
+							} else if (message instanceof TransferMessage){
+								TransferMessage transfer = (TransferMessage) message;
+								
+								//Get the entities involved
+								Entity e = world.getEntity(transfer.getEntityID());
+								Player p = (Player) world.getEntity(transfer.getPlayerID());
+								Container c = (Container) world.getEntity(transfer.getContainerID());
+
+								//If from the player
+								if (transfer.fromPlayer()){
+									if (p.getInventory().contains(e) && c.canPutInside(e)){
+										//Transfer the entity to the container
+										p.getInventory().remove(e);
+										c.putInside(e);
+
+										//Forward the message to the other clients
+										sendMessageToAllExcept(id, message);
+									}
+								//Other from the container
+								} else {
+									if (c.getItemsContained().contains(e)){
+										//Transfer the entity to the player
+										c.removeContainedItem(e);
+										p.pickup(e);
+
+										//Forward the message to the other clients
+										sendMessageToAllExcept(id, message);
+									}
 								}
 							}
 						}
