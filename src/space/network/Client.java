@@ -186,6 +186,7 @@ public class Client {
 
 	//TODO: remove
 	boolean torch = false;
+	boolean interact = false;
 	
 	/**
 	 * Updates the game world with changes from the server and local input.
@@ -201,10 +202,26 @@ public class Client {
 				
 				//TODO: Tempory code to test getViewedEntity() works for doors
 				if (Keyboard.isKeyDown(Keyboard.KEY_E)){
-					Entity viewed = getViewedEntity();
-					if (viewed != null){
-						interactWith(viewed);
+					if (!interact){
+						interact = true;
+						Entity viewed = getViewedEntity();
+						if (viewed != null){
+							interactWith(viewed);
+							
+							if (viewed instanceof Container){
+								Container c = (Container) viewed;
+								if (c.isOpen()){
+									if (c.getItemsContained().size() > 0){
+										transfer((Entity) c.getItemsContained().get(0), c, localPlayer);
+									} else if (localPlayer.getInventory().size() > 0){
+										transfer((Entity) localPlayer.getInventory().get(0), localPlayer, c);
+									}
+								}
+							}
+						}
 					}
+				} else {
+					interact = false;
 				}
 				
 				//TODO: Tempory code to test dropping entities

@@ -47,5 +47,10 @@ public class TransferMessage implements Message {
 		buffer.put((byte) ((fromPlayer) ? 1 : 0));
 		return buffer.array();
 	}
+	
+	@Override
+	public String toString(){
+		return "[Transfer]: Entity with the id \"" + entityId + "\" transferred between player \"" + playerId + "\" and the container \"" + containerId + "\"";
+	}
 
 }
