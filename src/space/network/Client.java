@@ -507,6 +507,9 @@ public class Client {
 							//Drop a pickup from a player
 							} else if (message instanceof DropPickupMessage){
 								handleDrop((DropPickupMessage) message);
+							//Transfer an entity between player and a container
+							} else if (message instanceof TransferMessage){
+								handleTransfer((TransferMessage) message);
 							//Remote shutdown
 							} else if (message instanceof ShutdownMessage){
 								shutdown();
@@ -613,6 +616,30 @@ public class Client {
 		private void handlePlayerJump(JumpMessage jumpingPlayer){
 			Player p = (Player) world.getEntity(jumpingPlayer.getPlayerID());
 			p.jump();
+		}
+		
+		/**
+		 * Handles the transfer of an entity between a player and a container.
+		 * 
+		 * @param transfer the message containing the information about the transfer
+		 */
+		private void handleTransfer(TransferMessage transfer){
+			//Get the entities involved
+			Entity e = world.getEntity(transfer.getEntityID());
+			Player p = (Player) world.getEntity(transfer.getPlayerID());
+			Container c = (Container) world.getEntity(transfer.getContainerID());
+
+			if (transfer.fromPlayer()){
+				if (p.getInventory().contains(e) && c.canPutInside(e)){
+					p.getInventory().remove(e);
+					c.putInside(e);
+				}
+			} else {
+				if (c.getItemsContained().contains(e)){
+					c.removeContainedItem(e);
+					p.pickup(e);
+				}
+			}
 		}
 	}
 }

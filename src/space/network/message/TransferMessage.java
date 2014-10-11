@@ -30,12 +30,16 @@ public class TransferMessage implements Message {
 		return entityId;
 	}
 
-	public int getPlayerId(){
+	public int getPlayerID(){
 		return playerId;
 	}
 
-	public int getContainerId(){
+	public int getContainerID(){
 		return containerId;
+	}
+	
+	public boolean fromPlayer(){
+		return fromPlayer;
 	}
 
 	@Override
