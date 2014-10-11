@@ -2,18 +2,22 @@ package space.world;
 
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.math.Vector2D;
-
 /**
  * Represents a door which connects two rooms together
  * 
  * @author Maria Libunao
  */
-public class Door extends Openable implements ViewableDoor {
+public class Door extends NonStationary implements ViewableDoor {
+	private enum OpeningState {OPEN, OPENING, CLOSED, CLOSING};
+	private boolean locked;	
+	private Key key;
+	private OpeningState state;
 	private Room room1;
 	private Room room2;
 	private boolean oneWay; // if one way, can only get from room1 to room2
-
-	private static final float COL_RADIUS = 3; // the collision radius
+	private float amtOpen = 0; // the amount the door is open. 1 is fully open 0 is fully closed
+	
+	private static final float OPEN_DURATION = 500;
 
 	/**
 	 * Creates new Door
@@ -34,27 +38,59 @@ public class Door extends Openable implements ViewableDoor {
 	 */
 	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
 			boolean isLocked, Key key) {
-		super(position, id, 0, description,name,500, isLocked, key);
+		super(position, id, 0, description,name);
 		this.room1 = room1;
 		this.room2 = room2;
 		this.oneWay = isOneWay;
+		this.locked = isLocked;
+		this.key = key;
 	}
+	
 	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
 			boolean isLocked, Key key, String state, float amtOpened) {
-		super(position, id, 0, description,name,500, isLocked, key,state,amtOpened);
+		super(position, id, 0, description,name);
 		this.room1 = room1;
 		this.room2 = room2;
 		this.oneWay = isOneWay;
+		this.locked = isLocked;
+		this.key = key;
+		this.state = OpeningState.valueOf(state);
+		this.amtOpen = amtOpened;
 	}
 	
 	public boolean canInteract(){
 		return true;
 	}
 	
-	public boolean interact(Character c){
-		return false;
+	@Override
+	public boolean interact(Character c,World w){
+		if(locked){
+			unlock(c);
+		}
+		if(state == OpeningState.CLOSED){
+			return close();
+		} else {
+			return open();
+		}
 	}
 
+	@Override
+	public void update(int delta) {
+		if (state == OpeningState.CLOSING) {
+			amtOpen -= delta / OPEN_DURATION;
+			if (amtOpen <= 0) {
+				amtOpen = 0;
+				state = OpeningState.CLOSED;
+			}
+		} else if (state == OpeningState.OPENING) {
+			amtOpen += delta / OPEN_DURATION;
+			if (amtOpen >= 1) {
+				amtOpen = 1;
+				state = OpeningState.OPEN;
+			}
+		}
+
+	}
 	/**
 	 * Whether or not something can go through the door. Can only go through it
 	 * when it is unlocked and fully open
@@ -62,12 +98,12 @@ public class Door extends Openable implements ViewableDoor {
 	 * @return
 	 */
 	public boolean canGoThrough() {
-		return !super.isLocked() && super.getOpenPercent() == 1;
+		return locked && amtOpen == 1;
 	}
 
 	@Override
 	public float getCollisionRadius() {
-		return COL_RADIUS;
+		return 3;
 	}
 
 	@Override
@@ -97,6 +133,44 @@ public class Door extends Openable implements ViewableDoor {
 		}
 		return null;
 	}
+	
+	/** Opens this if it is not already open & is unlocked
+	 * @return if this has been opened*/
+	public boolean open() {
+		if (state != OpeningState.OPEN && !locked) {
+			state = OpeningState.OPENING;
+			return true;
+		}
+		return false;
+	}
+	
+	/** Closes this if it is not already closed
+	 * @return if this has been closed*/
+	public boolean close() {
+		if (state != OpeningState.CLOSED) {
+			state = OpeningState.CLOSING;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Unlocks this if the player has the key to unlock it
+	 *
+	 * @param c
+	 *            The player trying to unlock
+	 */
+	public void unlock(Character c) {
+		for (Pickup i : c.getInventory()) {
+			if (i instanceof Key && key.equals(i)) { //player has key to unlock this
+				locked = false;
+			}
+		}
+	}
+
+	public float getOpenPercent() {
+		return amtOpen;
+	}
 
 	/**
 	 * Returns whether or not the door is one way
@@ -120,8 +194,25 @@ public class Door extends Openable implements ViewableDoor {
 
 	@Override
 	public float getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 10;
 	}
+	
+	/**
+	 * Returns whether or not this is locked
+	 *
+	 * @return
+	 */
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public String getState(){
+		return state.toString();
+	}
+
+	public Key getKey() {
+		return key;
+	}
+
 
 }
