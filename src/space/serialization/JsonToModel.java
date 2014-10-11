@@ -133,22 +133,22 @@ public class JsonToModel implements WorldLoader{
 		Set<Entity> contained = new HashSet<Entity>();
 		for(int i=0;i<contains.getSize();i++){
 			MyJsonObject e = contains.getMyJsonObject(i);
-			 if(e.getString("name")=="Key"){
+			 if(e.getString("name").equals("Key")){
 				 Key key = loadKey(e);
 				 contained.add(key);
 				 entities.add(key);
 			 }
-			 else if(e.getString("name")=="Light"){
+			 else if(e.getString("name").equals("Light")){
 				 Light light = loadLight(e);
 				 contained.add(light);
 				 entities.add(light);
 			 }
-			 else if(e.getString("name")=="Button"){
+			 else if(e.getString("name").equals("Button")){
 				 Button button = loadButton(e);
 				 contained.add(button);
 				 entities.add(button);
 			 }
-			 else if(e.getString("name")=="Teleporter"){
+			 else if(e.getString("name").equals("Teleporter")){
 				 Teleporter teleporter = loadTeleporter(e);
 				 contained.add(teleporter);
 				 entities.add(teleporter);

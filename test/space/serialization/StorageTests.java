@@ -52,8 +52,10 @@ public class StorageTests {
 			Room other = loaded.getRoom(r.getID());
 			assertNotNull(other);
 			for (Entity e : r.getEntities()){
-				Entity oe = loaded.getEntity(e.getID());
-				assertTrue(other.containsEntity(oe));
+				if (!(e instanceof Player) || allowPlayers){
+					Entity oe = loaded.getEntity(e.getID());
+					assertTrue(other.containsEntity(oe));
+				}
 			}
 		}
 	}
