@@ -8,6 +8,11 @@ public class Chest extends Container {
 			String description, String name, boolean isLocked, Key key) {
 		super(position, id, elevation, description, name, isLocked, key);
 	}
+	
+	public Chest(Vector2D position, int id, float elevation,
+			String description, String name, boolean isLocked, Key key,boolean isOpen) {
+		super(position, id, elevation, description, name, isLocked,isOpen, key);
+	}
 
 	@Override
 	public boolean canClip() {

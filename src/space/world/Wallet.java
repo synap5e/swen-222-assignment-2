@@ -8,6 +8,11 @@ public class Wallet extends Container implements Pickup {
 			String description, String name) {
 		super(position, id, elevation, description, name, false, null);
 	}
+	
+	public Wallet(Vector2D position, int id, float elevation,
+			String description, String name, boolean isOpen) {
+		super(position, id, elevation, description, name, false,isOpen, null);
+	}
 
 	@Override
 	public boolean canClip() {
