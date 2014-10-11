@@ -98,7 +98,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	 * @return
 	 */
 	public boolean canGoThrough() {
-		return locked && amtOpen == 1;
+		return !locked && amtOpen == 1;
 	}
 
 	@Override
