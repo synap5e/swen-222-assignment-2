@@ -3,12 +3,8 @@ package space.world;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import org.junit.Test;
 
-import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 
 public class WorldTest {
@@ -16,7 +12,7 @@ public class WorldTest {
 	public void moveInSameRoomValid(){
 		World world = new World();
 		Room room = createRoom(0,new Vector2D(30,60),new Vector2D(60,60),new Vector2D(60,30),new Vector2D(30,30));
-		Vector2D newPos = new Vector2D(42,45);
+		Vector2D newPos = new Vector2D(43,45);
 		Player p = new Player(new Vector2D(45,45),1, "");
 		p.setRoom(room);
 		room.putInRoom(p);
@@ -236,7 +232,7 @@ public class WorldTest {
 		
 	}
 	private Room createRoom(int id,Vector2D ... roomPoints){
-		return new Room(LightMode.BASIC_LIGHT, id, "" , Arrays.asList(roomPoints));
+		return new Room(null, id, "" , Arrays.asList(roomPoints));
 	}
 	
 	private Door createDoor(Room r1, Room r2, Vector2D pos){

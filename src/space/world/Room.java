@@ -10,16 +10,17 @@ import java.util.Set;
 
 import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
-import space.gui.pipeline.viewable.ViewableObject;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.ConcaveHull;
 import space.math.Segment2D;
 import space.math.Vector2D;
+import space.math.Vector3D;
+
 
 /**Represents a location or room in the World*/
 public class Room implements ViewableRoom{
-	private LightMode mode;
+	private Vector3D light;
 	private int id;
 	private String description;
 	private ConcaveHull roomShape;
@@ -27,13 +28,13 @@ public class Room implements ViewableRoom{
 	private Map<Integer, List<Door>> doors; //wall index to door. Maps which door belongs to which wall
 
 	/**Constructs a new room
-	 *@param lightMode The lighting of the room
+	 *@param light The lighting of the room
 	 *@param id The room's id
 	 *@param description The room's description
 	 *@param points The list of points which make up the room's shape
 	 *@param doors The list of doors in the room which maps to which wall it belongs to*/
-	public Room(LightMode lightMode, int id, String description, List<Vector2D> points){
-		mode = lightMode;
+	public Room(Vector3D light, int id, String description, List<Vector2D> points){
+		this.light = light;
 		this.id = id;
 		this.description = description;
 		this.roomShape = new ConcaveHull(points);
@@ -144,8 +145,8 @@ public class Room implements ViewableRoom{
 	}
 
 	@Override
-	public LightMode getLightMode() {
-		return mode;
+	public Vector3D getLight() {
+		return light;
 	}
 
 	/**Returns the concave hull which represents the shape of the room

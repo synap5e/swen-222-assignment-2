@@ -3,12 +3,8 @@ package space.world;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import org.junit.Test;
 
-import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 
 public class RoomTest {
@@ -44,6 +40,6 @@ public class RoomTest {
 	}
 
 	private Room createRoom(Vector2D ... roomPoints){
-		return new Room(LightMode.BASIC_LIGHT, 0, "" , Arrays.asList(roomPoints));
+		return new Room(null, 0, "" , Arrays.asList(roomPoints));
 	}
 }

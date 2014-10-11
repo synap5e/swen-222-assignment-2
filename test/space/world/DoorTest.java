@@ -3,17 +3,14 @@ package space.world;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import org.junit.Test;
 
-import space.gui.pipeline.viewable.ViewableRoom.LightMode;
 import space.math.Vector2D;
 
+
 public class DoorTest {
-	private Room r1 = new Room(LightMode.BASIC_LIGHT, 0, "", Arrays.asList(new Vector2D(30,60),new Vector2D(60,60),new Vector2D(60,30),new Vector2D(30,30)));
-	private Room r2 =  new Room(LightMode.BASIC_LIGHT, 1, "", Arrays.asList(new Vector2D(60,60),new Vector2D(90,60),new Vector2D(90,30),new Vector2D(60,30)));
+	private Room r1 = new Room(null, 0, "", Arrays.asList(new Vector2D(30,60),new Vector2D(60,60),new Vector2D(60,30),new Vector2D(30,30)));
+	private Room r2 =  new Room(null, 1, "", Arrays.asList(new Vector2D(60,60),new Vector2D(90,60),new Vector2D(90,30),new Vector2D(60,30)));
 
 	@Test
 	public void validUnlock1(){
