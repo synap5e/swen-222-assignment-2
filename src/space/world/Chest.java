@@ -1,5 +1,7 @@
 package space.world;
 
+import java.util.List;
+
 import space.math.Vector2D;
 
 public class Chest extends Container {
@@ -10,8 +12,8 @@ public class Chest extends Container {
 	}
 	
 	public Chest(Vector2D position, int id, float elevation,
-			String description, String name, boolean isLocked, Key key,boolean isOpen) {
-		super(position, id, elevation, description, name, isLocked,isOpen, key);
+			String description, String name, boolean isLocked, Key key,boolean isOpen, List<Pickup> itemsContained) {
+		super(position, id, elevation, description, name, isLocked,isOpen, key,itemsContained);
 	}
 
 	@Override
