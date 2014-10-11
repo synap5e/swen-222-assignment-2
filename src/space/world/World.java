@@ -42,7 +42,7 @@ public class World implements ViewableWorld{
 				byOpenDoor = true;
 			}
 
-			if(otherRoom != null && byOpenDoor && otherRoom.contains(newPos) && otherRoom.isPositionVacant(newPos, c.getCollisionRadius())){
+			if(otherRoom != null && byOpenDoor && otherRoom.contains(newPos) && otherRoom.isPositionVacant(newPos, c)){
 				c.setPosition(newPos);
 				room.removeFromRoom(c);
 				otherRoom.putInRoom(c);
@@ -51,7 +51,7 @@ public class World implements ViewableWorld{
 		}
 
 		if((byOpenDoor || room.contains(newPos, c.getCollisionRadius()))
-				&& room.isPositionVacant(newPos, c.getCollisionRadius())){
+				&& room.isPositionVacant(newPos, c)){
 			c.setPosition(newPos);
 		}
 	}
@@ -79,7 +79,7 @@ public class World implements ViewableWorld{
 	public void dropEntity(Character character, Entity entity, Vector2D dropSpot){
 		if(character.withinReach(dropSpot) && character.getInventory().contains(entity) 
 			&& character.getRoom().contains(dropSpot) 
-			&& character.getRoom().isPositionVacant(dropSpot, entity.getCollisionRadius())){
+			&& character.getRoom().isPositionVacant(dropSpot, entity)){
 				character.drop(entity);
 				entity.setPosition(dropSpot);
 				character.getRoom().putInRoom(entity);

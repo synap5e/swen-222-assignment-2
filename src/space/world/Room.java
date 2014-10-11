@@ -43,10 +43,10 @@ public class Room implements ViewableRoom{
 
 	/**Whether or not a particular position in the room is vacant
 	 * @param position the position that will be checked
-	 * @param radius the bounding circle of how much space should be vacant around the position*/
-	public boolean isPositionVacant(Vector2D position, float radius){
+	 * @param moveIn the entity being moved in*/
+	public boolean isPositionVacant(Vector2D position, Entity moveIn){
 		for(Entity e : entities){
-			if(position.sub(e.getPosition()).len() <  e.getCollisionRadius() + radius){
+			if(!e.equals(moveIn) && position.sub(e.getPosition()).len() <  e.getCollisionRadius() + moveIn.getCollisionRadius()){
 				if(e.canClip()){
 					return false;
 				}

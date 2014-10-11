@@ -20,7 +20,7 @@ public class Teleporter extends Stationary{
 	public boolean interact(Character c, World world){
 		c.setPosition(teleportsToPos);
 		Room room = world.getRoomAt(teleportsToPos);
-		if(room.isPositionVacant(teleportsToPos, c.getCollisionRadius())){
+		if(room.isPositionVacant(teleportsToPos, c)){
 			c.setPosition(teleportsToPos);
 			c.getRoom().removeFromRoom(c);
 			room.putInRoom(c);
