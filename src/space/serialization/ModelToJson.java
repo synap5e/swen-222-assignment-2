@@ -40,7 +40,7 @@ import space.world.World;
 
 public class ModelToJson implements WorldSaver {
 
-	MyJsonObject fileobject = new MyJsonObject();
+
 	MyJsonList listOfRooms = new MyJsonList();
 	MyJsonList listOfPlayers = new MyJsonList();
 	MyJsonList listofDoors = new MyJsonList();
@@ -52,6 +52,51 @@ public class ModelToJson implements WorldSaver {
 	@Override
 	public void saveWorld(String savePath, World world, List<Player> players) {
 
+		MyJsonObject fileobject = constructJsonObj(world, players);
+		FileWriter file = null;
+		try {
+			file = new FileWriter(savePath + ".json");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		try {
+			file.write(fileobject.toString());
+			System.out.println("Successfully Copied JSON Object to File...");
+			System.out.println("\nJSON Object: " + fileobject);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
+		} finally {
+			try {
+				file.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				file.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	
+	@Override
+	public String representWorldAsString(World world) {
+		//why does this method not give a list of players
+	}
+	
+	
+	//CONSTRUCT METHODS
+	
+	private MyJsonObject constructJsonObj(World world, List<Player> players){
+		MyJsonObject fileobject = new MyJsonObject();
 		Map<Integer, Room> rooms = world.getRooms();
 		for (Entry<Integer, Room> entry : rooms.entrySet()) {
 			listOfRooms.add(constructRoom(entry.getKey(), entry.getValue()));
@@ -87,40 +132,11 @@ public class ModelToJson implements WorldSaver {
 		fileobject.put("doors", listofDoors);
 		fileobject.put("players", listOfPlayers);
 		fileobject.put("keys", listOfKeys);
-
-		FileWriter file = null;
-		try {
-			file = new FileWriter(savePath + ".json");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		try {
-			file.write(fileobject.toString());
-			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + fileobject);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-
-		} finally {
-			try {
-				file.flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				file.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		return fileobject;
 
 	}
-
+	
+	
 	/**
 	 * A method to create and return a MyJsonObject of a room that is passed
 	 * into the method
@@ -141,6 +157,26 @@ public class ModelToJson implements WorldSaver {
 		r.put("door ids", constructDoorIds(room.getAllDoors()));
 		return r;
 	}
+	
+	/**
+	 * A method to create and return a MyJsonObject of a room shape
+	 * 
+	 * @param roomShape
+	 *            the concave hull that is the shape of the room
+	 * @return a MyJsonObject representation of the Convave Hull
+	 */
+	private MyJsonObject constructRoomShape(ConcaveHull roomShape) {
+		MyJsonObject hull = new MyJsonObject();
+		MyJsonList points = new MyJsonList();
+		for (Vector2D v : roomShape.getDefiningPoints()) {
+			MyJsonList pos = new MyJsonList();
+			pos.add(v.getX());
+			pos.add(v.getY());
+			points.add(pos);
+		}
+		hull.put("points", points);
+		return hull;
+	}
 
 	private MyJsonList constructDoorIds(List<Door> doorsList) {
 		MyJsonList doorids = new MyJsonList();
@@ -148,21 +184,6 @@ public class ModelToJson implements WorldSaver {
 			doorids.add(d.getID());
 		}
 		return doorids;
-	}
-
-	private MyJsonList constructPoint(Vector2D v) {
-		MyJsonList pos = new MyJsonList();
-		pos.add(v.getX());
-		pos.add(v.getY());
-		return pos;
-	}
-
-	private MyJsonList construct3DVector(Vector3D v) {
-		MyJsonList vector = new MyJsonList();
-		vector.add(v.getX());
-		vector.add(v.getY());
-		vector.add(v.getZ());
-		return vector;
 	}
 
 	/**
@@ -210,11 +231,33 @@ public class ModelToJson implements WorldSaver {
 			addFields((Door) e, object);
 		} 
 		else if (e instanceof Button) {
-			//addFields((Button) e, object, room);
+			addFields((Button) e, object, room);
 		}
 		return object;
 	}
 
+	private MyJsonList constructHeldItems(List<Pickup> itemsHeld) {
+		MyJsonList items = new MyJsonList();
+		for (Pickup p : itemsHeld) {
+			if (p instanceof Key) {
+				listOfKeys.add(constructEntity((Entity) p, null));
+				MyJsonObject key = new MyJsonObject();
+				key.put("name", "Key");
+				key.put("keyId", ((Key) p).getID());
+				items.add(key);
+			} 
+			else
+			{
+				items.add(constructEntity((Entity) p, null));
+			}
+		}
+		return items;
+	}
+
+
+	
+	
+	//ADD FIELDS METHODS
 	private void addFields(Button e, MyJsonObject object, Room room) {
 		object.put("entityId", e.getEntity().getID());
 		object.put("roomButtonIsIn", room.getID());
@@ -282,62 +325,29 @@ public class ModelToJson implements WorldSaver {
 		}
 
 	}
-
-	private MyJsonList constructHeldItems(List<Pickup> itemsHeld) {
-		MyJsonList items = new MyJsonList();
-		for (Pickup p : itemsHeld) {
-			if (p instanceof Key) {
-				listOfKeys.add(constructEntity((Entity) p, null));
-				MyJsonObject key = new MyJsonObject();
-				key.put("name", "Key");
-				key.put("keyId", ((Key) p).getID());
-				items.add(key);
-			} 
-			else
-			{
-				items.add(constructEntity((Entity) p, null));
-			}
-		}
-		return items;
-	}
-
+	
 	private void addFields(Teleporter e, MyJsonObject object) {
 		object.put("teleportstoPos", constructPoint(e.getTeleportsTo()));
 		object.put("canInteract", e.canInteract());
 	}
-
-	/**
-	 * Returns MyJsonObject of a player
-	 * 
-	 * @param e
-	 *            player entity to be saved
-	 * 
-	 * @return MyJsonObject of player
-	 */
-
-	/**
-	 * A method to create and return a MyJsonObject of a room shape
-	 * 
-	 * @param roomShape
-	 *            the concave hull that is the shape of the room
-	 * @return a MyJsonObject representation of the Convave Hull
-	 */
-	private MyJsonObject constructRoomShape(ConcaveHull roomShape) {
-		MyJsonObject hull = new MyJsonObject();
-		MyJsonList points = new MyJsonList();
-		for (Vector2D v : roomShape.getDefiningPoints()) {
-			MyJsonList pos = new MyJsonList();
-			pos.add(v.getX());
-			pos.add(v.getY());
-			points.add(pos);
-		}
-		hull.put("points", points);
-		return hull;
+	
+	
+	
+	
+	//UTILITY METHODS
+	private MyJsonList constructPoint(Vector2D v) {
+		MyJsonList pos = new MyJsonList();
+		pos.add(v.getX());
+		pos.add(v.getY());
+		return pos;
 	}
 
-	@Override
-	public String representWorldAsString(World world) {
-		return fileobject.toString();
+	private MyJsonList construct3DVector(Vector3D v) {
+		MyJsonList vector = new MyJsonList();
+		vector.add(v.getX());
+		vector.add(v.getY());
+		vector.add(v.getZ());
+		return vector;
 	}
 
 }
