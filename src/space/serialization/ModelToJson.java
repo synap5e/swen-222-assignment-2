@@ -90,6 +90,7 @@ public class ModelToJson implements WorldSaver {
 	@Override
 	public String representWorldAsString(World world) {
 		//why does this method not give a list of players
+		return null;
 	}
 	
 	
