@@ -283,19 +283,24 @@ public class Server {
 								Player p = (Player) world.getEntity(transfer.getPlayerID());
 								Container c = (Container) world.getEntity(transfer.getContainerID());
 
-								
+								//If from the player
 								if (transfer.fromPlayer()){
 									if (p.getInventory().contains(e) && c.canPutInside(e)){
+										//Transfer the entity to the container
 										p.getInventory().remove(e);
 										c.putInside(e);
 
+										//Forward the message to the other clients
 										sendMessageToAllExcept(id, message);
 									}
+								//Other from the container
 								} else {
 									if (c.getItemsContained().contains(e)){
+										//Transfer the entity to the player
 										c.removeContainedItem(e);
 										p.pickup(e);
 
+										//Forward the message to the other clients
 										sendMessageToAllExcept(id, message);
 									}
 								}
