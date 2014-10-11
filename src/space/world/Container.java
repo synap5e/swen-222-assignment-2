@@ -32,6 +32,13 @@ public abstract class Container extends NonStationary implements OpenableContain
 		this.locked = isLocked;
 		this.key = key;
 	}
+	
+	public Container(Vector2D position, int id, float elevation, String description, String name, boolean isLocked, boolean isOpen,Key key) {
+		super(position, id, elevation, description, name);
+		this.locked = isLocked;
+		this.isOpen = isOpen;
+		this.key = key;
+	}
 
 	/**Whether or not a Pickup can be placed inside this container
 	 * @return*/
