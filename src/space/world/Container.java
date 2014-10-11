@@ -102,5 +102,9 @@ public abstract class Container extends NonStationary implements OpenableContain
 		return key;
 	}
 
+	public boolean isLocked() {
+		return locked;
+	}
+
 
 }
