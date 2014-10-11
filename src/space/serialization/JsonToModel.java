@@ -41,7 +41,7 @@ import space.world.World;
 public class JsonToModel implements WorldLoader {
 
 	private World world;
-	MyJsonObject json;
+	MyJsonObject jsonObj;
 	Set<Entity> entities = new HashSet<Entity>();
 	Set<Room> rooms = new HashSet<Room>();
 	List<Door> doors = new ArrayList<Door>();
@@ -53,8 +53,7 @@ public class JsonToModel implements WorldLoader {
 
 		JSONParser p = new JSONParser();
 		try {
-			json = new MyJsonObject((JSONObject) p.parse(new FileReader(
-					new File(savePath + ".json"))));
+			jsonObj = new MyJsonObject((JSONObject) p.parse(new FileReader(new File(savePath + ".json"))));
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 		} catch (IOException e) {
@@ -63,6 +62,13 @@ public class JsonToModel implements WorldLoader {
 			System.out.println(e);
 		}
 		
+		
+		world = createWorld(jsonObj);
+		
+	}
+
+	private World createWorld(MyJsonObject json) {
+
 		MyJsonList keyJsonObjects = json.getMyJsonList("keys");
 		for(int i=0;i<keyJsonObjects.getSize();i++){
 			MyJsonObject k = keyJsonObjects.getMyJsonObject(i);
@@ -83,43 +89,65 @@ public class JsonToModel implements WorldLoader {
 		
 		for(int i=0;i<buttonsJsonObjects.getSize();i++){
 			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
-			int id = (int) b.getNumber("id");
-			Vector2D position = loadPoint(b.getMyJsonList("position"));
-			float elevation = (float) b.getNumber("elevation");
-			String description = b.getString("description");
-			String name = b.getString("name");
-			Entity entity = null;
-			for(Entity e:entities){
-				Double entityId = (double) e.getID();
-				if(b.getNumber("entityId")==entityId){
-					entity=e;
-				}
-			}
-			Button button = new Button(position, id, elevation, description, name, entity);
-			for(Room r:rooms){
-				Double roomId = (double) r.getID();
-				if(roomId==b.getNumber("roomButtonIsIn")){
-					r.putInRoom(button);
-					entities.add(button);
-				}
-			}
-
+			loadButton(b);
 		}
 		
-		world = new World(entities, rooms);
+
+		return new World(entities, rooms);
 	}
 
-	private Key loadKey(MyJsonObject k) {
-		double id = k.getNumber("id");
-		Vector2D position = loadPoint(k.getMyJsonList("position"));
-		String description = k.getString("description");
-		String name = k.getString("name");
-		double elevation = k.getNumber("elevation");
-		return new Key(position, (int)id, (float)elevation, description, name);
+	@Override
+	public List<Player> getPlayers() {
+		ArrayList<Player> ps = new ArrayList<Player>();
+		MyJsonList players = jsonObj.getMyJsonList("players");
+		for (int i = 0; i < players.getSize(); i++) {
+			MyJsonObject o = players.getMyJsonObject(i);
+			ps.add(loadPlayer(o));
+		}
+		return ps;
+
 	}
 
+	@Override
+	public World getWorld() {
+		return world;
+	}
+
+	@Override
+	public void loadWorldFromString(String wrld) {
+		JSONParser p = new JSONParser();
+			try {
+				jsonObj = new MyJsonObject((JSONObject) p.parse(wrld));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+		world = createWorld(jsonObj);
+
+	}
+	
+	//LOAD OBJECT METHODS
+
+	private Room loadRoom(MyJsonObject r) {
+		Vector3D light = loadVector3D(r.getMyJsonList("Light"));
+		int id = (int) r.getNumber("id");
+		String description = r.getString("description");
+		List<Vector2D> points = new ArrayList<Vector2D>();
+		MyJsonObject RoomShape = r.getMyJsonObject("Room Shape");
+		MyJsonList pointFloats = RoomShape.getMyJsonList("points");
+		for (int i = 0; i < pointFloats.getSize(); i++) {
+			points.add(new Vector2D(loadPoint(pointFloats.getMyJsonList(i))));
+		}
+
+		Room rm = new Room(light, id, description, points);
+		Set<Entity> entitiesInRoom = loadEntities(r.getMyJsonList("contains"));
+		for (Entity e : entitiesInRoom) {
+			rm.putInRoom(e);
+		}
+		return rm;
+	}
+	
 	private Door loadDoor(MyJsonObject d) {
-
 		double id = d.getNumber("id");
 		Vector2D position = loadPoint(d.getMyJsonList("position"));
 		Room room1 = null;
@@ -157,27 +185,20 @@ public class JsonToModel implements WorldLoader {
 
 	}
 
-	private Room loadRoom(MyJsonObject r) {
-		Vector3D light = loadVector3D(r.getMyJsonList("Light"));
-		int id = (int) r.getNumber("id");
-		String description = r.getString("description");
-		List<Vector2D> points = new ArrayList<Vector2D>();
-		MyJsonObject RoomShape = r.getMyJsonObject("Room Shape");
-		MyJsonList pointFloats = RoomShape.getMyJsonList("points");
-		for (int i = 0; i < pointFloats.getSize(); i++) {
-			points.add(new Vector2D(loadPoint(pointFloats.getMyJsonList(i))));
+	private Player loadPlayer(MyJsonObject o) {
+		Vector2D position = loadPoint(o.getMyJsonList("position"));
+		int id = (int) o.getNumber("id");
+		String name = o.getString("name");
+		Player p = new Player(position, id, name);
+		p.setPoints((int) o.getNumber("points"));
+		p.setXRotation((float) o.getNumber("x rotation"));
+		p.setYRotation((float) o.getNumber("y rotation"));
+		p.setTorch(o.getBoolean("torchOn"));
+		Set<Entity> items = loadEntities(o.getMyJsonList("inventory"));
+		for (Entity e : items) {
+			p.pickup(e);
 		}
-
-		Room rm = new Room(light, id, description, points);
-		Set<Entity> entitiesInRoom = loadEntities(r.getMyJsonList("contains"));
-		for (Entity e : entitiesInRoom) {
-			rm.putInRoom(e);
-		}
-		return rm;
-	}
-
-	private Vector3D loadVector3D(MyJsonList e) {
-		return new Vector3D((float) (e.getNumber(0)), (float) (e.getNumber(1)),(float) (e.getNumber(2)));
+		return p;
 	}
 
 	private Set<Entity> loadEntities(MyJsonList contains) {
@@ -221,7 +242,7 @@ public class JsonToModel implements WorldLoader {
 		}
 		return contained;
 	}
-
+	
 	private Container loadContainer(MyJsonObject o, int id, Vector2D position,
 			float elevation, String description, String name) {
 		Set<Entity> items = loadEntities(o.getMyJsonList("itemsContained"));
@@ -257,7 +278,7 @@ public class JsonToModel implements WorldLoader {
 		else return null;
 
 	}
-
+	
 	private Teleporter loadTeleporter(MyJsonObject e, int id,
 			Vector2D position, float elevation, String description, String name) {
 		Vector2D teleportstoPos = loadPoint(e.getMyJsonList("teleportstoPos"));
@@ -272,48 +293,48 @@ public class JsonToModel implements WorldLoader {
 
 		return new Light(position, id, elevation, description, name);
 	}
-
-	@Override
-	public List<Player> getPlayers() {
-		ArrayList<Player> ps = new ArrayList<Player>();
-		MyJsonList players = json.getMyJsonList("players");
-		for (int i = 0; i < players.getSize(); i++) {
-			MyJsonObject o = players.getMyJsonObject(i);
-			ps.add(loadPlayer(o));
-		}
-		return ps;
-
+	
+	private Key loadKey(MyJsonObject k) {
+		double id = k.getNumber("id");
+		Vector2D position = loadPoint(k.getMyJsonList("position"));
+		String description = k.getString("description");
+		String name = k.getString("name");
+		double elevation = k.getNumber("elevation");
+		return new Key(position, (int)id, (float)elevation, description, name);
 	}
 
-	private Player loadPlayer(MyJsonObject o) {
-		Vector2D position = loadPoint(o.getMyJsonList("position"));
-		int id = (int) o.getNumber("id");
-		String name = o.getString("name");
-		Player p = new Player(position, id, name);
-		p.setPoints((int) o.getNumber("points"));
-		p.setXRotation((float) o.getNumber("x rotation"));
-		p.setYRotation((float) o.getNumber("y rotation"));
-		p.setTorch(o.getBoolean("torchOn"));
-		Set<Entity> items = loadEntities(o.getMyJsonList("inventory"));
-		for (Entity e : items) {
-			p.pickup(e);
+	private void loadButton(MyJsonObject b) {
+		int id = (int) b.getNumber("id");
+		Vector2D position = loadPoint(b.getMyJsonList("position"));
+		float elevation = (float) b.getNumber("elevation");
+		String description = b.getString("description");
+		String name = b.getString("name");
+		Entity entity = null;
+		for(Entity e:entities){
+			Double entityId = (double) e.getID();
+			if(b.getNumber("entityId")==entityId){
+				entity=e;
+			}
 		}
-		return p;
+		Button button = new Button(position, id, elevation, description, name, entity);
+		for(Room r:rooms){
+			Double roomId = (double) r.getID();
+			if(roomId==b.getNumber("roomButtonIsIn")){
+				r.putInRoom(button);
+				entities.add(button);
+			}
+		}
+
+		
 	}
 
-	public Vector2D loadPoint(MyJsonList e) {
+	//UTILITY METHODS
+	private Vector2D loadPoint(MyJsonList e) {
 		return new Vector2D((float) (e.getNumber(0)), (float) (e.getNumber(1)));
 	}
-
-	@Override
-	public World getWorld() {
-		return world;
-	}
-
-	@Override
-	public void loadWorldFromString(String world) {
-		// TODO Auto-generated method stub
-
+	
+	private Vector3D loadVector3D(MyJsonList e) {
+		return new Vector3D((float) (e.getNumber(0)), (float) (e.getNumber(1)),(float) (e.getNumber(2)));
 	}
 
 }
