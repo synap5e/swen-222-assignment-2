@@ -55,22 +55,21 @@ public class MyJsonList implements Iterable<JSONObject>{
 	public int getSize(){
 		return list.size();
 	}
-	
-	public <E> E get(int index){
-		Object value = list.get(index);
-		if (value instanceof JSONArray){
-			value = new MyJsonList((JSONArray)value);
-		}
-		else if (value instanceof JSONObject){
-			value = new MyJsonObject((JSONObject)value);
-		}
-		return (E) value;
-	}
 
 	@Override
 	public Iterator<JSONObject> iterator() {
 		return list.iterator();
 	}
 
+	public MyJsonList getMyJsonList(int i) {
+		return new MyJsonList((JSONArray) list.get(i));
+	}
+	public double getNumber(int i) {
+		return (double) list.get(i);
+	}
+
+	public MyJsonObject getMyJsonObject(int i) {
+		return new MyJsonObject((JSONObject) list.get(i));
+	}
 
 }

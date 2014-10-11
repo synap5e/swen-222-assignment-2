@@ -1,5 +1,7 @@
 package space.serialization;
 
+import java.util.Set;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 /**
@@ -14,7 +16,6 @@ import org.json.simple.JSONObject;
 
 public class MyJsonObject {
 	JSONObject obj;
-	String key;
 	
 		/**
 		 * Constructor - creates a new Json object
@@ -27,10 +28,7 @@ public class MyJsonObject {
 		 * Second constructor that takes a loaded 
 		 * @param loadedObject JSONObject with data
 		 */
-		
-		public String getName(){
-			return key;
-		}
+
 		
 		public MyJsonObject(JSONObject loadedObject){
 			obj = loadedObject;
@@ -48,9 +46,6 @@ public class MyJsonObject {
 			obj.put(key, value);
 		}
 		
-		public void put(String key, int value){
-			obj.put(key, value);
-		}
 		
 		public void put(String key, MyJsonObject value){
 			 obj.put(key, value.getRawObject());
@@ -64,22 +59,31 @@ public class MyJsonObject {
 			return obj;
 		}
 		
-		public <E> E get(String key){
-			Object value = obj.get(key);
-			if (value instanceof JSONArray){
-				value = new MyJsonList((JSONArray)value);
-			}
-			else if (value instanceof JSONObject){
-				value = new MyJsonObject((JSONObject)value);
-			}
-			return (E) value;
-		}
 
 		@Override
 		public String toString() {
 			return obj.toJSONString();
 		}
 
+		public MyJsonList getMyJsonList(String string) {
+			MyJsonList list = new MyJsonList((JSONArray) obj.get(string));
+			return list;
+		}
+	
+		public String getString(String string) {
+			return (String) obj.get(string);
+		}
+		public boolean getBoolean(String string) {
+			return (boolean) obj.get(string);
+		}
+		public double getNumber(String string) {
+			return (double) obj.get(string);
+		}
+
+		public MyJsonObject getMyJsonObject(String string) {
+			MyJsonObject object = new MyJsonObject((JSONObject) obj.get(string));
+			return object;
+		}
 			
 		
 }

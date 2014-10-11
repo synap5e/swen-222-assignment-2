@@ -12,11 +12,14 @@ import org.json.simple.JSONObject;
 
 import space.math.ConcaveHull;
 import space.math.Vector2D;
+import space.math.Vector3D;
 import space.network.storage.WorldSaver;
+import space.world.Button;
+import space.world.Chest;
 import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
-import space.world.Openable;
+import space.world.Key;
 import space.world.Pickup;
 import space.world.Character;
 import space.world.Player;
@@ -43,6 +46,7 @@ public class ModelToJson implements WorldSaver {
 	MyJsonList listOfRooms = new MyJsonList();
 	MyJsonList listOfPlayers = new MyJsonList();
 	MyJsonList listofDoors = new MyJsonList();
+	MyJsonList listOfKeys = new MyJsonList();
 
 	/**
 	 * {@inheritDoc}
@@ -58,7 +62,7 @@ public class ModelToJson implements WorldSaver {
 		fileobject.put("rooms", listOfRooms);
 		
 		for(Player p : players){
-			listOfPlayers.add(constructEntity(p));
+			listOfPlayers.add(constructEntity(p,null));
 		}
 
 		for(Room r : world.getRooms().values()){
@@ -67,16 +71,17 @@ public class ModelToJson implements WorldSaver {
 				for(Door dr: d){
 					boolean alreadyIn = false;
 					if(listofDoors.getSize()!=0){
-						for(JSONObject door : listofDoors){
-							int one = (int) door.get("id");
-							int two = dr.getID();
+						for (int i=0;i<listofDoors.getSize();i++){
+							MyJsonObject door = listofDoors.getMyJsonObject(i);
+							double one = door.getNumber("id");
+							double two = dr.getID();
 							if(one==two){
 								alreadyIn = true;
 							}
 						}
 					}
 					if(!alreadyIn){
-						listofDoors.add(constructEntity(dr));
+						listofDoors.add(constructEntity(dr,null));
 					}
 				}
 			}
@@ -136,24 +141,12 @@ public class ModelToJson implements WorldSaver {
 	private MyJsonObject constructRoom(Integer roomId, Room room) {
 		MyJsonObject r = new MyJsonObject();
 		r.put("id", roomId);
-		r.put("Light Mode", room.getLightMode().toString());
+		r.put("Light", construct3DVector(room.getLight()));
 		r.put("description", room.getDescription());
 		r.put("Room Shape", constructRoomShape(room.getRoomShape()));
 		r.put("contains", constructContains(room));
-		r.put("walls and door ids", constructWalls(room));
+		r.put("door ids", constructDoorIds(room.getAllDoors()));
 		return r;
-	}
-
-	private MyJsonList constructWalls(Room room) {
-		MyJsonList walls = new MyJsonList();
-		Map<Integer, List<Door>> doors = room.getDoors();
-		for (Map.Entry<Integer, List<Door>> entry : doors.entrySet()) {
-			MyJsonObject wall = new MyJsonObject();
-			wall.put(entry.getKey().toString(),
-					constructDoorIds(entry.getValue()));
-			walls.add(wall);
-		}
-		return walls;
 	}
 
 	private MyJsonList constructDoorIds(List<Door> doorsList) {
@@ -170,6 +163,14 @@ public class ModelToJson implements WorldSaver {
 		pos.add(v.getY());
 		return pos;
 	}
+	
+	private MyJsonList construct3DVector(Vector3D v){
+		MyJsonList vector = new MyJsonList();
+		vector.add(v.getX());
+		vector.add(v.getY());
+		vector.add(v.getZ());
+		return vector;
+	}
 
 	/**
 	 * Method that returns a MyJsonList of the entities with a room
@@ -182,17 +183,22 @@ public class ModelToJson implements WorldSaver {
 		Set<Entity> entities = room.getEntities();
 		MyJsonList entitiesInRoom = new MyJsonList();
 		for (Entity e : entities) {
-			if ((e instanceof Player)) {
-				listOfPlayers.add(constructEntity(e));
-			} else {
-				entitiesInRoom.add(constructEntity(e));
+			if (e instanceof Player) {
+				listOfPlayers.add(constructEntity(e, null));
+			} 
+			else if(e instanceof Key){
+				listOfKeys.add(constructEntity(e, null));
+				entitiesInRoom.add(constructEntity(e, null));
+			}
+			else {
+				entitiesInRoom.add(constructEntity(e,room));
 			}
 
 		}
 		return entitiesInRoom;
 	}
 
-	private MyJsonObject constructEntity(Entity e) {
+	private MyJsonObject constructEntity(Entity e, Room room) {
 		MyJsonObject object = new MyJsonObject();
 		object.put("position", constructPoint(e.getPosition()));
 		object.put("id",e.getID());
@@ -203,27 +209,65 @@ public class ModelToJson implements WorldSaver {
 			addFields((Teleporter) e, object);
 		} else if (e instanceof Character) {
 			addFields((Character) e, object);
-		} else if (e instanceof Openable) {
-			addFields((Openable) e, object);
+		} else if (e instanceof Container) {
+			addFields((Container) e, object);
+		}
+		else if (e instanceof Door){
+			addFields((Door)e, object);
+		}
+		else if(e instanceof Button){
+			addFields((Button)e, object,room);
 		}
 		return object;
 	}
 
-	private void addFields(Openable e, MyJsonObject object) {
-		object.put("state", e.getState());
-		object.put("isLocked", e.isLocked());
-		object.put("amt open", e.getOpenPercent());
-		if (e instanceof Container) {
-			Container cont = (Container) e;
-			object.put("items contained",
-					constructHeldItems(cont.getItemsContained()));
-		} else if (e instanceof Door) {
-			Door door = (Door) e;
-			object.put("room 1", door.getRoom1().getID());
-			object.put("room2", door.getRoom2().getID());
-			object.put("is oneway", door.isOneWay());
-			object.put("key", door.getKey().getID());
+	private void addFields(Button e, MyJsonObject object, Room room) {
+		object.put("entity", e.getEntity().getID());
+		object.put("roomButtonIsIn", room.getID());
+		
+	}
+
+	private void addFields(Door door, MyJsonObject object) {
+		object.put("room1", door.getRoom1().getID());
+		Room room1 = door.getRoom1();
+		int room1Wall = 0;
+		Map<Integer, List<Door>> wallstodoors = room1.getDoors();
+		for (Entry<Integer, List<Door>> entry : wallstodoors.entrySet()){
+
+			for(Door d: entry.getValue()){
+				if(d==door){
+					room1Wall = entry.getKey();
+				}
+			}
 		}
+		object.put("room1Wall", room1Wall);
+		object.put("room2", door.getRoom2().getID());
+		Room room2 = door.getRoom1();
+		int room2Wall = 0;
+		Map<Integer, List<Door>> wallstodoors2 = room2.getDoors();
+		for (Entry<Integer, List<Door>> entry : wallstodoors2.entrySet()){
+
+			for(Door d: entry.getValue()){
+				if(d==door){
+					room1Wall = entry.getKey();
+				}
+			}
+		}
+		object.put("room2Wall", room2Wall);
+		object.put("isOneWay", door.isOneWay());
+		object.put("key", door.getKey().getID());
+		object.put("state", door.getState());
+		object.put("locked", door.isLocked());
+		object.put("canInteract", door.canInteract());
+		object.put("amtOpen", door.getOpenPercent());
+	}
+		
+
+	private void addFields(Container e, MyJsonObject object) {
+		object.put("isLocked", e.isLocked());
+		object.put("isOpen", e.isOpen());
+		object.put("itemsContained",constructHeldItems(e.getItemsContained()));
+		object.put("key", e.getKey().getID());
 	}
 
 	private void addFields(Character e, MyJsonObject object) {
@@ -234,7 +278,7 @@ public class ModelToJson implements WorldSaver {
 			object.put("points", p.getPoints());
 			object.put("x rotation", p.getXRotation());
 			object.put("y rotation", p.getYRotation());
-			object.put("torch on", p.isTorchOn());
+			object.put("torchOn", p.isTorchOn());
 		}
 
 	}
@@ -242,13 +286,14 @@ public class ModelToJson implements WorldSaver {
 	private MyJsonList constructHeldItems(List<Pickup> itemsHeld) {
 		MyJsonList items = new MyJsonList();
 		for (Pickup p : itemsHeld) {
-			items.add(constructEntity((Entity) p));
+			items.add(constructEntity((Entity) p, null));
 		}
 		return items;
 	}
 
 	private void addFields(Teleporter e, MyJsonObject object) {
 		object.put("teleportstoPos", constructPoint(e.getTeleportsTo()));
+		object.put("canInteract", e.canInteract());
 	}
 
 	/**
