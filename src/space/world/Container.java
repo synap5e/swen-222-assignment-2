@@ -63,6 +63,10 @@ public abstract class Container extends NonStationary implements OpenableContain
 	
 	@Override
 	public boolean interact(Character c,World w){
+		return openClose(c);
+	}
+	
+	public boolean openClose(Character c){
 		if(locked){
 			unlock(c);
 		}
@@ -75,7 +79,6 @@ public abstract class Container extends NonStationary implements OpenableContain
 		}
 		return false;
 	}
-	
 	/**Returns the Pickup which is contained in this
 	 * @return*/
 	public List<Pickup> getItemsContained() {

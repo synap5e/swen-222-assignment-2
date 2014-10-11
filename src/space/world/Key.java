@@ -29,12 +29,7 @@ public class Key extends NonStationary implements Pickup {
 	public boolean canClip() {
 		return true;
 	}
-
-	@Override
-	public float getAngle() {
-		return 0;
-	}
-
+	
 	@Override
 	public float getCollisionRadius() {
 		return COL_RADIUS;

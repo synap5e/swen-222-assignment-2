@@ -53,8 +53,16 @@ public class Room implements ViewableRoom{
 			}
 		}
 		return true;
-	}
+	} 
 
+	public Player collidedWithPlayer(Entity collider){
+		for(Entity e : entities){
+			if(e instanceof Player && collider.getPosition().sub(e.getPosition()).len() <  e.getCollisionRadius() + collider.getCollisionRadius()){
+				return (Player) e;
+			}
+		}
+		return null;
+	}
 	/**Updates all the entities and doors in the room
 	 * @param delta the amount of time since the previous update*/
 	public void update(int delta) {
@@ -71,9 +79,6 @@ public class Room implements ViewableRoom{
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean contains(Vector2D position) {
 		return roomShape.contains(position);
@@ -208,25 +213,16 @@ public class Room implements ViewableRoom{
 			this.wallDoors = doors;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Vector2D getStart() {
 			return lineSeg.start;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Vector2D getEnd() {
 			return lineSeg.end;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public List<? extends ViewableDoor> getDoors() {
 			return Collections.unmodifiableList(wallDoors);

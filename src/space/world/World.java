@@ -50,7 +50,7 @@ public class World implements ViewableWorld{
 			}
 		}
 
-		if((byOpenDoor || room.contains(newPos, c.getCollisionRadius()))
+		if(((byOpenDoor && room.contains(newPos))  || room.contains(newPos, c.getCollisionRadius()))
 				&& room.isPositionVacant(newPos, c)){
 			c.setPosition(newPos);
 		}

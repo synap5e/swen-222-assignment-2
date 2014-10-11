@@ -55,6 +55,10 @@ public abstract class Entity implements ViewableObject {
 	public float getElevation() {
 		return elevation;
 	}
+	
+	public void setElevation(float e){
+		elevation = e;
+	}
 
 	/**
 	 * Returns the entity's description
@@ -91,6 +95,11 @@ public abstract class Entity implements ViewableObject {
 	 * @return*/
 	public boolean canInteract(){
 		return false;
+	}
+	
+	@Override
+	public float getAngle() {
+		return 0;
 	}
 
 	/**
