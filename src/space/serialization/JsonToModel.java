@@ -54,56 +54,23 @@ public class JsonToModel implements WorldLoader{
 		} catch (ParseException e) {
 			System.out.println(e);
 		}
+		
 		MyJsonList roomJsonObjects = json.getMyJsonList("rooms");
 		for(int i = 0; i<roomJsonObjects.getSize(); i++){
 			MyJsonObject r = roomJsonObjects.getMyJsonObject(i);
 			rooms.add(loadRoom(r));
 		}
-
+		
 		MyJsonList doorJsonObjects = json.getMyJsonList("doors");
 		for(int i = 0; i<doorJsonObjects.getSize(); i++){
 			MyJsonObject d = doorJsonObjects.getMyJsonObject(i);
 			doors.add(loadDoor(d));
 		}
-
-		for(int k=0;k<roomJsonObjects.getSize();k++){
-			MyJsonObject r=roomJsonObjects.getMyJsonObject(k);
-			MyJsonList walls = r.getMyJsonList("walls and door ids");
-			Room toPlaceDoor = null;
-			for(Room rm : rooms){
-				if ((double)rm.getID()==r.getNumber("id")){
-					toPlaceDoor = rm;
-				}
-			}
-
-			for(int i=0; i<walls.getSize(); i++){
-				MyJsonObject wall = walls.getMyJsonObject(i);
-				System.out.println(wall.key);
-				String key = wall.getName();//NOT WORKING
-				MyJsonList drs = wall.getMyJsonList(key);
-				System.out.println(key);
-				for(int j = 0; j<drs.getSize(); j++){
-					int doorid = (int) drs.getNumber(j);
-					Door doorToAdd = null;
-					for(Door d : doors){
-						if(d.getID()==doorid){
-							doorToAdd = d;
-						}
-					}
-					toPlaceDoor.addDoor(Integer.parseInt(key), doorToAdd);
-
-
-				}
-
-
-			}
-
-
-		}
+		
 
 		world = new World(entities, rooms);
 	}
-
+	
 	private Door loadDoor(MyJsonObject d) {
 		
 		double id = d.getNumber("id");
@@ -118,7 +85,10 @@ public class JsonToModel implements WorldLoader{
 			if(d.getNumber("room2")==(double)r.getID()){
 				room2=r;
 			}
+			
 		}
+		double room1wall = d.getNumber("room1 wall");
+		double room2wall = d.getNumber("room2 wall");
 		String description = d.getString("description");
 		String name = d.getString("name");
 		String state = d.getString("state");
@@ -133,9 +103,13 @@ public class JsonToModel implements WorldLoader{
 				}
 			}
 		}
-		return new Door(position, (int) id, description,name,room1, room2, isOneWay, isLocked,key,state,amtOpen);
+		Door doorObject = new Door(position, (int) id, description,name,room1, room2, isOneWay, isLocked,key,state,amtOpen);
+		room1.addDoor((int) room1wall, doorObject);
+		room2.addDoor((int) room2wall, doorObject);
+		return doorObject;
+		
 	}
-
+	
 	private Room loadRoom(MyJsonObject r) {
 		LightMode lightmode = LightMode.valueOf(r.getString("Light Mode"));
 		int id = (int)r.getNumber("id");
@@ -154,7 +128,7 @@ public class JsonToModel implements WorldLoader{
 		}
 		return rm;
 	}
-
+	
 	private Set<Entity> loadEntities(MyJsonList contains) {
 		Set<Entity> contained = new HashSet<Entity>();
 		for(int i=0;i<contains.getSize();i++){
@@ -182,7 +156,7 @@ public class JsonToModel implements WorldLoader{
 		 }
 		return contained;
 	}
-
+	
 	private Teleporter loadTeleporter(MyJsonObject e) {
 		Vector2D position = loadPoint(e.getMyJsonList("position"));
 		Vector2D teleportstoPos = loadPoint(e.getMyJsonList("teleportstoPos"));
@@ -193,11 +167,7 @@ public class JsonToModel implements WorldLoader{
 		
 		return new Teleporter(position,teleportstoPos, id, elevation, description, name);
 	}
-	
-	public Vector2D loadPoint(MyJsonList e){
-		return new Vector2D((float)(e.getNumber(0)),(float)(e.getNumber(1)));
-	}
-	
+
 	private Button loadButton(MyJsonObject e) {
 		Vector2D position = loadPoint(e.getMyJsonList("position"));
 		int id = (int) e.getNumber("id");
@@ -227,6 +197,22 @@ public class JsonToModel implements WorldLoader{
 		
 		return new Key(position, id, elevation, description, name);
 	}
+
+	
+	@Override
+	public List<Player> getPlayers() {
+		ArrayList<Player> ps = new ArrayList<Player>();
+		MyJsonList players = json.getMyJsonList("players");
+		for(int i=0;i<players.getSize();i++){
+			MyJsonObject o = players.getMyJsonObject(i);
+			ps.add(loadPlayer(o));
+		}
+		for(Player p:ps){
+			System.out.println(p.getID());
+		}
+		return ps;
+
+	}
 	
 	private Player loadPlayer(MyJsonObject o){
 		Vector2D position = loadPoint(o.getMyJsonList("position"));
@@ -238,19 +224,9 @@ public class JsonToModel implements WorldLoader{
 		p.setYRotation((float) o.getNumber("y rotation"));
 		return p;
 	}
-
-	@Override
-	public List<Player> getPlayers() {
-		ArrayList<Player> ps = new ArrayList<Player>();
-		MyJsonList players = json.getMyJsonList("players");
-		//for(JSONObject o : players){
-		for(int i=0;i<players.getSize();i++){
-			MyJsonObject o = players.getMyJsonObject(i);
-			ps.add(loadPlayer(o));
-		}
-
-		return ps;
-
+	
+	public Vector2D loadPoint(MyJsonList e){
+		return new Vector2D((float)(e.getNumber(0)),(float)(e.getNumber(1)));
 	}
 
 	@Override

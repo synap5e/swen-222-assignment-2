@@ -67,11 +67,10 @@ public class ModelToJson implements WorldSaver {
 				for(Door dr: d){
 					boolean alreadyIn = false;
 					if(listofDoors.getSize()!=0){
-						//for(JSONObject door : listofDoors){
 						for (int i=0;i<listofDoors.getSize();i++){
 							MyJsonObject door = listofDoors.getMyJsonObject(i);
 							double one = door.getNumber("id");
-							int two = dr.getID();
+							double two = dr.getID();
 							if(one==two){
 								alreadyIn = true;
 							}
@@ -142,21 +141,21 @@ public class ModelToJson implements WorldSaver {
 		r.put("description", room.getDescription());
 		r.put("Room Shape", constructRoomShape(room.getRoomShape()));
 		r.put("contains", constructContains(room));
-		r.put("walls and door ids", constructWalls(room));
+		r.put("door ids", constructDoorIds(room.getAllDoors()));
 		return r;
 	}
 
-	private MyJsonList constructWalls(Room room) {
-		MyJsonList walls = new MyJsonList();
-		Map<Integer, List<Door>> doors = room.getDoors();
-		for (Map.Entry<Integer, List<Door>> entry : doors.entrySet()) {
-			MyJsonObject wall = new MyJsonObject();
-			wall.put(entry.getKey().toString(),
-					constructDoorIds(entry.getValue()));
-			walls.add(wall);
-		}
-		return walls;
-	}
+//	private MyJsonList constructWalls(Room room) {
+//		MyJsonList walls = new MyJsonList();
+//		Map<Integer, List<Door>> doors = room.getDoors();
+//		for (Map.Entry<Integer, List<Door>> entry : doors.entrySet()) {
+//			MyJsonObject wall = new MyJsonObject();
+//			wall.put(entry.getKey().toString(),
+//					constructDoorIds(entry.getValue()));
+//			walls.add(wall);
+//		}
+//		return walls;
+//	}
 
 	private MyJsonList constructDoorIds(List<Door> doorsList) {
 		MyJsonList doorids = new MyJsonList();
@@ -217,12 +216,35 @@ public class ModelToJson implements WorldSaver {
 		object.put("amt open", e.getOpenPercent());
 		if (e instanceof Container) {
 			Container cont = (Container) e;
-			object.put("items contained",
-					constructHeldItems(cont.getItemsContained()));
+			object.put("items contained",constructHeldItems(cont.getItemsContained()));
 		} else if (e instanceof Door) {
 			Door door = (Door) e;
 			object.put("room1", door.getRoom1().getID());
+			Room room1 = door.getRoom1();
+			int room1Wall = 0;
+			Map<Integer, List<Door>> wallstodoors = room1.getDoors();
+			for (Entry<Integer, List<Door>> entry : wallstodoors.entrySet()){
+
+				for(Door d: entry.getValue()){
+					if(d==door){
+						room1Wall = entry.getKey();
+					}
+				}
+			}
+			object.put("room1 wall", room1Wall);
 			object.put("room2", door.getRoom2().getID());
+			Room room2 = door.getRoom1();
+			int room2Wall = 0;
+			Map<Integer, List<Door>> wallstodoors2 = room2.getDoors();
+			for (Entry<Integer, List<Door>> entry : wallstodoors2.entrySet()){
+
+				for(Door d: entry.getValue()){
+					if(d==door){
+						room1Wall = entry.getKey();
+					}
+				}
+			}
+			object.put("room2 wall", room2Wall);
 			object.put("is oneway", door.isOneWay());
 			object.put("key", door.getKey().getID());
 		}

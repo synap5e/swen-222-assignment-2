@@ -31,7 +31,7 @@ public class StorageTests {
 		World loaded = loader.getWorld();
 		List<Player> ps = loader.getPlayers();
 		assertEquals(1, ps.size());
-		assertEquals(PLAYER_ID, ps.get(0));
+		assertEquals(PLAYER_ID, ps.get(0).getID());
 		match(w, loaded, false);
 	}
 

@@ -1,5 +1,7 @@
 package space.serialization;
 
+import java.util.Set;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 /**
@@ -14,7 +16,6 @@ import org.json.simple.JSONObject;
 
 public class MyJsonObject {
 	JSONObject obj;
-	String key;
 	
 		/**
 		 * Constructor - creates a new Json object
@@ -27,10 +28,7 @@ public class MyJsonObject {
 		 * Second constructor that takes a loaded 
 		 * @param loadedObject JSONObject with data
 		 */
-		
-		public String getName(){
-			return key;
-		}
+
 		
 		public MyJsonObject(JSONObject loadedObject){
 			obj = loadedObject;
@@ -38,28 +36,23 @@ public class MyJsonObject {
 
 		public void put(String key, String value){
 			obj.put(key, value);
-			this.key=key;
 		}
 		
 		public void put(String key, double value){
 			obj.put(key, value);
-			this.key=key;
 		}
 		
 		public void put(String key, boolean value){
 			obj.put(key, value);
-			this.key=key;
 		}
 		
 		
 		public void put(String key, MyJsonObject value){
 			 obj.put(key, value.getRawObject());
-			 this.key=key;
 		}
 		
 		public void put(String key, MyJsonList value){
 			obj.put(key, value.getRawList());
-			this.key=key;
 		}
 		
 		public JSONObject getRawObject(){
@@ -74,13 +67,9 @@ public class MyJsonObject {
 
 		public MyJsonList getMyJsonList(String string) {
 			MyJsonList list = new MyJsonList((JSONArray) obj.get(string));
-			for(Object k:obj.keySet()){
-				this.key = (String) k;
-				System.out.println(this.key);
-				
-			}
 			return list;
 		}
+	
 		public String getString(String string) {
 			return (String) obj.get(string);
 		}
@@ -92,7 +81,8 @@ public class MyJsonObject {
 		}
 
 		public MyJsonObject getMyJsonObject(String string) {
-			return new MyJsonObject((JSONObject) obj.get(string));
+			MyJsonObject object = new MyJsonObject((JSONObject) obj.get(string));
+			return object;
 		}
 			
 		
