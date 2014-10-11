@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Segment2D;
@@ -20,7 +22,9 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
+import space.network.message.TransferMessage;
 import space.network.message.sync.SyncMessage;
+import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
 import space.world.Pickup;
@@ -323,6 +327,26 @@ public class Client {
 					sendMessage(new DropPickupMessage(localPlayer.getID(), e.getID(), locationOnFloor));
 				}
 			}
+		}
+	}
+	
+	public void transfer(Entity pickup, Container from, Player to){
+		if (from.getItemsContained().contains(pickup)){
+			from.removeContainedItem(pickup);
+			to.pickup(pickup);
+
+			//Tell the server
+			sendMessage(new TransferMessage(pickup.getID(), to.getID(), from.getID(), false));
+		}
+	}
+
+	public void transfer(Entity pickup, Player from, Container to){
+		if (from.getInventory().contains(pickup) && to.canPutInside(pickup)){
+			from.getInventory().remove(pickup);
+			to.putInside(pickup);
+
+			//Tell the server
+			sendMessage(new TransferMessage(pickup.getID(), from.getID(), to.getID(), true));
 		}
 	}
 	

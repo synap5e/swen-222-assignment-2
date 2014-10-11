@@ -15,6 +15,7 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
+import space.network.message.TransferMessage;
 import space.network.message.sync.DoorSyncMessage;
 
 /**
@@ -33,6 +34,7 @@ public class Connection {
 	private static final int INTERACTION = 7;
 	private static final int SYNC_DOOR = 8;
 	private static final int DROP_PICKUP = 9;
+	private static final int TRANSFER = 10;
 	private static final int UNKNOWN = -1;
 
 	private Socket socket;
@@ -84,6 +86,8 @@ public class Connection {
 				return new DoorSyncMessage(data);
 			case DROP_PICKUP:
 				return new DropPickupMessage(data);
+			case TRANSFER:
+				return new TransferMessage(data);
 			default:
 				//TODO: decide how to deal with format error
 				return null;
@@ -111,6 +115,7 @@ public class Connection {
 		else if (message instanceof InteractionMessage) return INTERACTION;
 		else if (message instanceof DoorSyncMessage) return SYNC_DOOR;
 		else if (message instanceof DropPickupMessage) return DROP_PICKUP;
+		else if (message instanceof TransferMessage) return TRANSFER;
 		else return UNKNOWN;
 	}
 	
