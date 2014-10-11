@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
 import org.lwjgl.Sys;
+
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
@@ -22,10 +24,12 @@ import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
+import space.network.message.TransferMessage;
 import space.network.storage.WorldLoader;
 import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
 import space.network.message.sync.DoorSyncMessage;
+import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
 import space.world.Pickup;
@@ -270,6 +274,30 @@ public class Server {
 								//If the interaction succeeded, forward the message
 								if (succesful){
 									sendMessageToAllExcept(id, message);
+								}
+							} else if (message instanceof TransferMessage){
+								TransferMessage transfer = (TransferMessage) message;
+								
+								//Get the entities involved
+								Entity e = world.getEntity(transfer.getEntityID());
+								Player p = (Player) world.getEntity(transfer.getPlayerID());
+								Container c = (Container) world.getEntity(transfer.getContainerID());
+
+								
+								if (transfer.fromPlayer()){
+									if (p.getInventory().contains(e) && c.canPutInside(e)){
+										p.getInventory().remove(e);
+										c.putInside(e);
+
+										sendMessageToAllExcept(id, message);
+									}
+								} else {
+									if (c.getItemsContained().contains(e)){
+										c.removeContainedItem(e);
+										p.pickup(e);
+
+										sendMessageToAllExcept(id, message);
+									}
 								}
 							}
 						}
