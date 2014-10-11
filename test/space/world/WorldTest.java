@@ -25,7 +25,7 @@ public class WorldTest {
 		World world = new World();
 		Room r1 = createRoom(0,new Vector2D(30,60),new Vector2D(60,60),new Vector2D(60,30),new Vector2D(30,30));
 		Room r2 = createRoom(1,new Vector2D(60,60),new Vector2D(90,60),new Vector2D(90,30),new Vector2D(60,30));
-		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, false, null);
+		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, false, null,false);
 		r1.addDoor(1,d);
 		r2.addDoor(3,d);
 		addToWorld(world,r1,r2);
@@ -236,7 +236,7 @@ public class WorldTest {
 	}
 	
 	private Door createDoor(Room r1, Room r2, Vector2D pos){
-		Door d = new Door(pos,0, " ", null, r1,r2, false, false,new Key(null, 0, 0, "", ""));
+		Door d = new Door(pos,0, " ", null, r1,r2, false, false,new Key(null, 0, 0, "", ""),false);
 		r1.addDoor(0,d);
 		r2.addDoor(0,d);
 		return d;

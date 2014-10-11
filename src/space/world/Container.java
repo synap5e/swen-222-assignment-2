@@ -84,7 +84,7 @@ public abstract class Container extends NonStationary implements OpenableContain
 	public List<Pickup> getItemsContained() {
 		return itemsContained;
 	}
-	
+
 	@Override
 	public boolean isOpen(){
 		return isOpen;
@@ -97,5 +97,10 @@ public abstract class Container extends NonStationary implements OpenableContain
 			}
 		}
 	}
+	
+	public Key getKey() {
+		return key;
+	}
+
 
 }

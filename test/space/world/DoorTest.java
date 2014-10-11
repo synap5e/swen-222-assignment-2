@@ -15,7 +15,7 @@ public class DoorTest {
 	@Test
 	public void validUnlock1(){
 		Key k = new Key(new Vector2D(0,0), 0, 0, null, null);
-		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, true, k);
+		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, true, k,false);
 		Player p = new Player(new Vector2D(59,50), 3,"");
 		p.pickup(k);
 		d.unlock(p);
@@ -26,7 +26,7 @@ public class DoorTest {
 	public void validUnlock2(){
 		Key k1 = new Key(new Vector2D(0,0), 0, 0, null, null);
 		Key k2 = new Key(new Vector2D(0,0), 0,0, null, null);
-		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, true,k2);
+		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, true,k2, false);
 		Player p = new Player(new Vector2D(59,50), 3,"");
 		p.pickup(k1);
 		p.pickup(k2);
@@ -36,7 +36,7 @@ public class DoorTest {
 
 	@Test
 	public void invalidUnlock1(){//no key in inventory
-		Door d = new Door(new Vector2D(60,50), 2, "", "", r1, r2, false, true,new Key(new Vector2D(0,0), 0, 0, null, null));
+		Door d = new Door(new Vector2D(60,50), 2, "", "", r1, r2, false, true,new Key(new Vector2D(0,0), 0, 0, null, null), false);
 		Player p = new Player(new Vector2D(59,50),3, "");
 		d.unlock(p);
 		assertTrue("Door should still be locked because player has no key",d.isLocked());
@@ -46,7 +46,7 @@ public class DoorTest {
 	public void invalidUnlock2(){//player's key does not unlock door
 		Key k1 = new Key(new Vector2D(0,0), 0, 0, null, null);
 		Key k2 = new Key(new Vector2D(0,0), 0,0, null, null);
-		Door d = new Door(new Vector2D(60,50), 2, "", "", r1, r2, false, true,k1);
+		Door d = new Door(new Vector2D(60,50), 2, "", "", r1, r2, false, true,k1, false);
 		Player p = new Player(new Vector2D(59,50), 3, "");
 		p.pickup(k2);
 		d.unlock(p);
@@ -55,14 +55,14 @@ public class DoorTest {
 
 	@Test
 	public void otherRoom(){
-		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, true,null);
+		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, false, true,null, false);
 		assertEquals(r1, d.otherRoom(r2));
 		assertEquals(r2, d.otherRoom(r1));
 	}
 
 	@Test
 	public void otherRoomOneWay(){
-		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, true, true, null);
+		Door d = new Door(new Vector2D(60,50), 2, "", null, r1, r2, true, true, null, false);
 		assertEquals(r2,d.otherRoom(r1));
 		assertEquals(null, d.otherRoom(r2));
 	}
