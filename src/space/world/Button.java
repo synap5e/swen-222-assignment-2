@@ -3,16 +3,21 @@ package space.world;
 import space.math.Vector2D;
 
 public class Button extends Stationary {
-
+	private Entity entity;
 	public Button(Vector2D position, int id, float elevation,
-			String description, String name) {
+			String description, String name, Entity entity) {
 		super(position, id, elevation, description, name);
+		this.entity = entity;
 	}
 
 	@Override
-	public float getAngle() {
-		// TODO Auto-generated method stub
-		return 0;
+	public boolean canInteract(){
+		return true;
+	}
+	
+	@Override
+	public boolean interact(Character c, World w){
+		return entity.interact(c, w);
 	}
 
 	@Override
@@ -22,13 +27,11 @@ public class Button extends Stationary {
 
 	@Override
 	public float getCollisionRadius() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public float getHeight() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

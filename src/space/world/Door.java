@@ -15,6 +15,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	private Room room1;
 	private Room room2;
 	private boolean oneWay; // if one way, can only get from room1 to room2
+	private boolean canInteract; //true if can interact directly, false if player must press on button to interact
 	private float amtOpen = 0; // the amount the door is open. 1 is fully open 0 is fully closed
 	
 	private static final float OPEN_DURATION = 500;
@@ -37,29 +38,31 @@ public class Door extends NonStationary implements ViewableDoor {
 	 *            Whether or not the door is locked
 	 */
 	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
-			boolean isLocked, Key key) {
+			boolean isLocked, Key key,boolean canInteract) {
 		super(position, id, 0, description,name);
 		this.room1 = room1;
 		this.room2 = room2;
 		this.oneWay = isOneWay;
 		this.locked = isLocked;
 		this.key = key;
+		this.canInteract = canInteract;
 	}
 	
 	public Door(Vector2D position, int id, String description, String name,Room room1, Room room2, boolean isOneWay,
-			boolean isLocked, Key key, String state, float amtOpened) {
+			boolean isLocked, Key key,boolean canInteract, String state, float amtOpened) {
 		super(position, id, 0, description,name);
 		this.room1 = room1;
 		this.room2 = room2;
 		this.oneWay = isOneWay;
 		this.locked = isLocked;
 		this.key = key;
+		this.canInteract = canInteract;
 		this.state = OpeningState.valueOf(state);
 		this.amtOpen = amtOpened;
 	}
 	
 	public boolean canInteract(){
-		return true;
+		return canInteract;
 	}
 	
 	@Override
@@ -67,10 +70,10 @@ public class Door extends NonStationary implements ViewableDoor {
 		if(locked){
 			unlock(c);
 		}
-		if(state == OpeningState.CLOSED){
+		if(open()){
+			return true;
+		} else{
 			return close();
-		} else {
-			return open();
 		}
 	}
 
@@ -137,7 +140,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	/** Opens this if it is not already open & is unlocked
 	 * @return if this has been opened*/
 	public boolean open() {
-		if (state != OpeningState.OPEN && !locked) {
+		if (state != OpeningState.OPEN && state != OpeningState.OPENING && !locked) {
 			state = OpeningState.OPENING;
 			return true;
 		}
@@ -147,7 +150,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	/** Closes this if it is not already closed
 	 * @return if this has been closed*/
 	public boolean close() {
-		if (state != OpeningState.CLOSED) {
+		if (state != OpeningState.CLOSED && state != OpeningState.CLOSING) {
 			state = OpeningState.CLOSING;
 			return true;
 		}
@@ -179,11 +182,6 @@ public class Door extends NonStationary implements ViewableDoor {
 	 */
 	public boolean isOneWay() {
 		return oneWay;
-	}
-
-	@Override
-	public float getAngle() {
-		return 0;
 	}
 
 	@Override

@@ -4,16 +4,17 @@ import space.math.Vector2D;
 
 public class Teleporter extends Stationary{
 	private Vector2D teleportsToPos; //player teleport destination
-	private static final float HEIGHT = 11;
+	private boolean canInteract; //true if can interact directly, false if player must press on button to interact
 	public Teleporter(Vector2D teleporterPos, Vector2D teleportsToPos, int id, float elevation,
-			String description, String name) {
+			String description, String name,boolean canInteract) {
 		super(teleporterPos, id, elevation, description, name);
 		this.teleportsToPos = teleportsToPos;
+		this.canInteract = canInteract;
 	}
 	
 	@Override
 	public boolean canInteract(){
-		return true;
+		return canInteract;
 	}
 	
 	@Override
@@ -30,11 +31,6 @@ public class Teleporter extends Stationary{
 	}
 	
 	@Override
-	public float getAngle() {
-		return 0;
-	}
-	
-	@Override
 	public boolean canClip() {
 		return false;
 	}
@@ -46,7 +42,7 @@ public class Teleporter extends Stationary{
 	
 	@Override
 	public float getHeight() {
-		return HEIGHT;
+		return 1;
 	}
 	
 	public Vector2D getTeleportsTo() {
