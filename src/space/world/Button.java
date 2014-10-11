@@ -30,6 +30,10 @@ public class Button extends Stationary {
 		return 0;
 	}
 
+	public Entity getEntity() {
+		return entity;
+	}
+
 	@Override
 	public float getHeight() {
 		return 0;
