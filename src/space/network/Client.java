@@ -610,7 +610,7 @@ public class Client {
 					r.removeFromRoom(e);
 				}
 				if (p != null){
-					p.pickup((Pickup) e);
+					p.pickup(e);
 				}
 			}
 		}
