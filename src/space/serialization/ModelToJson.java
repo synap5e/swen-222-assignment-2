@@ -40,12 +40,10 @@ import space.world.World;
  */
 
 public class ModelToJson implements WorldSaver {
-
-
-	MyJsonList listOfRooms = new MyJsonList();
-	MyJsonList listOfPlayers = new MyJsonList();
-	MyJsonList listofDoors = new MyJsonList();
-	MyJsonList listOfKeys = new MyJsonList();
+	MyJsonList listOfRooms;
+	MyJsonList listOfPlayers;
+	MyJsonList listofDoors;
+	MyJsonList listOfKeys;
 
 	/**
 	 * {@inheritDoc}
@@ -98,6 +96,13 @@ public class ModelToJson implements WorldSaver {
 	//CONSTRUCT METHODS
 	
 	private MyJsonObject constructJsonObj(World world, List<Player> players){
+
+		MyJsonList listOfRooms = new MyJsonList();
+		MyJsonList listOfPlayers = new MyJsonList();
+		MyJsonList listofDoors = new MyJsonList();
+		MyJsonList listOfKeys = new MyJsonList();
+		
+		
 		MyJsonObject fileobject = new MyJsonObject();
 		Map<Integer, Room> rooms = world.getRooms();
 		for (Entry<Integer, Room> entry : rooms.entrySet()) {
