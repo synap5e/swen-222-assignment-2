@@ -85,7 +85,7 @@ public class Client {
 	 * @param loader the world loader that will load the world sent by the server
 	 * @param prevId the previous ID used when connecting to the server
 	 */
-	public Client(String host, int port, WorldLoader loader, KeyBinding keybinding, int prevId){
+	public Client(String host, int port, WorldLoader loader, KeyBinding keyBinding, int prevId){
 		this.keyBinding = keyBinding;
 		//Connect to the server
 		try {
