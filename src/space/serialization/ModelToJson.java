@@ -275,21 +275,21 @@ public class ModelToJson implements WorldSaver {
 		for (Entry<Integer, List<Door>> entry : wallstodoors.entrySet()) {
 
 			for (Door d : entry.getValue()) {
-				if (d == door) {
+				if (d.equals(door)) {
 					room1Wall = entry.getKey();
 				}
 			}
 		}
 		object.put("room1Wall", room1Wall);
 		object.put("room2", door.getRoom2().getID());
-		Room room2 = door.getRoom1();
+		Room room2 = door.getRoom2();
 		int room2Wall = 0;
 		Map<Integer, List<Door>> wallstodoors2 = room2.getDoors();
 		for (Entry<Integer, List<Door>> entry : wallstodoors2.entrySet()) {
 
 			for (Door d : entry.getValue()) {
-				if (d == door) {
-					room1Wall = entry.getKey();
+				if (d.equals(door)) {
+					room2Wall = entry.getKey();
 				}
 			}
 		}
