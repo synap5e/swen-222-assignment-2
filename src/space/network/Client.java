@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Segment2D;
@@ -483,7 +485,7 @@ public class Client {
 		public void run() {
 			try {
 				while (stillAlive){
-					if (connection.hasMessage()){
+					while (connection.hasMessage()){
 						Message message = connection.readMessage();
 						
 						//Ensure the world is able to be modified
@@ -522,6 +524,12 @@ public class Client {
 								System.out.println(connection.readMessage());
 							}
 						}
+					}
+					
+					//Sleep, iterating over the loop roughly 60 times a second
+					try {
+						Thread.sleep(17);
+					} catch (InterruptedException e) {
 					}
 				}
 			} catch (IOException e){
