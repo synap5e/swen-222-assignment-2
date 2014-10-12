@@ -26,7 +26,8 @@ public class Room implements ViewableRoom{
 	private ConcaveHull roomShape;
 	private Set<Entity> entities = new HashSet<Entity>();
 	private Map<Integer, List<Door>> doors; //wall index to door. Maps which door belongs to which wall
-
+	private List<Beam> beams = new ArrayList<Beam>();
+	
 	/**Constructs a new room
 	 *@param light The lighting of the room
 	 *@param id The room's id
@@ -63,11 +64,31 @@ public class Room implements ViewableRoom{
 		}
 		return null;
 	}
+	
+	public Player closestPlayer(Vector2D position){
+		Player closest = null;
+		for(Entity e : entities){
+			if(e instanceof Player){
+				if(closest == null || position.sub(e.getPosition()).len() < position.sub(closest.getPosition()).len()){
+					closest = (Player) e;
+				}
+			}
+		}
+		return closest;
+	}
 	/**Updates all the entities and doors in the room
 	 * @param delta the amount of time since the previous update*/
 	public void update(int delta) {
-		for(Entity e: entities){
+		List<Beam> beamCopy = new ArrayList<Beam>(beams);
+		List<Entity> entityCopy = new ArrayList<Entity>(entities);
+		for(Entity e: entityCopy){
 			e.update(delta);
+		}
+		for(Beam b: beamCopy){
+			b.update(delta);
+			if(b.getRemainingLife() <= 0){
+				beams.remove(b);
+			}
 		}
 		for(List<Door> doorList : doors.values()){
 			for(Door d : doorList){
@@ -119,6 +140,10 @@ public class Room implements ViewableRoom{
 		}else{
 			doors.get(i).add(d);
 		}
+	}
+	
+	public void addBeam(Beam b){
+		beams.add(b);
 	}
 
 	@Override
@@ -195,9 +220,8 @@ public class Room implements ViewableRoom{
 	}
 
 	@Override
-	public List<? extends ViewableBeam> getBeams() {
-		// TODO Auto-generated method stub
-		return new ArrayList<ViewableBeam>();
+	public List<Beam> getBeams() {
+		return beams;
 	}
 
 	/**Represents a wall in the room. It contains doors and is represented by a line segment*/
