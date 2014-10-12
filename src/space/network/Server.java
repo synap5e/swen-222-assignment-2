@@ -98,7 +98,8 @@ public class Server {
 		
 		//Load the World
 		try {
-			loader.loadWorld(savePath);
+			//loader.loadWorld(savePath);
+			loader.loadWorld("default_world");
 		} catch (Exception e){
 			//If something went wrong assume the file didn't exist
 			loader.loadWorld("default_world");
@@ -375,6 +376,7 @@ public class Server {
 						while (usedIds.contains(id = idGenerator.nextInt(1000)));
 						usedIds.add(id);
 						p = new Player(new Vector2D(0, 0), id, "Player"); //TODO use name
+						p.setTorch(false);
 					}
 					
 					//Add the client the map of connections
