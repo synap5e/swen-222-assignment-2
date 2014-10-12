@@ -104,7 +104,7 @@
                
             ]
          },
-         "Light":[ 0.1, 0.01, 0.01 ],
+         "Light":[ 0.08, 0.01, 0.01 ],
          "description":"A dim dark hallway. Use [F] to toggle your flashlight.",
          "id": 3.0,
          "door ids":[  
