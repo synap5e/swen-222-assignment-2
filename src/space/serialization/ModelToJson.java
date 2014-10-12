@@ -207,6 +207,7 @@ public class ModelToJson implements WorldSaver {
 				MyJsonObject key = new MyJsonObject();
 				key.put("type", "Key");
 				key.put("keyId", e.getID());
+				entitiesInRoom.add(key);
 			} 
 			else {
 				entitiesInRoom.add(constructEntity(e, room));

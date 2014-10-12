@@ -204,7 +204,6 @@ public class JsonToModel implements WorldLoader {
 				for(Key k : keys){
 					if((int)e.getNumber("keyId")==(k.getID())){
 						ky=k;
-						System.out.println(ky+"key");
 						contained.add(ky);
 						entities.add(ky);
 					}
@@ -220,7 +219,6 @@ public class JsonToModel implements WorldLoader {
 
 				if (type.equals("Light")) {
 					Light light = loadLight(id, position, elevation, description,name);
-					System.out.println(light+"light");
 					contained.add(light);
 					entities.add(light);
 				} 
@@ -230,13 +228,11 @@ public class JsonToModel implements WorldLoader {
 				else if (type.equals("Teleporter")) {
 					Teleporter teleporter = loadTeleporter(e, id, position,elevation, description, name);
 					contained.add(teleporter);
-					System.out.println(teleporter+"teleporter");
 					entities.add(teleporter);
 				} 
 				else if (type.equals("Wallet") || type.equals("Chest")) {
 					Container container = loadContainer(e, id, position, elevation,description, name);
 					contained.add(container);
-					System.out.println(container+"container");
 					entities.add(container);
 				}
 			}
