@@ -83,8 +83,9 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
 			loadButton(b);
 		}
-		
-
+		for(Entity e:entities){
+			System.out.println(e);
+		}
 		return new World(entities, rooms);
 	}
 
@@ -203,10 +204,12 @@ public class JsonToModel implements WorldLoader {
 				for(Key k : keys){
 					if((int)e.getNumber("keyId")==(k.getID())){
 						ky=k;
+						System.out.println(ky+"key");
+						contained.add(ky);
+						entities.add(ky);
 					}
 				}
-				contained.add(ky);
-				entities.add(ky);
+				
 			}
 			else{
 				String name = e.getString("name");
@@ -217,6 +220,7 @@ public class JsonToModel implements WorldLoader {
 
 				if (type.equals("Light")) {
 					Light light = loadLight(id, position, elevation, description,name);
+					System.out.println(light+"light");
 					contained.add(light);
 					entities.add(light);
 				} 
@@ -226,11 +230,13 @@ public class JsonToModel implements WorldLoader {
 				else if (type.equals("Teleporter")) {
 					Teleporter teleporter = loadTeleporter(e, id, position,elevation, description, name);
 					contained.add(teleporter);
+					System.out.println(teleporter+"teleporter");
 					entities.add(teleporter);
 				} 
 				else if (type.equals("Wallet") || type.equals("Chest")) {
 					Container container = loadContainer(e, id, position, elevation,description, name);
 					contained.add(container);
+					System.out.println(container+"container");
 					entities.add(container);
 				}
 			}
@@ -245,14 +251,13 @@ public class JsonToModel implements WorldLoader {
 		for(Entity e : items){
 			pickup.add((Pickup) e);
 		}
-
 		boolean isOpen = o.getBoolean("isOpen");
 		boolean isLocked = o.getBoolean("isLocked");
-		if (o.getString("name").equals("Wallet")) {
+		if (o.getString("type").equals("Wallet")) {
 			Wallet w = new Wallet(position, id, elevation, name, name,isOpen,pickup);
 			return w;
 		} 
-		else if (o.getString("name").equals("Chest")) {
+		else if (o.getString("type").equals("Chest")) {
 			Key k = null;
 				for(Key key:keys){
 					Double keyid = (double) key.getID();
@@ -308,6 +313,7 @@ public class JsonToModel implements WorldLoader {
 			Double roomId = (double) r.getID();
 			if(roomId==b.getNumber("roomButtonIsIn")){
 				r.putInRoom(button);
+				System.out.println("button");
 				entities.add(button);
 			}
 		}
