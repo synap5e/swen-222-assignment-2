@@ -97,10 +97,10 @@ public class ModelToJson implements WorldSaver {
 	
 	private MyJsonObject constructJsonObj(World world, List<Player> players){
 
-		MyJsonList listOfRooms = new MyJsonList();
-		MyJsonList listOfPlayers = new MyJsonList();
-		MyJsonList listofDoors = new MyJsonList();
-		MyJsonList listOfKeys = new MyJsonList();
+		listOfRooms = new MyJsonList();
+		listOfPlayers = new MyJsonList();
+		listofDoors = new MyJsonList();
+		listOfKeys = new MyJsonList();
 		
 		
 		MyJsonObject fileobject = new MyJsonObject();
