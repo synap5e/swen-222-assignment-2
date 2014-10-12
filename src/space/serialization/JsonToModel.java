@@ -17,6 +17,7 @@ import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.storage.WorldLoader;
 import space.world.Button;
+import space.world.Chair;
 import space.world.Chest;
 import space.world.Container;
 import space.world.Door;
@@ -26,6 +27,7 @@ import space.world.Light;
 import space.world.Pickup;
 import space.world.Player;
 import space.world.Room;
+import space.world.Table;
 import space.world.Teleporter;
 import space.world.Wallet;
 import space.world.World;
@@ -217,7 +219,7 @@ public class JsonToModel implements WorldLoader {
 				String description = e.getString("description");
 
 				if (type.equals("Light")) {
-					Light light = loadLight(id, position, elevation, description,name);
+					Light light = new Light(position, id, elevation, description, name);
 					contained.add(light);
 					entities.add(light);
 				} 
@@ -233,6 +235,16 @@ public class JsonToModel implements WorldLoader {
 					Container container = loadContainer(e, id, position, elevation,description, name);
 					contained.add(container);
 					entities.add(container);
+				}
+				else if (type.equals("Chair")){
+					Chair c = new Chair(position, id, elevation,description,name);
+					contained.add(c);
+					entities.add(c);
+				}
+				else if(type.equals("Table")){
+					Table t = new Table(position, id, elevation,description,name);
+					contained.add(t);
+					entities.add(t);
 				}
 			}
 		}
@@ -276,11 +288,6 @@ public class JsonToModel implements WorldLoader {
 		return new Teleporter(position, teleportstoPos, id, elevation,description, name, canInteract);
 	}
 
-	private Light loadLight(int id, Vector2D position, float elevation,String description, String name) {
-
-		return new Light(position, id, elevation, description, name);
-	}
-	
 	private Key loadKey(MyJsonObject k) {
 		double id = k.getNumber("id");
 		Vector2D position = loadPoint(k.getMyJsonList("position"));
