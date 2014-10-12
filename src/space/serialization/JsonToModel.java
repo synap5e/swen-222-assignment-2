@@ -165,8 +165,10 @@ public class JsonToModel implements WorldLoader {
 		boolean canInteract = d.getBoolean("canInteract");
 		Key key = null;
 		for (Key k : keys) {
-
-			if (k.getID() == d.getNumber("key")) {
+			if(d.getString("key").equals("null")){
+				key = null;
+			}
+			else if (k.getID() == d.getNumber("key")) {
 				key = k;
 			}
 		}

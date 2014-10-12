@@ -295,7 +295,12 @@ public class ModelToJson implements WorldSaver {
 		}
 		object.put("room2Wall", room2Wall);
 		object.put("isOneWay", door.isOneWay());
+		if(door.getKey()!=null){
 		object.put("key", door.getKey().getID());
+		}
+		else{
+			object.put("key", "null");
+		}
 		object.put("state", door.getState());
 		object.put("locked", door.isLocked());
 		object.put("canInteract", door.canInteract());
@@ -311,7 +316,7 @@ public class ModelToJson implements WorldSaver {
 			object.put("keyId", e.getKey().getID());
 			}
 			else {
-				object.put("keyId", "null");//need to add check for this
+				object.put("keyId", "null");
 			}
 		}
 	}
