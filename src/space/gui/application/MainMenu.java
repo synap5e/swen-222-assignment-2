@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import space.gui.application.widget.ControlsWidget;
+import space.gui.application.widget.InstructionsWidget;
+import space.gui.application.widget.MultiplayerWidget;
+import space.gui.application.widget.NestedWidget;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 

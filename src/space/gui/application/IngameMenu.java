@@ -3,6 +3,7 @@ package space.gui.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import space.gui.application.widget.NestedWidget;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 

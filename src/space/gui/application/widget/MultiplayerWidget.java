@@ -1,5 +1,6 @@
-package space.gui.application;
+package space.gui.application.widget;
 
+import space.gui.application.GameApplication;
 import space.network.Client;
 import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;

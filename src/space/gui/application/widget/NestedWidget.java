@@ -1,12 +1,23 @@
-package space.gui.application;
+package space.gui.application.widget;
 
+import space.gui.application.GameApplication;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Widget;
 
+/**
+ * Widgets which are part of the widget tree displayed from the Game Application should extend NestedWidget.
+ * A NestedWodget will expand to the size of the Game Application and provides additional methods of layout purposes.
+ * 
+ * @author Matt Graham 
+ */
 public class NestedWidget extends Widget {
 	
 	GameApplication gameApplication;
+	
+	
 	int startX;
+	
+	
 	int startY;
 	
 	public NestedWidget(GameApplication gameApplication){
