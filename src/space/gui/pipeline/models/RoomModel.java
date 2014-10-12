@@ -216,12 +216,14 @@ public class RoomModel {
 			glDisable(GL_CULL_FACE);
 			glDisable(GL_TEXTURE_2D);
 			glEnable(GL_COLOR_MATERIAL);
-			glColor3f(1,0,0);
+			glEnable(GL_BLEND);
+			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glColor4f(1,0,0, 0.5f);
 			glPushMatrix();
 			Cylinder d = new Cylinder();
 			glTranslated(0, 1, 0);
 			glRotated(90, 1, 0, 0);
-			d.draw(viewableObject.getCollisionRadius(), viewableObject.getCollisionRadius(), 3, 20, 20);
+			d.draw(viewableObject.getCollisionRadius(), viewableObject.getCollisionRadius(), 20, 20, 20);
 			glPopMatrix();
 			glPopAttrib();
 		}
