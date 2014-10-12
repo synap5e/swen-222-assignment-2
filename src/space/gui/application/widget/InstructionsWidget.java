@@ -1,5 +1,6 @@
-package space.gui.application;
+package space.gui.application.widget;
 
+import space.gui.application.GameApplication;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
