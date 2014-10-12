@@ -1,0 +1,131 @@
+{  
+   "doors":[  
+      {  
+         "elevation":0.0,
+         "canInteract":true,
+         "isOneWay":false,
+         "description":"It can be opened",
+         "room1Wall":3.0,
+         "type":"Door",
+         "room1":1.0,
+         "room2":2.0,
+         "amtOpen":0.0,
+         "name":"Door",
+         "room2Wall":1.0,
+         "position":[  
+            0.0,
+            -20.0
+         ],
+         "id":3.0,
+         "state":"CLOSED",
+         "locked":true,
+         "key":4.0
+      }
+   ],
+   "rooms":[  
+      {  
+         "contains":[  
+            {  
+               "elevation":0.0,
+               "isOpen":false,
+               "isLocked":false,
+               "name":"teapot",
+               "description":"holds the key",
+               "keyId":-1.0,
+               "position":[  
+                  -5.0,
+                  -5.0
+               ],
+               "id": 90.0,
+               "type":"Chest",
+               "itemsContained":[  
+					{  
+		               "keyId":4.0,
+		               "type":"Key"
+		            }
+               ]
+            }
+         ],
+         "Room Shape":{  
+            "points":[  
+               [  
+                  -20.0,
+                  20.0
+               ],
+               [  
+                  20.0,
+                  20.0
+               ],
+               [  
+                  20.0,
+                  -20.0
+               ],
+               [  
+                  -20.0,
+                  -20.0
+               ]
+            ]
+         },
+         "Light":[  
+            0.4,
+            0.4,
+            0.4
+         ],
+         "description":"temp",
+         "id": 1.0,
+         "door ids":[  
+            3.0
+         ]
+      },
+      {  
+         "contains":[  
+
+         ],
+         "Room Shape":{  
+            "points":[  
+               [  
+                  -20.0,
+                  -20.0
+               ],
+               [  
+                  20.0,
+                  -20.0
+               ],
+               [  
+                  20.0,
+                  -40.0
+               ],
+               [  
+                  -20.0,
+                  -40.0
+               ]
+            ]
+         },
+         "Light":[  
+            0.1,
+            0.01,
+            0.01
+         ],
+         "description":"dark",
+         "id": 2.0,
+         "door ids":[  
+            3.0
+         ]
+      }
+   ],
+   "players":[  
+   ],
+   "keys":[  
+      {  
+         "elevation":0.0,
+         "name":"Key",
+         "description":"A key",
+         "position":[  
+            0.0,
+            0.0
+         ],
+         "id": 4.0,
+         "type":"Key"
+      }
+   ]
+}

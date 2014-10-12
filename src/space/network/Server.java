@@ -1,5 +1,6 @@
 package space.network;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -12,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
 import org.lwjgl.Sys;
+
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
@@ -89,7 +92,12 @@ public class Server {
 		connectionHandler = new Thread(new ConnectionHandler());
 		
 		//Load the World
-		loader.loadWorld(savePath);
+		try {
+			loader.loadWorld(savePath);
+		} catch (Exception e){
+			//If something went wrong assume the file didn't exist
+			loader.loadWorld("default_world");
+		}
 		world = loader.getWorld();
 		//Mark the IDs of all the entities in the world as used
 		for (Room r : world.getRooms().values()){
