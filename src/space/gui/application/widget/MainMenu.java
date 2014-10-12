@@ -1,13 +1,14 @@
-package space.gui.application;
+package space.gui.application.widget;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import space.gui.application.GameApplication;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
-public class MainMenu extends NestedWidget {
+public class MainMenu extends GUIWrapper {
 	private static final int SPACING = 15;
 
 	private List<Label> title;
@@ -18,6 +19,7 @@ public class MainMenu extends NestedWidget {
 	InstructionsWidget instructionsWidget;
 	ControlsWidget controlsWidget;
 
+	SingleplayerWidget singleplayerWidget;
 	MultiplayerWidget multiplayerWidget;
 
 	public MainMenu(final GameApplication gameApplication){
@@ -46,7 +48,11 @@ public class MainMenu extends NestedWidget {
 		Label menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
+				boolean isVisible = singleplayerWidget.isVisible();
+				
+				hideWidgets();
+				
+				singleplayerWidget.setVisible(!isVisible);
 			}
 		};
 		menuItem.setText("Play Singleplayer");
@@ -106,6 +112,9 @@ public class MainMenu extends NestedWidget {
             add(item);
         }
 		
+		singleplayerWidget = new SingleplayerWidget(gameApplication);
+		add(singleplayerWidget);
+		
 		multiplayerWidget = new MultiplayerWidget(gameApplication);
 		add(multiplayerWidget);
 
@@ -118,11 +127,14 @@ public class MainMenu extends NestedWidget {
 
     @Override
     protected void layout() {
+    	super.layout();
+    	
         int x = 150;
         int y = getHeight() - 200;
         int midY;
 
         Collections.reverse(menuItems);
+        
         for(Label item : menuItems) {
             item.setPosition(x, y);
             item.adjustSize();
@@ -137,10 +149,13 @@ public class MainMenu extends NestedWidget {
         	letter.setPosition(x, y);
         	x += letter.getWidth();
         }
+        
+        Collections.reverse(menuItems);
 
         instructionsWidget.updatePositions((int) (getWidth() * 0.4), midY);
         controlsWidget.updatePositions((int) (getWidth() * 0.4), midY);
         multiplayerWidget.updatePositions((int) (getWidth() * 0.4), midY);
+        singleplayerWidget.updatePositions((int) (getWidth() * 0.4), midY);
 
     }
 
@@ -154,6 +169,7 @@ public class MainMenu extends NestedWidget {
     }
     
     private void hideWidgets(){
+    	singleplayerWidget.setVisible(false);
 		controlsWidget.setVisible(false);
 		multiplayerWidget.setVisible(false);
 		instructionsWidget.setVisible(false);

@@ -8,6 +8,7 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import space.gui.application.KeyBinding;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Segment2D;
@@ -73,6 +74,8 @@ public class Client {
 	 * The list of listeners to be alerted of events
 	 */
 	public List<ClientListener> listeners;
+
+	private KeyBinding keyBinding;
 	
 	/**
 	 * Creates a game client that connects to a server.
@@ -82,7 +85,8 @@ public class Client {
 	 * @param loader the world loader that will load the world sent by the server
 	 * @param prevId the previous ID used when connecting to the server
 	 */
-	public Client(String host, int port, WorldLoader loader, int prevId){
+	public Client(String host, int port, WorldLoader loader, KeyBinding keybinding, int prevId){
+		this.keyBinding = keyBinding;
 		//Connect to the server
 		try {
 			connection = new Connection(new Socket(host, port));
@@ -123,9 +127,10 @@ public class Client {
 	 * @param host the host name of the server
 	 * @param port the port of the server
 	 * @param loader the world loader that will load the world sent by the server
+	 * @param keyBinding the key bindings model
 	 */
-	public Client(String host, int port, WorldLoader loader){
-		this(host, port, loader, -1);
+	public Client(String host, int port, WorldLoader loader, KeyBinding keyBinding){
+		this(host, port, loader, keyBinding, -1);
 	}
 	
 	/**
@@ -208,7 +213,7 @@ public class Client {
 				updatePlayer(delta);
 				
 				//TODO: Tempory code to test getViewedEntity() works for doors
-				if (Keyboard.isKeyDown(Keyboard.KEY_E)){
+				/*if (Keyboard.isKeyDown(Keyboard.KEY_E)){
 					if (!interact){
 						interact = true;
 						Entity viewed = getViewedEntity();
@@ -229,10 +234,10 @@ public class Client {
 					}
 				} else {
 					interact = false;
-				}
+				}*/
 				
 				//TODO: Tempory code to test dropping entities
-				if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
+				/*if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
 					List<Pickup> inv = localPlayer.getInventory();
 					if (inv.size() > 0){
 						for (Pickup p : inv){
@@ -240,17 +245,17 @@ public class Client {
 							break;
 						}
 					}
-				}
+				}*/
 				
 				//TODO: Temp code for toggle torch
-				if (Keyboard.isKeyDown(Keyboard.KEY_F)){
+				/*if (Keyboard.isKeyDown(Keyboard.KEY_F)){
 					if (!torch){
 						localPlayer.setTorch(!localPlayer.isTorchOn());
 						torch = true;
 					}
 				} else {
 					torch = false;
-				}
+				}*/
 			}
 		} catch (IOException e) {
 			shutdown();
@@ -320,6 +325,10 @@ public class Client {
 	 * @return Whether the interaction was successful.
 	 */
 	public boolean interactWith(Entity e){
+		if(e == null){
+			return false;
+		}
+		
 		boolean interactionSuccessful = e.interact(localPlayer, world);
 		
 		if (interactionSuccessful){
@@ -415,18 +424,18 @@ public class Client {
 	private void applyWalk(int delta) throws IOException{
 		Vector3D moveDirection = localPlayer.getLookDirection();
 		Vector3D moveDelta = new Vector3D(0, 0, 0);
-
+		
 		//Calculate the players general movement
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)){
+		if (Keyboard.isKeyDown(keyBinding.getKey(KeyBinding.MOVE_FORWARD))){
 			moveDelta.addLocal(moveDirection);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)){
+		if (Keyboard.isKeyDown(keyBinding.getKey(KeyBinding.MOVE_LEFT))){
 			moveDelta.subLocal(moveDirection.cross(new Vector3D(0,1,0)));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)){
+		if (Keyboard.isKeyDown(keyBinding.getKey(KeyBinding.MOVE_RIGHT))){
 			moveDelta.addLocal(moveDirection.cross(new Vector3D(0,1,0)));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)){
+		if (Keyboard.isKeyDown(keyBinding.getKey(KeyBinding.MOVE_BACKWARD))){
 			moveDelta.subLocal(moveDirection);
 		}
 		

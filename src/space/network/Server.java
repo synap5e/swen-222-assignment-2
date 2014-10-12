@@ -48,6 +48,8 @@ public class Server {
 	 * The time between when the server saves the game. Set to 5 minutes.
 	 */
 	private static final int TIME_BETWEEN_SAVES = 300000;
+
+	public static final String DEFAULT_SAVE = "save";
 	
 	private Thread connectionHandler;
 	private Thread gameLoop;

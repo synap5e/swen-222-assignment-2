@@ -1,5 +1,6 @@
-package space.gui.application;
+package space.gui.application.widget;
 
+import space.gui.application.GameApplication;
 import space.network.Client;
 import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;
@@ -74,14 +75,14 @@ public class MultiplayerWidget extends NestedWidget {
 
     	serverLabel.setPosition(x - serverLabel.getWidth(), y);
     	
-    	serverField.setPosition(x + SPACING, y);
+    	serverField.setPosition(x + SPACING, y - 2);
     	serverField.setSize(200, 20);
     	
     	y += serverLabel.getHeight() + SPACING;
     	
     	idLabel.setPosition(x - idLabel.getWidth(), y);
     	
-    	idField.setPosition(x + SPACING, y);
+    	idField.setPosition(x + SPACING, y - 2);
     	idField.setSize(200, 20);
     	
     	y += idLabel.getHeight() + SPACING * 2;
