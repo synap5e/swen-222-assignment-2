@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import space.gui.pipeline.mock.Bullet;
 import space.gui.pipeline.models.BulletModel;
 import space.gui.pipeline.models.RenderModel;
 import space.gui.pipeline.models.WavefrontModel;
@@ -38,6 +37,13 @@ public class ModelFlyweight {
 														new Vector3D(0.35f,0.3f,0.15f),
 														Material.bronze
 													));
+			models.put("Table", new WavefrontModel(	new File("./assets/models/table.obj"),
+														new Vector3D(0, 0, 0),
+														new Vector3D(0, 0, 0), 0.75f,
+														new Vector3D(0.35f,0.35f,0.35f),
+														Material.bronze
+				));	
+		
 			models.put("Bullet", new BulletModel());
 
 			openContainer = new WavefrontModel(			new File("./assets/models/teapot.obj"),
@@ -69,7 +75,12 @@ public class ModelFlyweight {
 				return closedContainer;
 			}
 		}
-		return models.get(type.getName());
+		if (!models.containsKey(type.getType())){
+			System.err.println("ModelFlyweight does not have a model for \"" + type.getType() + "\"");
+			System.out.println("Loaded models are " + models.keySet());
+			System.exit(-1);
+		}
+		return models.get(type.getType());
 	}
 
 }

@@ -61,4 +61,9 @@ public class Bullet extends NonStationary {
 		return velocity;
 	}
 
+	@Override
+	public String getType() {
+		return "Bullet";
+	}
+
 }

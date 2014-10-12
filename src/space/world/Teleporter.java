@@ -49,4 +49,9 @@ public class Teleporter extends Stationary{
 		return teleportsToPos;
 	}
 
+	@Override
+	public String getType() {
+		return "Teleporter";
+	}
+
 }

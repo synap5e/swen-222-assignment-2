@@ -19,7 +19,7 @@ public interface ViewableObject {
 
 	public float getElevation();
 	
-	public String getName();
+	public String getType();
 
 	public float getCollisionRadius();
 }

@@ -60,4 +60,9 @@ public class Turret extends NonStationary{
 		return room;
 	}
 
+	@Override
+	public String getType() {
+		return "Turret";
+	}
+
 }

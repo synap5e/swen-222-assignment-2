@@ -39,4 +39,9 @@ public class Button extends Stationary {
 		return 0;
 	}
 
+	@Override
+	public String getType() {
+		return "Button";
+	}
+
 }

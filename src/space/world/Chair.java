@@ -24,4 +24,9 @@ public class Chair extends Stationary {
 		return 1;
 	}
 
+	@Override
+	public String getType() {
+		return "Chair";
+	}
+
 }

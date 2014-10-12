@@ -75,5 +75,10 @@ public class Beam extends NonStationary implements ViewableBeam {
 		Vector2D projection = toTurret.mul(projectionLength);
 		willHit = toTurret.sub(projection).len()< turret.getCollisionRadius();
 	}
+
+	@Override
+	public String getType() {
+		return "Beam";
+	}
 	
 }
