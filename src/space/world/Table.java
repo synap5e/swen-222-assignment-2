@@ -16,7 +16,7 @@ public class Table extends Stationary {
 
 	@Override
 	public float getCollisionRadius() {
-		return 1;
+		return 4;
 	}
 
 	@Override

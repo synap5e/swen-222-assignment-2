@@ -37,6 +37,13 @@ public class ModelFlyweight {
 														new Vector3D(0.35f,0.3f,0.15f),
 														Material.bronze
 													));
+			models.put("Table", new WavefrontModel(	new File("./assets/models/table.obj"),
+														new Vector3D(0, 0, 0),
+														new Vector3D(0, 0, 0), 0.75f,
+														new Vector3D(0.35f,0.35f,0.35f),
+														Material.bronze
+				));	
+		
 			models.put("Bullet", new BulletModel());
 
 			openContainer = new WavefrontModel(			new File("./assets/models/teapot.obj"),
