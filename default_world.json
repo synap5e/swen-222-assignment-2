@@ -1,10 +1,11 @@
+
 {  
    "doors":[  
       {  
          "elevation":0.0,
          "canInteract":true,
          "isOneWay":false,
-         "description":"It can be opened",
+         "description":"Use [E] to open/close",
          "room1Wall":3.0,
          "type":"Door",
          "room1":1.0,
@@ -12,35 +13,66 @@
          "amtOpen":0.0,
          "name":"Door",
          "room2Wall":1.0,
-         "position":[  
-            0.0,
-            -20.0
-         ],
-         "id":3.0,
+         "position":[ 0.0, -20.0 ],
+         "id": 20.0,
+         "state":"CLOSED",
+         "locked":false,
+         "key": -1.0
+      },
+      {  
+         "elevation":0.0,
+         "canInteract":true,
+         "isOneWay":false,
+         "description":"It's locked! There must be a key somewhere...",
+         "room1Wall":1.0,
+         "type":"Door",
+         "room1":1.0,
+         "room2":3.0,
+         "amtOpen":0.0,
+         "name":"Door",
+         "room2Wall":3.0,
+         "position":[ 0.0, 20.0 ],
+         "id": 21.0,
          "state":"CLOSED",
          "locked":true,
-         "key":4.0
+         "key": 51.0
       }
    ],
    "rooms":[  
       {  
          "contains":[  
-            {  
+         ],
+         "Room Shape":{  
+            "points":[  
+               [ -20.0,  20.0 ],
+               [  20.0,  20.0 ],
+               [  20.0, -20.0 ],
+               [ -20.0, -20.0 ]
+            ]
+         },
+         "Light":[ 0.4, 0.4, 0.4 ],
+         "description":"Wait for you friends to join before you start your adventure to shut down the ROUGE AI!",
+         "id": 1.0,
+         "door ids":[  
+            20.0,
+            21.0
+         ]
+      },
+      {  
+         "contains":[  
+ 			{  
                "elevation":3.0,
                "isOpen":false,
                "isLocked":false,
                "name":"teapot",
                "description":"holds the key",
                "keyId":-1.0,
-               "position":[  
-                  -5.0,
-                  -5.0
-               ],
-               "id": 90.0,
+               "position":[ 0.0, -35.0 ],
+               "id": 50.0,
                "type":"Chest",
                "itemsContained":[  
 					{  
-		               "keyId":4.0,
+		               "keyId":51.0,
 		               "type":"Key"
 		            }
                ]
@@ -50,8 +82,8 @@
                "name":"table",
                "description":"it's a table :O",
                "position":[  
-                  -5.0,
-                  -5.0
+                  0.0,
+                  -35.0
                ],
                "id": 4762.0,
                "type":"Table"
@@ -59,68 +91,36 @@
          ],
          "Room Shape":{  
             "points":[  
-               [  
-                  -20.0,
-                  20.0
-               ],
-               [  
-                  20.0,
-                  20.0
-               ],
-               [  
-                  20.0,
-                  -20.0
-               ],
-               [  
-                  -20.0,
-                  -20.0
-               ]
+               [ -10.0, -20.0 ],
+               [  10.0, -20.0 ],
+               [  10.0, -40.0 ],
+               [ -10.0, -40.0 ]
             ]
          },
-         "Light":[  
-            0.4,
-            0.4,
-            0.4
-         ],
-         "description":"temp",
-         "id": 1.0,
+         "Light":[ 0.3, 0.5, 0.3 ],
+         "description":"A sparse room, with a chest in the center",
+         "id": 2.0,
          "door ids":[  
-            3.0
+            20.0
          ]
       },
       {  
          "contains":[  
-
          ],
          "Room Shape":{  
             "points":[  
-               [  
-                  -20.0,
-                  -20.0
-               ],
-               [  
-                  20.0,
-                  -20.0
-               ],
-               [  
-                  20.0,
-                  -40.0
-               ],
-               [  
-                  -20.0,
-                  -40.0
-               ]
+               [ -10.0,  80.0 ],
+               [  10.0,  80.0 ],
+               [  10.0,  20.0 ],
+               [ -10.0,  20.0 ]
+               
             ]
          },
-         "Light":[  
-            0.1,
-            0.01,
-            0.01
-         ],
-         "description":"dark",
-         "id": 2.0,
+         "Light":[ 0.08, 0.01, 0.01 ],
+         "description":"A dim dark hallway. Use [F] to toggle your flashlight.",
+         "id": 3.0,
          "door ids":[  
-            3.0
+            21.0
          ]
       }
    ],
@@ -131,11 +131,8 @@
          "elevation":0.0,
          "name":"Key",
          "description":"A key",
-         "position":[  
-            0.0,
-            0.0
-         ],
-         "id": 4.0,
+         "position":[ 0.0, 0.0 ],
+         "id": 51.0,
          "type":"Key"
       }
    ]

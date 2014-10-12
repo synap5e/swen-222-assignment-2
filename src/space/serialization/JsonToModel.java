@@ -84,8 +84,10 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
 			loadButton(b);
 		}
-		for(Entity e:entities){
-			System.out.println(e);
+		for (Key key : keys){
+			if (!entities.contains(key)){
+				entities.add(key);
+			}
 		}
 		return new World(entities, rooms);
 	}
