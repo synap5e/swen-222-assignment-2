@@ -112,7 +112,7 @@ public class GameApplication implements ClientListener{
 		
 		switch(state){
 			case SINGLEPLAYER:
-				server = new Server(Client.DEFAULT_HOST, Client.DEFAULT_PORT, new MockStorage(), new ModelToJson(), "temp");
+				server = new Server(Client.DEFAULT_HOST, Client.DEFAULT_PORT, new JsonToModel(), new ModelToJson(), "temp");
 			case MULTIPLAYER:
 				startGame();
 			default:
