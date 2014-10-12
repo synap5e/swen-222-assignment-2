@@ -2,6 +2,7 @@ package space.serialization;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +40,10 @@ import space.world.World;
  */
 
 public class ModelToJson implements WorldSaver {
-
-
-	MyJsonList listOfRooms = new MyJsonList();
-	MyJsonList listOfPlayers = new MyJsonList();
-	MyJsonList listofDoors = new MyJsonList();
-	MyJsonList listOfKeys = new MyJsonList();
+	MyJsonList listOfRooms;
+	MyJsonList listOfPlayers;
+	MyJsonList listofDoors;
+	MyJsonList listOfKeys;
 
 	/**
 	 * {@inheritDoc}
@@ -89,14 +88,21 @@ public class ModelToJson implements WorldSaver {
 	
 	@Override
 	public String representWorldAsString(World world) {
-		//why does this method not give a list of players
-		return null;
+		MyJsonObject stringobject = constructJsonObj(world, new ArrayList<Player>());
+		return stringobject.toString();
 	}
 	
 	
 	//CONSTRUCT METHODS
 	
 	private MyJsonObject constructJsonObj(World world, List<Player> players){
+
+		MyJsonList listOfRooms = new MyJsonList();
+		MyJsonList listOfPlayers = new MyJsonList();
+		MyJsonList listofDoors = new MyJsonList();
+		MyJsonList listOfKeys = new MyJsonList();
+		
+		
 		MyJsonObject fileobject = new MyJsonObject();
 		Map<Integer, Room> rooms = world.getRooms();
 		for (Entry<Integer, Room> entry : rooms.entrySet()) {
@@ -204,8 +210,9 @@ public class ModelToJson implements WorldSaver {
 			else if (e instanceof Key) {
 				listOfKeys.add(constructEntity(e, null));
 				MyJsonObject key = new MyJsonObject();
-				key.put("name", "Key");
+				key.put("type", "Key");
 				key.put("keyId", e.getID());
+				entitiesInRoom.add(key);
 			} 
 			else {
 				entitiesInRoom.add(constructEntity(e, room));
@@ -217,6 +224,7 @@ public class ModelToJson implements WorldSaver {
 
 	private MyJsonObject constructEntity(Entity e, Room room) {
 		MyJsonObject object = new MyJsonObject();
+		object.put("type", e.getClass().getSimpleName());
 		object.put("position", constructPoint(e.getPosition()));
 		object.put("id", e.getID());
 		object.put("elevation", e.getElevation());
@@ -243,7 +251,7 @@ public class ModelToJson implements WorldSaver {
 			if (p instanceof Key) {
 				listOfKeys.add(constructEntity((Entity) p, null));
 				MyJsonObject key = new MyJsonObject();
-				key.put("name", "Key");
+				key.put("type", "Key");
 				key.put("keyId", ((Key) p).getID());
 				items.add(key);
 			} 
@@ -273,27 +281,32 @@ public class ModelToJson implements WorldSaver {
 		for (Entry<Integer, List<Door>> entry : wallstodoors.entrySet()) {
 
 			for (Door d : entry.getValue()) {
-				if (d == door) {
+				if (d.equals(door)) {
 					room1Wall = entry.getKey();
 				}
 			}
 		}
 		object.put("room1Wall", room1Wall);
 		object.put("room2", door.getRoom2().getID());
-		Room room2 = door.getRoom1();
+		Room room2 = door.getRoom2();
 		int room2Wall = 0;
 		Map<Integer, List<Door>> wallstodoors2 = room2.getDoors();
 		for (Entry<Integer, List<Door>> entry : wallstodoors2.entrySet()) {
 
 			for (Door d : entry.getValue()) {
-				if (d == door) {
-					room1Wall = entry.getKey();
+				if (d.equals(door)) {
+					room2Wall = entry.getKey();
 				}
 			}
 		}
 		object.put("room2Wall", room2Wall);
 		object.put("isOneWay", door.isOneWay());
-		object.put("key", door.getKey().getID());
+		if(door.getKey()!=null){
+			object.put("key", door.getKey().getID());
+		}
+		else{
+			object.put("key", -1);
+		}
 		object.put("state", door.getState());
 		object.put("locked", door.isLocked());
 		object.put("canInteract", door.canInteract());
@@ -305,11 +318,11 @@ public class ModelToJson implements WorldSaver {
 		object.put("isOpen", e.isOpen());
 		object.put("itemsContained", constructHeldItems(e.getItemsContained()));
 		if (e instanceof Chest) {
-			if(e.getKey().getID()!=null){//need to change the id getter in key to allow this null check
+			if(e.getKey()!=null){
 			object.put("keyId", e.getKey().getID());
 			}
 			else {
-				object.put("keyId", "null");
+				object.put("keyId", -1);
 			}
 		}
 	}

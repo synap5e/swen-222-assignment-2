@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 import org.lwjgl.Sys;
-
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
@@ -23,12 +21,12 @@ import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
-import space.network.message.PlayerRotatedMessage;
+import space.network.message.EntityRotationMessage;
+import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
 import space.network.storage.WorldLoader;
 import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
-import space.network.message.sync.DoorSyncMessage;
 import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
@@ -234,11 +232,12 @@ public class Server {
 									sendMessageToAllExcept(id, message);
 								}
 							//If an entity rotated
-							} else if (message instanceof PlayerRotatedMessage){
-								PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+							} else if (message instanceof EntityRotationMessage){
+								EntityRotationMessage playerRotated = (EntityRotationMessage) message;
 								Player p = (Player) world.getEntity(playerRotated.getID());
 
-								p.moveLook(playerRotated.getDelta());
+								p.setXRotation(playerRotated.getXRotation());
+								p.setYRotation(playerRotated.getYRotation());
 
 								//Forward the message to all the other clients
 								sendMessageToAllExcept(id, message);
@@ -362,7 +361,7 @@ public class Server {
 						//Assign a new ID
 						while (usedIds.contains(id = idGenerator.nextInt(1000)));
 						usedIds.add(id);
-						p = new Player(new Vector2D(0, 0), id, "player"); //TODO use name
+						p = new Player(new Vector2D(0, 0), id, "Player"); //TODO use name
 					}
 					
 					//Add the client the map of connections
@@ -380,51 +379,21 @@ public class Server {
 						Message playerJoined = new PlayerJoiningMessage(id);
 						for (Connection con : connections.values()){
 							con.sendMessage(playerJoined);
-							
-							//Send the inventory of the player
-							for (Pickup pickup : p.getInventory()){
-								con.sendMessage(new InteractionMessage(id, ((Entity) pickup).getID()));
-							}
 						}
 						
-						//Add the other players to the client
-						for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
-							int otherId = cons.getKey();
-							if (otherId != id){
-								Player other = (Player) world.getEntity(otherId);
-								newClient.sendMessage(new PlayerJoiningMessage(otherId));
-								newClient.sendMessage(new PlayerRotatedMessage(otherId, new Vector2D((other.getAngle()-280)*8, 0)));
-								
-								for (Pickup pickup : other.getInventory()){
-									newClient.sendMessage(new InteractionMessage(otherId, ((Entity) pickup).getID()));
-								}
-							}
-						}
+						//Send the current state of the world to the player
+						String representation = saver.representWorldAsString(world);
+						newClient.sendMessage(new TextMessage(representation));
 						
-						//Remove entities from the new clients world that are in inactive player's inventory 
-						for (Player inactive : inactivePlayers.values()){
-							for (Pickup pickup : inactive.getInventory()){
-								newClient.sendMessage(new InteractionMessage(inactive.getID(), ((Entity) pickup).getID()));
+						//Ensure the new player is in the correct spot for existing clients
+						for (Connection other : connections.values()){
+							if (other != newClient){
+								other.sendMessage(new EntityMovedMessage(id, p.getPosition()));
+								other.sendMessage(new EntityRotationMessage(id, p.getXRotation(), p.getYRotation()));
 							}
 						}
 						
 						
-						
-						sendMessageToAllExcept(id, new PlayerRotatedMessage(id, new Vector2D((-180)*8, 0)));
-						
-						//Sync the doors
-						for (Room room : world.getRooms().values()){
-							for (Entity e : room.getEntities()){
-								newClient.sendMessage(new EntityMovedMessage(e.getID(), e.getPosition()));
-							}
-							
-							for (List<Door> doors : room.getDoors().values()){
-								for (Door door : doors){
-									//TODO: Might need a more reliable way of checking whether the door is open
-									newClient.sendMessage(new DoorSyncMessage(door.getID(), door.canGoThrough(), door.isLocked()));
-								}
-							}
-						}
 					}
 				} catch (SocketException se){
 					if (!se.getMessage().equals("socket closed")){

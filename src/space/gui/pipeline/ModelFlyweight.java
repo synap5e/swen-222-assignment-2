@@ -33,8 +33,8 @@ public class ModelFlyweight {
 														Material.bronze										// model material properties
 												));
 			models.put("Player", new WavefrontModel(	new File("./assets/models/character_model.obj"),
-														new Vector3D(-0.5f,0,0.160f),
-														new Vector3D(0,270,0), 0.23f,
+														new Vector3D(1.0f,0,-0.160f),
+														new Vector3D(0,90,0), 0.23f,
 														new Vector3D(0.35f,0.3f,0.15f),
 														Material.bronze
 													));

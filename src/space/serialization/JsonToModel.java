@@ -4,23 +4,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import space.gui.pipeline.viewable.ViewableRoom.LightMode;
-import space.math.ConcaveHull;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.storage.WorldLoader;
@@ -91,8 +83,9 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
 			loadButton(b);
 		}
-		
-
+		for(Entity e:entities){
+			System.out.println(e);
+		}
 		return new World(entities, rooms);
 	}
 
@@ -167,13 +160,12 @@ public class JsonToModel implements WorldLoader {
 		String description = d.getString("description");
 		String name = d.getString("name");
 		String state = d.getString("state");
-		boolean isOneWay = d.getBoolean("isOneway");
+		boolean isOneWay = d.getBoolean("isOneWay");
 		float amtOpen = (float) d.getNumber("amtOpen");
-		boolean isLocked = d.getBoolean("isLocked");
+		boolean isLocked = d.getBoolean("locked");
 		boolean canInteract = d.getBoolean("canInteract");
 		Key key = null;
 		for (Key k : keys) {
-
 			if (k.getID() == d.getNumber("key")) {
 				key = k;
 			}
@@ -205,61 +197,64 @@ public class JsonToModel implements WorldLoader {
 		Set<Entity> contained = new HashSet<Entity>();
 		for (int i = 0; i < contains.getSize(); i++) {
 			MyJsonObject e = contains.getMyJsonObject(i);
-			int id = (int) e.getNumber("id");
-			Vector2D position = loadPoint(e.getMyJsonList("position"));
-			float elevation = (float) e.getNumber("elevation");
-			String description = e.getString("description");
-			String name = e.getString("name");
-			if (e.getString("name").equals("Key")) {
+			
+			String type = e.getString("type");
+			if (type.equals("Key")) {
 				Key ky = null;
 				for(Key k : keys){
 					if((int)e.getNumber("keyId")==(k.getID())){
 						ky=k;
+						contained.add(ky);
+						entities.add(ky);
 					}
 				}
-				contained.add(ky);
-				entities.add(ky);
+				
 			}
-			
-			else if (e.getString("name").equals("Light")) {
-				Light light = loadLight(id, position, elevation, description,name);
-				contained.add(light);
-				entities.add(light);
-			} 
-			else if (e.getString("name").equals("Button")) {
-				buttonsJsonObjects.add(e);
-			}
-			else if (e.getString("name").equals("Teleporter")) {
-				Teleporter teleporter = loadTeleporter(e, id, position,elevation, description, name);
-				contained.add(teleporter);
-				entities.add(teleporter);
-			} 
-			else if (e.getString("name").equals("Wallet") || e.getString("name").equals("Chest")) {
-				Container container = loadContainer(e, id, position, elevation,description, name);
-				contained.add(container);
-				entities.add(container);
+			else{
+				String name = e.getString("name");
+				int id = (int) e.getNumber("id");
+				Vector2D position = loadPoint(e.getMyJsonList("position"));
+				float elevation = (float) e.getNumber("elevation");
+				String description = e.getString("description");
+
+				if (type.equals("Light")) {
+					Light light = loadLight(id, position, elevation, description,name);
+					contained.add(light);
+					entities.add(light);
+				} 
+				else if (type.equals("Button")) {
+					buttonsJsonObjects.add(e);
+				}
+				else if (type.equals("Teleporter")) {
+					Teleporter teleporter = loadTeleporter(e, id, position,elevation, description, name);
+					contained.add(teleporter);
+					entities.add(teleporter);
+				} 
+				else if (type.equals("Wallet") || type.equals("Chest")) {
+					Container container = loadContainer(e, id, position, elevation,description, name);
+					contained.add(container);
+					entities.add(container);
+				}
 			}
 		}
 		return contained;
+
 	}
 	
-	private Container loadContainer(MyJsonObject o, int id, Vector2D position,
-			float elevation, String description, String name) {
+	private Container loadContainer(MyJsonObject o, int id, Vector2D position,float elevation, String description, String name) {
 		Set<Entity> items = loadEntities(o.getMyJsonList("itemsContained"));
-
+		Set<Pickup> pickup = new HashSet<Pickup>(); 
+		for(Entity e : items){
+			pickup.add((Pickup) e);
+		}
 		boolean isOpen = o.getBoolean("isOpen");
 		boolean isLocked = o.getBoolean("isLocked");
-		if (o.getString("name").equals("Wallet")) {
-			Wallet w = new Wallet(position, id, elevation, name, name);
-			w.setOpen(isOpen);//need setter for open or close
-			for(Entity e:items){
-				w.putInside(e);
-			}
+		if (o.getString("type").equals("Wallet")) {
+			Wallet w = new Wallet(position, id, elevation, name, name,isOpen,pickup);
 			return w;
 		} 
-		else if (o.getString("name").equals("Chest")) {
+		else if (o.getString("type").equals("Chest")) {
 			Key k = null;
-			if(!(o.getString("keyId").equals("null"))){
 				for(Key key:keys){
 					Double keyid = (double) key.getID();
 					if(keyid.equals(o.getNumber("keyId"))){
@@ -267,29 +262,22 @@ public class JsonToModel implements WorldLoader {
 					}
 
 				}
-			}
-			Chest c = new Chest(position, id, elevation, description, name,isLocked,k);
-			c.setOpen(isOpen);//need setter for open or close
-			for(Entity e:items){
-				c.putInside(e);
-			}
+			
+			Chest c = new Chest(position, id, elevation, description, name,isLocked,k,isOpen, pickup);
 			return c;
 		}
 		else return null;
 
 	}
 	
-	private Teleporter loadTeleporter(MyJsonObject e, int id,
-			Vector2D position, float elevation, String description, String name) {
+	private Teleporter loadTeleporter(MyJsonObject e, int id,Vector2D position, float elevation, String description, String name) {
 		Vector2D teleportstoPos = loadPoint(e.getMyJsonList("teleportstoPos"));
 		boolean canInteract = e.getBoolean("canInteract");
 
-		return new Teleporter(position, teleportstoPos, id, elevation,
-				description, name, canInteract);
+		return new Teleporter(position, teleportstoPos, id, elevation,description, name, canInteract);
 	}
 
-	private Light loadLight(int id, Vector2D position, float elevation,
-			String description, String name) {
+	private Light loadLight(int id, Vector2D position, float elevation,String description, String name) {
 
 		return new Light(position, id, elevation, description, name);
 	}
@@ -321,6 +309,7 @@ public class JsonToModel implements WorldLoader {
 			Double roomId = (double) r.getID();
 			if(roomId==b.getNumber("roomButtonIsIn")){
 				r.putInRoom(button);
+				System.out.println("button");
 				entities.add(button);
 			}
 		}
