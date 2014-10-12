@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 import org.lwjgl.Sys;
-
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
@@ -23,13 +21,12 @@ import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
-import space.network.message.PlayerRotatedMessage;
+import space.network.message.EntityRotationMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
 import space.network.storage.WorldLoader;
 import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
-import space.network.message.sync.DoorSyncMessage;
 import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
@@ -235,11 +232,12 @@ public class Server {
 									sendMessageToAllExcept(id, message);
 								}
 							//If an entity rotated
-							} else if (message instanceof PlayerRotatedMessage){
-								PlayerRotatedMessage playerRotated = (PlayerRotatedMessage) message;
+							} else if (message instanceof EntityRotationMessage){
+								EntityRotationMessage playerRotated = (EntityRotationMessage) message;
 								Player p = (Player) world.getEntity(playerRotated.getID());
 
-								p.moveLook(playerRotated.getDelta());
+								p.setXRotation(playerRotated.getXRotation());
+								p.setYRotation(playerRotated.getYRotation());
 
 								//Forward the message to all the other clients
 								sendMessageToAllExcept(id, message);
@@ -386,6 +384,16 @@ public class Server {
 						//Send the current state of the world to the player
 						String representation = saver.representWorldAsString(world);
 						newClient.sendMessage(new TextMessage(representation));
+						
+						//Ensure the new player is in the correct spot for existing clients
+						for (Connection other : connections.values()){
+							if (other != newClient){
+								other.sendMessage(new EntityMovedMessage(id, p.getPosition()));
+								other.sendMessage(new EntityRotationMessage(id, p.getXRotation(), p.getYRotation()));
+							}
+						}
+						
+						
 					}
 				} catch (SocketException se){
 					if (!se.getMessage().equals("socket closed")){

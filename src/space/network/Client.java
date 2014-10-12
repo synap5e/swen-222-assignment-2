@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableWall;
 import space.math.Segment2D;
@@ -20,11 +18,10 @@ import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
-import space.network.message.PlayerRotatedMessage;
+import space.network.message.EntityRotationMessage;
 import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
-import space.network.message.sync.SyncMessage;
 import space.network.storage.WorldLoader;
 import space.world.Container;
 import space.world.Door;
@@ -391,8 +388,8 @@ public class Client {
 		localPlayer.moveLook(mouseDelta);
 		
 		//Broadcast change to server
-		if (mouseDelta.sqLen() > 0){
-			connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
+		if (mouseDelta.sqLen() > 0.01){
+			connection.sendMessage(new EntityRotationMessage(localPlayer.getID(), localPlayer.getXRotation(), localPlayer.getYRotation()));
 		}
 
 		//Deal with player movement
@@ -501,17 +498,14 @@ public class Client {
 							} else if (message instanceof EntityMovedMessage){
 								handleMove((EntityMovedMessage) message);
 							//Rotate remote player
-							} else if (message instanceof PlayerRotatedMessage){
-								handlePlayerLook((PlayerRotatedMessage) message);
+							} else if (message instanceof EntityRotationMessage){
+								handlePlayerLook((EntityRotationMessage) message);
 							//Make player jump
 							} else if (message instanceof JumpMessage){
 								handlePlayerJump((JumpMessage) message);
 							//Make player interact with entity
 							} else if (message instanceof InteractionMessage){
 								handleInteraction((InteractionMessage) message);
-							//Sync the world
-							} else if (message instanceof SyncMessage){
-								((SyncMessage) message).applyTo(world);
 							//Drop a pickup from a player
 							} else if (message instanceof DropPickupMessage){
 								handleDrop((DropPickupMessage) message);
@@ -597,9 +591,10 @@ public class Client {
 		 * 
 		 * @param playerRotated the message containing the information about the rotation
 		 */
-		private void handlePlayerLook(PlayerRotatedMessage playerRotated){
+		private void handlePlayerLook(EntityRotationMessage playerRotated){
 			Player p = (Player) world.getEntity(playerRotated.getID());
-			p.moveLook(playerRotated.getDelta());
+			p.setXRotation(playerRotated.getXRotation());
+			p.setYRotation(playerRotated.getYRotation());
 		}
 		
 		/**

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
 import space.network.message.EntityMovedMessage;
@@ -13,11 +12,10 @@ import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
-import space.network.message.PlayerRotatedMessage;
+import space.network.message.EntityRotationMessage;
 import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
-import space.network.message.sync.DoorSyncMessage;
 
 /**
  * 
@@ -33,9 +31,8 @@ public class Connection {
 	private static final int SHUTDOWN = 5;
 	private static final int JUMP = 6;
 	private static final int INTERACTION = 7;
-	private static final int SYNC_DOOR = 8;
-	private static final int DROP_PICKUP = 9;
-	private static final int TRANSFER = 10;
+	private static final int DROP_PICKUP = 8;
+	private static final int TRANSFER = 9;
 	private static final int UNKNOWN = -1;
 
 	private Socket socket;
@@ -76,7 +73,7 @@ public class Connection {
 			case ENTITY_MOVED:
 				return new EntityMovedMessage(data);
 			case ENTITY_ROTATED:
-				return new PlayerRotatedMessage(data);
+				return new EntityRotationMessage(data);
 			case DISCONNECT:
 				return new DisconnectMessage(data);
 			case SHUTDOWN:
@@ -85,8 +82,6 @@ public class Connection {
 				return new JumpMessage(data);
 			case INTERACTION:
 				return new InteractionMessage(data);
-			case SYNC_DOOR:
-				return new DoorSyncMessage(data);
 			case DROP_PICKUP:
 				return new DropPickupMessage(data);
 			case TRANSFER:
@@ -113,12 +108,11 @@ public class Connection {
 		if (message instanceof TextMessage) return TEXT;
 		else if (message instanceof PlayerJoiningMessage) return PLAYER_JOINING;
 		else if (message instanceof EntityMovedMessage) return ENTITY_MOVED;
-		else if (message instanceof PlayerRotatedMessage) return ENTITY_ROTATED; //TODO: Check actual class when it exists
+		else if (message instanceof EntityRotationMessage) return ENTITY_ROTATED; //TODO: Check actual class when it exists
 		else if (message instanceof DisconnectMessage) return DISCONNECT;
 		else if (message instanceof ShutdownMessage) return SHUTDOWN;
 		else if (message instanceof JumpMessage) return JUMP;
 		else if (message instanceof InteractionMessage) return INTERACTION;
-		else if (message instanceof DoorSyncMessage) return SYNC_DOOR;
 		else if (message instanceof DropPickupMessage) return DROP_PICKUP;
 		else if (message instanceof TransferMessage) return TRANSFER;
 		else return UNKNOWN;
