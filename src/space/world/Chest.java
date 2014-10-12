@@ -36,4 +36,9 @@ public class Chest extends Container {
 		return 5;
 	}
 
+	@Override
+	public String getType() {
+		return "Chest";
+	}
+
 }

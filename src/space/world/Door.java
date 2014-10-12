@@ -213,5 +213,10 @@ public class Door extends NonStationary implements ViewableDoor {
 		return key;
 	}
 
+	@Override
+	public String getType() {
+		return "Door";
+	}
+
 
 }

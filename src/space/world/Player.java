@@ -190,4 +190,9 @@ public class Player extends Character implements ViewablePlayer {
 		return 0;
 	}
 
+	@Override
+	public String getType() {
+		return "Player";
+	}
+
 }

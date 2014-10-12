@@ -23,4 +23,9 @@ public class Light extends Stationary {
 		return false;
 	}
 
+	@Override
+	public String getType() {
+		return "Light";
+	}
+
 }

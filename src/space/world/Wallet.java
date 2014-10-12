@@ -55,4 +55,9 @@ public class Wallet extends Container implements Pickup {
 		return 1;
 	}
 
+	@Override
+	public String getType() {
+		return "Wallet";
+	}
+
 }

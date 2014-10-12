@@ -62,4 +62,9 @@ public class Key extends NonStationary implements Pickup {
 		return 0;
 	}
 
+	@Override
+	public String getType() {
+		return "Key";
+	}
+
 }

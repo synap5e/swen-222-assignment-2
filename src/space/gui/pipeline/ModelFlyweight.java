@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import space.gui.pipeline.mock.Bullet;
 import space.gui.pipeline.models.BulletModel;
 import space.gui.pipeline.models.RenderModel;
 import space.gui.pipeline.models.WavefrontModel;
@@ -69,7 +68,12 @@ public class ModelFlyweight {
 				return closedContainer;
 			}
 		}
-		return models.get(type.getName());
+		if (!models.containsKey(type.getType())){
+			System.err.println("ModelFlyweight does not have a model for \"" + type.getType() + "\"");
+			System.out.println("Loaded models are " + models.keySet());
+			System.exit(-1);
+		}
+		return models.get(type.getType());
 	}
 
 }

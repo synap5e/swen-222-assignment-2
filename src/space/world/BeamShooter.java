@@ -98,4 +98,9 @@ public class BeamShooter extends NonStationary{
 		Vector2D lookDir = Vector2D.fromPolar(yRotation, 1);
 		room.addBeam(new Beam(getPosition(), getID()+1000+beamsShot++, getHeight() + getElevation(), new Vector3D(lookDir.getX(),0,lookDir.getY()), turret));
 	}
+
+	@Override
+	public String getType() {
+		return "BeamShooter";
+	}
 }
