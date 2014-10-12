@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
@@ -62,7 +63,9 @@ public class Connection {
 	
 	public Message readMessage() throws IOException{
 		int type = incoming.read();
-		int length = incoming.read();
+		byte[] rawLength = new byte[4];
+		incoming.read(rawLength);
+		int length = ByteBuffer.wrap(rawLength).getInt();
 		byte[] data = new byte[length];
 		incoming.read(data);
 		switch (type){
@@ -99,7 +102,9 @@ public class Connection {
 		byte[] data = message.toByteArray();
 		
 		outgoing.write(type);
-		outgoing.write(data.length);
+		ByteBuffer length = ByteBuffer.allocate(4);
+		length.putInt(data.length);
+		outgoing.write(length.array());
 		outgoing.write(data);
 	}
 	

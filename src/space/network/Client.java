@@ -22,8 +22,10 @@ import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.PlayerRotatedMessage;
 import space.network.message.ShutdownMessage;
+import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
 import space.network.message.sync.SyncMessage;
+import space.network.storage.WorldLoader;
 import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
@@ -78,12 +80,10 @@ public class Client {
 	 * 
 	 * @param host the host name of the server
 	 * @param port the port of the server
-	 * @param world the local instance of the game world
+	 * @param loader the world loader that will load the world sent by the server
 	 * @param prevId the previous ID used when connecting to the server
 	 */
-	public Client(String host, int port, World world, int prevId){
-		this.world = world;
-		
+	public Client(String host, int port, WorldLoader loader, int prevId){
 		//Connect to the server
 		try {
 			connection = new Connection(new Socket(host, port));
@@ -93,10 +93,18 @@ public class Client {
 			
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
-			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID(), "Player");
-			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
-			localPlayer.getRoom().putInRoom(localPlayer);
-			world.addEntity(localPlayer);
+			
+			//Load the world
+			TextMessage worldData = (TextMessage) connection.readMessage();
+			loader.loadWorldFromString(worldData.getText());
+			world = loader.getWorld();
+			for (Player p : loader.getPlayers()){
+				world.addEntity(p);
+				p.setRoom(world.getRoomAt(p.getPosition()));
+				p.getRoom().putInRoom(p);
+			}
+			
+			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -115,10 +123,10 @@ public class Client {
 	 * 
 	 * @param host the host name of the server
 	 * @param port the port of the server
-	 * @param world the local instance of the game world
+	 * @param loader the world loader that will load the world sent by the server
 	 */
-	public Client(String host, int port, World world){
-		this(host, port, world, -1);
+	public Client(String host, int port, WorldLoader loader){
+		this(host, port, loader, -1);
 	}
 	
 	/**
