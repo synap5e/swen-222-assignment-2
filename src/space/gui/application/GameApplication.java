@@ -16,6 +16,7 @@ import space.network.ClientListener;
 import space.network.Server;
 import space.network.storage.MockStorage;
 import space.network.storage.WorldLoader;
+import space.serialization.JsonToModel;
 import space.serialization.ModelToJson;
 import space.world.World;
 import de.matthiasmann.twl.Event;
@@ -41,7 +42,6 @@ public class GameApplication implements ClientListener{
 	
 	Server server;
 	Client client;
-	World world;
 	GameRenderer gameRenderer;
 	
 	LWJGLRenderer renderer;
@@ -122,13 +122,8 @@ public class GameApplication implements ClientListener{
 	
 	public void startGame() throws LWJGLException, IOException{
 		
-		//Load World TODO Load from json
-		WorldLoader loader = new MockStorage();
-		loader.loadWorld("savepath");
-		world = loader.getWorld();
-		
 		//Create the client TODO use program arguments for host and port
-		client = new Client(serverAddress, Client.DEFAULT_PORT, world);
+		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel());
 		client.addListener(this);
 		
 		guiWrapper = new GUIWrapper(this);
@@ -146,7 +141,7 @@ public class GameApplication implements ClientListener{
         //Load Render Pipeline
 		gameRenderer = new GameRenderer(width, height);
 		
-		gameRenderer.loadModels(world);
+		gameRenderer.loadModels(client.getWorld());
 		
 		this.end = false;
 		this.state = 0;
@@ -181,7 +176,7 @@ public class GameApplication implements ClientListener{
 		client.update(delta);
 		
 		// update renderer
-		gameRenderer.renderTick(delta, client.getLocalPlayer(), world);
+		gameRenderer.renderTick(delta, client.getLocalPlayer(), client.getWorld());
 		
 		// update gui
 		headsUpDisplay.update(client);

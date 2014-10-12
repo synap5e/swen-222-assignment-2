@@ -20,10 +20,11 @@ import space.network.message.InteractionMessage;
 import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
-import space.network.message.PlayerRotatedMessage;
+import space.network.message.EntityRotationMessage;
 import space.network.message.ShutdownMessage;
+import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
-import space.network.message.sync.SyncMessage;
+import space.network.storage.WorldLoader;
 import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
@@ -78,12 +79,10 @@ public class Client {
 	 * 
 	 * @param host the host name of the server
 	 * @param port the port of the server
-	 * @param world the local instance of the game world
+	 * @param loader the world loader that will load the world sent by the server
 	 * @param prevId the previous ID used when connecting to the server
 	 */
-	public Client(String host, int port, World world, int prevId){
-		this.world = world;
-		
+	public Client(String host, int port, WorldLoader loader, int prevId){
 		//Connect to the server
 		try {
 			connection = new Connection(new Socket(host, port));
@@ -93,10 +92,18 @@ public class Client {
 			
 			//Create the local player, using the ID supplied by the server
 			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
-			localPlayer = new Player(new Vector2D(0, 0), joinConfirmation.getPlayerID(), "Player");
-			localPlayer.setRoom(world.getRoomAt(localPlayer.getPosition()));
-			localPlayer.getRoom().putInRoom(localPlayer);
-			world.addEntity(localPlayer);
+			
+			//Load the world
+			TextMessage worldData = (TextMessage) connection.readMessage();
+			loader.loadWorldFromString(worldData.getText());
+			world = loader.getWorld();
+			for (Player p : loader.getPlayers()){
+				world.addEntity(p);
+				p.setRoom(world.getRoomAt(p.getPosition()));
+				p.getRoom().putInRoom(p);
+			}
+			
+			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -115,10 +122,10 @@ public class Client {
 	 * 
 	 * @param host the host name of the server
 	 * @param port the port of the server
-	 * @param world the local instance of the game world
+	 * @param loader the world loader that will load the world sent by the server
 	 */
-	public Client(String host, int port, World world){
-		this(host, port, world, -1);
+	public Client(String host, int port, WorldLoader loader){
+		this(host, port, loader, -1);
 	}
 	
 	/**
@@ -383,8 +390,8 @@ public class Client {
 		localPlayer.moveLook(mouseDelta);
 		
 		//Broadcast change to server
-		if (mouseDelta.sqLen() > 0){
-			connection.sendMessage(new PlayerRotatedMessage(localPlayer.getID(), mouseDelta));
+		if (mouseDelta.sqLen() > 0.01){
+			connection.sendMessage(new EntityRotationMessage(localPlayer.getID(), localPlayer.getXRotation(), localPlayer.getYRotation()));
 		}
 
 		//Deal with player movement
@@ -478,7 +485,7 @@ public class Client {
 		public void run() {
 			try {
 				while (stillAlive){
-					if (connection.hasMessage()){
+					while (connection.hasMessage()){
 						Message message = connection.readMessage();
 						
 						//Ensure the world is able to be modified
@@ -493,17 +500,14 @@ public class Client {
 							} else if (message instanceof EntityMovedMessage){
 								handleMove((EntityMovedMessage) message);
 							//Rotate remote player
-							} else if (message instanceof PlayerRotatedMessage){
-								handlePlayerLook((PlayerRotatedMessage) message);
+							} else if (message instanceof EntityRotationMessage){
+								handlePlayerLook((EntityRotationMessage) message);
 							//Make player jump
 							} else if (message instanceof JumpMessage){
 								handlePlayerJump((JumpMessage) message);
 							//Make player interact with entity
 							} else if (message instanceof InteractionMessage){
 								handleInteraction((InteractionMessage) message);
-							//Sync the world
-							} else if (message instanceof SyncMessage){
-								((SyncMessage) message).applyTo(world);
 							//Drop a pickup from a player
 							} else if (message instanceof DropPickupMessage){
 								handleDrop((DropPickupMessage) message);
@@ -520,6 +524,12 @@ public class Client {
 								System.out.println(connection.readMessage());
 							}
 						}
+					}
+					
+					//Sleep, iterating over the loop roughly 60 times a second
+					try {
+						Thread.sleep(17);
+					} catch (InterruptedException e) {
 					}
 				}
 			} catch (IOException e){
@@ -589,9 +599,10 @@ public class Client {
 		 * 
 		 * @param playerRotated the message containing the information about the rotation
 		 */
-		private void handlePlayerLook(PlayerRotatedMessage playerRotated){
+		private void handlePlayerLook(EntityRotationMessage playerRotated){
 			Player p = (Player) world.getEntity(playerRotated.getID());
-			p.moveLook(playerRotated.getDelta());
+			p.setXRotation(playerRotated.getXRotation());
+			p.setYRotation(playerRotated.getYRotation());
 		}
 		
 		/**
