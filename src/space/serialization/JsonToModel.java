@@ -36,7 +36,6 @@ public class JsonToModel implements WorldLoader {
 	MyJsonObject jsonObj;
 	Set<Entity> entities = new HashSet<Entity>();
 	Set<Room> rooms = new HashSet<Room>();
-	List<Door> doors = new ArrayList<Door>();
 	List<Key> keys = new ArrayList<Key>();
 	MyJsonList buttonsJsonObjects = new MyJsonList();
 
@@ -76,7 +75,7 @@ public class JsonToModel implements WorldLoader {
 		MyJsonList doorJsonObjects = json.getMyJsonList("doors");
 		for (int i = 0; i < doorJsonObjects.getSize(); i++) {
 			MyJsonObject d = doorJsonObjects.getMyJsonObject(i);
-			doors.add(loadDoor(d));
+			entities.add(loadDoor(d));
 		}
 		
 		for(int i=0;i<buttonsJsonObjects.getSize();i++){
