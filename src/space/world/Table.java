@@ -21,7 +21,7 @@ public class Table extends Stationary {
 
 	@Override
 	public float getHeight() {
-		return 1;
+		return 3;
 	}
 
 	@Override

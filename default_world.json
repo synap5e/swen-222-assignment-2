@@ -36,6 +36,60 @@
          "state":"CLOSED",
          "locked":true,
          "key": 51.0
+      },
+      {  
+         "elevation":0.0,
+         "canInteract":true,
+         "isOneWay":false,
+         "description":"Door to the Teleporter Bay",
+         "room1Wall":2.0,
+         "type":"Door",
+         "room1":3.0,
+         "room2":4.0,
+         "amtOpen":0.0,
+         "name":"Door",
+         "room2Wall":0.0,
+         "position":[ 10.0, 60.0 ],
+         "id": 22.0,
+         "state":"CLOSED",
+         "locked":false,
+         "key": -1.0
+      },
+      {  
+         "elevation":0.0,
+         "canInteract":true,
+         "isOneWay":false,
+         "description":"Supply closet door",
+         "room1Wall":0.0,
+         "type":"Door",
+         "room1":3.0,
+         "room2":5.0,
+         "amtOpen":0.0,
+         "name":"Door",
+         "room2Wall":2.0,
+         "position":[ -10.0, 40.0 ],
+         "id": 23.0,
+         "state":"CLOSED",
+         "locked":false,
+         "key": -1.0
+      },
+      {  
+         "elevation":0.0,
+         "canInteract":true,
+         "isOneWay":false,
+         "description":"Supply closet door",
+         "room1Wall":1.0,
+         "type":"Door",
+         "room1":3.0,
+         "room2":6.0,
+         "amtOpen":0.0,
+         "name":"Door",
+         "room2Wall":5.0,
+         "position":[ 0.0, 80.0 ],
+         "id": 24.0,
+         "state":"CLOSED",
+         "locked":false,
+         "key": -1.0
       }
    ],
    "rooms":[  
@@ -120,7 +174,70 @@
          "description":"A dim dark hallway. Use [F] to toggle your flashlight.",
          "id": 3.0,
          "door ids":[  
-            21.0
+            21.0,
+            22.0,
+            23.0,
+            24.0
+         ]
+      },
+      {  
+         "contains":[  
+         ],
+         "Room Shape":{  
+            "points":[  
+               [  10.0,  70.0 ],
+               [  50.0,  70.0 ],
+               [  50.0,  30.0 ],
+               [  10.0,  30.0 ]
+               
+            ]
+         },
+         "Light":[ 0.4, 0.4, 0.1 ],
+         "description":"Teleporter Bay",
+         "id": 4.0,
+         "door ids":[  
+            22.0
+         ]
+      },
+      {  
+         "contains":[  
+         ],
+         "Room Shape":{  
+            "points":[  
+               [ -30.0,  70.0 ],
+               [ -10.0,  70.0 ],
+               [ -10.0,  30.0 ],
+               [ -30.0,  30.0 ]
+               
+            ]
+         },
+         "Light":[ 0.5, 0.1, 0.1 ],
+         "description":"A supply closet",
+         "id": 5.0,
+         "door ids":[  
+            23.0
+         ]
+      },
+      {  
+         "contains":[  
+         ],
+         "Room Shape":{  
+            "points":[  
+               [ -20.0,  160.0 ],
+               [  20.0,  160.0 ],
+               [  40.0,  140.0 ],
+               [  40.0,  100.0 ],
+               [  20.0,  80.0 ],
+               [ -20.0,  80.0 ],
+               [ -40.0,  100.0 ],
+               [ -40.0,  140.0 ]
+            ]
+         },
+         "Light":[ 0.5, 0.3, 0.3 ],
+         "description":"Weapons Testing",
+         "id": 6.0,
+         "door ids":[  
+            24.0
          ]
       }
    ],

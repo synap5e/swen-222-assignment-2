@@ -59,7 +59,7 @@ public class Key extends NonStationary implements Pickup {
 	@Override
 	public float getHeight() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override

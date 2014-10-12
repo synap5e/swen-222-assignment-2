@@ -212,50 +212,25 @@ public class Client {
 				world.update(delta);
 				updatePlayer(delta);
 				
-				//TODO: Tempory code to test getViewedEntity() works for doors
-				/*if (Keyboard.isKeyDown(Keyboard.KEY_E)){
+				//TODO: Tempory code for rifling
+				if (Keyboard.isKeyDown(Keyboard.KEY_R)){
 					if (!interact){
 						interact = true;
 						Entity viewed = getViewedEntity();
-						if (viewed != null){
-							interactWith(viewed);
-							
-							if (viewed instanceof Container){
-								Container c = (Container) viewed;
-								if (c.isOpen()){
-									if (c.getItemsContained().size() > 0){
-										transfer((Entity) c.getItemsContained().get(0), c, localPlayer);
-									} else if (localPlayer.getInventory().size() > 0){
-										transfer((Entity) localPlayer.getInventory().get(0), localPlayer, c);
-									}
+						if (viewed instanceof Container){
+							Container c = (Container) viewed;
+							if (c.isOpen()){
+								if (c.getItemsContained().size() > 0){
+									transfer((Entity) c.getItemsContained().get(0), c, localPlayer);
+								} else if (localPlayer.getInventory().size() > 0){
+									transfer((Entity) localPlayer.getInventory().get(0), localPlayer, c);
 								}
 							}
 						}
 					}
 				} else {
 					interact = false;
-				}*/
-				
-				//TODO: Tempory code to test dropping entities
-				/*if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
-					List<Pickup> inv = localPlayer.getInventory();
-					if (inv.size() > 0){
-						for (Pickup p : inv){
-							drop((Entity) p);
-							break;
-						}
-					}
-				}*/
-				
-				//TODO: Temp code for toggle torch
-				/*if (Keyboard.isKeyDown(Keyboard.KEY_F)){
-					if (!torch){
-						localPlayer.setTorch(!localPlayer.isTorchOn());
-						torch = true;
-					}
-				} else {
-					torch = false;
-				}*/
+				}
 			}
 		} catch (IOException e) {
 			shutdown();
@@ -271,31 +246,46 @@ public class Client {
 	public Entity getViewedEntity(){
 		Vector3D look = localPlayer.getLookDirection();
 		Vector2D pos = localPlayer.getPosition();
-		float distance = -localPlayer.getEyeHeight()/look.getY();
-		
-		//If the floor location is in front of the player
-		if (distance >= 0){
-			Vector2D locationOnFloor = new Vector2D(pos.getX()+look.getX()*distance, pos.getY()+look.getZ()*distance);
-			
-			Entity viewed = null;
-			float closest = Float.MAX_VALUE;
-			
-			//Find the closest entity to the floor location
-			for (Entity e : localPlayer.getRoom().getEntities()){
-				float distanceBetween = e.getPosition().sub(locationOnFloor).sqLen();
-				if(distanceBetween < closest && distanceBetween < e.getCollisionRadius()*e.getCollisionRadius()){
-					viewed = e;
-					closest = distanceBetween;
-				}
-			}
-
-			if (viewed != null) return viewed;
-		}
-		
-		//No entity on floor so check doors
 		
 		//Create a line of sight from the player
 		Segment2D lineOfSight = new Segment2D(pos, pos.add(new Vector2D(look.getX()*10, look.getZ()*10)));
+		
+		float closest = Float.MAX_VALUE;
+		Entity viewed = null;
+		for (Entity e : localPlayer.getRoom().getEntities()){
+			if (e == localPlayer) continue;
+			
+			//Get the 3D vector along the floor that is the displacement
+			Vector2D to = e.getPosition().sub(localPlayer.getPosition());
+			Vector3D towards = new Vector3D(to.getX(), 0, to.getY()).normalized();
+			
+			//Find the cross section of the entity perpendicular to the player 
+			Vector3D side =  towards.cross(new Vector3D(0, 1, 0));
+			Vector2D sideways = new Vector2D(side.getX(), side.getZ()).normalized().mul(e.getCollisionRadius());
+			Segment2D face = new Segment2D(e.getPosition().sub(sideways), e.getPosition().add(sideways));
+			
+			//Skip if the player isn't looking at the entity
+			if (!face.intersects(lineOfSight)) continue;
+			
+			//Get the intersection
+			Vector2D intersection = face.getIntersection(lineOfSight);
+			
+			//Check the player was looking vertically at the entity
+			float t = (intersection.getX()-pos.getX())/look.getX();
+			float y = localPlayer.getEyeHeight()+look.getY()*t;
+			if (y < e.getElevation() || y > e.getElevation()+e.getHeight()) continue;
+			
+			//If that entity is the closest, the player must be looking at it
+			float distanceBetween = e.getPosition().sub(intersection).sqLen();
+			if (distanceBetween < closest){
+				viewed = e;
+				closest = distanceBetween;
+			}
+		}
+		//Return if an entity was found
+		if (viewed != null) return viewed;
+		
+		//No entity within the room so check doors
 		
 		//For each wall
 		for (ViewableWall w : localPlayer.getRoom().getWalls()){
@@ -365,6 +355,7 @@ public class Client {
 	
 	public void transfer(Entity pickup, Container from, Player to){
 		if (from.getItemsContained().contains(pickup)){
+			System.out.println("test");
 			from.removeContainedItem(pickup);
 			to.pickup(pickup);
 
