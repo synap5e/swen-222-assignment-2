@@ -16,6 +16,7 @@ import org.json.simple.parser.ParseException;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.storage.WorldLoader;
+import space.world.Bullet;
 import space.world.Button;
 import space.world.Chair;
 import space.world.Chest;
@@ -40,6 +41,7 @@ public class JsonToModel implements WorldLoader {
 	Set<Room> rooms = new HashSet<Room>();
 	List<Key> keys = new ArrayList<Key>();
 	MyJsonList buttonsJsonObjects = new MyJsonList();
+	MyJsonList bulletsJsonObjects = new MyJsonList();
 
 	@Override
 	public void loadWorld(String savePath) {
@@ -84,12 +86,42 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
 			loadButton(b);
 		}
+		
+		for(int i=0;i<bulletsJsonObjects.getSize();i++){
+			MyJsonObject b = bulletsJsonObjects.getMyJsonObject(i);
+			loadBullet(b);
+		}
+		
+		
 		for (Key key : keys){
 			if (!entities.contains(key)){
 				entities.add(key);
 			}
 		}
+		
+		
 		return new World(entities, rooms);
+	}
+
+	private void loadBullet(MyJsonObject b) {
+		int id = (int) b.getNumber("id");
+		Vector2D position = loadPoint(b.getMyJsonList("position"));
+		float elevation = (float) b.getNumber("elevation");
+		Vector3D velocity = loadVector3D(b.getMyJsonList("velocity"));
+		Room room = null;
+		Room roomIn = null;
+		for(Room r:rooms){
+			Double RoomId = (double) r.getID();
+			if(b.getNumber("RoomId")==RoomId){
+				room=r;
+			}
+			if(b.getNumber("roomBulletIsIn")==RoomId){
+				roomIn = r;
+			}
+		}
+		Bullet bullet = new Bullet(position,id,elevation,room,velocity);
+		roomIn.putInRoom(bullet);
+		entities.add(bullet);
 	}
 
 	@Override
@@ -247,6 +279,9 @@ public class JsonToModel implements WorldLoader {
 					Table t = new Table(position, id, elevation,description,name);
 					contained.add(t);
 					entities.add(t);
+				}
+				else if (type.equals("Bullet")){
+					bulletsJsonObjects.add(e);
 				}
 			}
 		}

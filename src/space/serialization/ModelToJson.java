@@ -13,6 +13,7 @@ import space.math.ConcaveHull;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.storage.WorldSaver;
+import space.world.Bullet;
 import space.world.Button;
 import space.world.Chest;
 import space.world.Container;
@@ -42,7 +43,7 @@ import space.world.World;
 public class ModelToJson implements WorldSaver {
 	MyJsonList listOfRooms;
 	MyJsonList listOfPlayers;
-	MyJsonList listofDoors;
+	MyJsonList listOfDoors;
 	MyJsonList listOfKeys;
 
 	/**
@@ -99,7 +100,7 @@ public class ModelToJson implements WorldSaver {
 
 		listOfRooms = new MyJsonList();
 		listOfPlayers = new MyJsonList();
-		listofDoors = new MyJsonList();
+		listOfDoors = new MyJsonList();
 		listOfKeys = new MyJsonList();
 		
 		
@@ -119,9 +120,9 @@ public class ModelToJson implements WorldSaver {
 			for (List<Door> d : doors) {
 				for (Door dr : d) {
 					boolean alreadyIn = false;
-					if (listofDoors.getSize() != 0) {
-						for (int i = 0; i < listofDoors.getSize(); i++) {
-							MyJsonObject door = listofDoors.getMyJsonObject(i);
+					if (listOfDoors.getSize() != 0) {
+						for (int i = 0; i < listOfDoors.getSize(); i++) {
+							MyJsonObject door = listOfDoors.getMyJsonObject(i);
 							double one = door.getNumber("id");
 							double two = dr.getID();
 							if (one == two) {
@@ -130,13 +131,13 @@ public class ModelToJson implements WorldSaver {
 						}
 					}
 					if (!alreadyIn) {
-						listofDoors.add(constructEntity(dr, null));
+						listOfDoors.add(constructEntity(dr, null));
 					}
 				}
 			}
 		}
 
-		fileobject.put("doors", listofDoors);
+		fileobject.put("doors", listOfDoors);
 		fileobject.put("players", listOfPlayers);
 		fileobject.put("keys", listOfKeys);
 		return fileobject;
@@ -242,8 +243,19 @@ public class ModelToJson implements WorldSaver {
 		else if (e instanceof Button) {
 			addFields((Button) e, object, room);
 		}
+		else if (e instanceof Bullet){
+			addFeilds((Bullet) e,object,room);
+		}
 		return object;
 	}
+
+	private void addFeilds(Bullet e, MyJsonObject object, Room room) {
+		object.put("velocity", construct3DVector(e.getVelocity()));
+		object.put("roomId",e.getRoom().getID());
+		object.put("roomBulletIsIn", room.getID());
+		
+	}
+
 
 	private MyJsonList constructHeldItems(List<Pickup> itemsHeld) {
 		MyJsonList items = new MyJsonList();
