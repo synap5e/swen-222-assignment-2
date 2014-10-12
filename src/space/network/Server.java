@@ -91,6 +91,11 @@ public class Server {
 		stillAlive = true;
 		connectionHandler = new Thread(new ConnectionHandler());
 		
+		//Make sure not to have the default world overwritten
+		if (savePath.equals("default_world")){
+			savePath += "2";
+		}
+		
 		//Load the World
 		try {
 			loader.loadWorld(savePath);
