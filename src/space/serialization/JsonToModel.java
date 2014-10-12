@@ -165,10 +165,7 @@ public class JsonToModel implements WorldLoader {
 		boolean canInteract = d.getBoolean("canInteract");
 		Key key = null;
 		for (Key k : keys) {
-			if(d.getString("key").equals("null")){
-				key = null;
-			}
-			else if (k.getID() == d.getNumber("key")) {
+			if (k.getID() == d.getNumber("key")) {
 				key = k;
 			}
 		}
@@ -257,7 +254,6 @@ public class JsonToModel implements WorldLoader {
 		} 
 		else if (o.getString("name").equals("Chest")) {
 			Key k = null;
-			if(!(o.getString("keyId").equals("null"))){
 				for(Key key:keys){
 					Double keyid = (double) key.getID();
 					if(keyid.equals(o.getNumber("keyId"))){
@@ -265,7 +261,7 @@ public class JsonToModel implements WorldLoader {
 					}
 
 				}
-			}
+			
 			Chest c = new Chest(position, id, elevation, description, name,isLocked,k,isOpen, pickup);
 			return c;
 		}

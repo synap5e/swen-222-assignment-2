@@ -218,7 +218,7 @@ public class ModelToJson implements WorldSaver {
 
 	private MyJsonObject constructEntity(Entity e, Room room) {
 		MyJsonObject object = new MyJsonObject();
-		object.put("type", e.getClass().toString());
+		object.put("type", e.getClass().getSimpleName());
 		object.put("position", constructPoint(e.getPosition()));
 		object.put("id", e.getID());
 		object.put("elevation", e.getElevation());
@@ -296,10 +296,10 @@ public class ModelToJson implements WorldSaver {
 		object.put("room2Wall", room2Wall);
 		object.put("isOneWay", door.isOneWay());
 		if(door.getKey()!=null){
-		object.put("key", door.getKey().getID());
+			object.put("key", door.getKey().getID());
 		}
 		else{
-			object.put("key", "null");
+			object.put("key", -1);
 		}
 		object.put("state", door.getState());
 		object.put("locked", door.isLocked());
@@ -316,7 +316,7 @@ public class ModelToJson implements WorldSaver {
 			object.put("keyId", e.getKey().getID());
 			}
 			else {
-				object.put("keyId", "null");
+				object.put("keyId", -1);
 			}
 		}
 	}
