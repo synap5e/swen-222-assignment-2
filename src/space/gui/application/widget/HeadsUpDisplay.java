@@ -11,7 +11,6 @@ import space.world.Entity;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.Label;
-import de.matthiasmann.twl.RadialPopupMenu;
 
 public class HeadsUpDisplay extends NestedWidget {
 	
@@ -102,21 +101,7 @@ public class HeadsUpDisplay extends NestedWidget {
         viewPrompt.setPosition((getWidth() - viewPrompt.getWidth()) / 2, y);
     }
 
-	RadialPopupMenu createRadialMenu() {
-        RadialPopupMenu rpm = new RadialPopupMenu(this);
-        for(int i=0 ; i<10 ; i++) {
-            final int idx = i;
-            rpm.addButton("star", new Runnable() {
-                public void run() {
-                    roomLabel.setText("Selected " + idx);
-                }
-            });
-        }
-        return rpm;
-    }
-
 	public void update(Client client) {
-		
 		updateLabels(client);
 		
 		updateInventory(client);
@@ -128,8 +113,6 @@ public class HeadsUpDisplay extends NestedWidget {
 		
 	}
 	
-	
-
 	private void updateLabels(Client client) {
 		if(roomLabel.getText() != client.getLocalPlayer().getRoom().getDescription()){
 			roomLabel.setText(client.getLocalPlayer().getRoom().getDescription());

@@ -8,7 +8,7 @@ import space.world.Entity;
 import space.world.Pickup;
 import de.matthiasmann.twl.Event;
 
-public class GameController extends NestedWidget{
+public class GameController extends GUIWrapper {
 	
 	KeyBinding keyBinding;
 
@@ -20,9 +20,8 @@ public class GameController extends NestedWidget{
 
     @Override
     protected void layout() {
-
+    	super.layout();
     }
-    
 
     @Override
     protected boolean handleEvent(Event evt) {

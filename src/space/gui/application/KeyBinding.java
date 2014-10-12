@@ -3,6 +3,7 @@ package space.gui.application;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import de.matthiasmann.twl.Event;
 
@@ -54,7 +55,7 @@ public class KeyBinding {
 		actionMap.put(action, key);
 	}
 	
-	protected void changeBinding(int key, String action){
+	public void changeBinding(int key, String action){
 		String previousAction = keyMap.get(key);
 		int previousKey = actionMap.get(action);
 		
@@ -78,5 +79,13 @@ public class KeyBinding {
 
 	public String getKeyName(String action) {
 		return Event.getKeyNameForCode(getKey(action));
+	}
+	
+	public String getKeyName(int key) {
+		return Event.getKeyNameForCode(key);
+	}
+
+	public Set<Map.Entry<String, Integer>> getActionSet() {
+		return Collections.unmodifiableSet(actionMap.entrySet());
 	}
 }

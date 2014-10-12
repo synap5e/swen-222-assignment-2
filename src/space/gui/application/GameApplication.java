@@ -1,6 +1,8 @@
 package space.gui.application;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 
 import java.io.IOException;
 
@@ -10,8 +12,12 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
+import space.gui.application.widget.GUIWrapper;
 import space.gui.application.widget.GameController;
 import space.gui.application.widget.HeadsUpDisplay;
+import space.gui.application.widget.IngameMenu;
+import space.gui.application.widget.KeyEntry;
+import space.gui.application.widget.MainMenu;
 import space.gui.pipeline.GameRenderer;
 import space.network.Client;
 import space.network.ClientListener;
@@ -20,8 +26,8 @@ import space.network.storage.MockStorage;
 import space.network.storage.WorldLoader;
 import space.serialization.ModelToJson;
 import space.world.World;
-import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.GUI;
+import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
 
@@ -33,10 +39,10 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 
 public class GameApplication implements ClientListener{
-	protected static final int QUIT = 0;
+	public static final int QUIT = 0;
 	
-	protected static final int SINGLEPLAYER = 1;
-	protected static final int MAINMENU = 1;
+	public static final int SINGLEPLAYER = 1;
+	public static final int MAINMENU = 1;
 	
 	public static final int MULTIPLAYER = 2;
 	
@@ -63,9 +69,10 @@ public class GameApplication implements ClientListener{
 	IngameMenu ingameMenu;
 	
 	String serverAddress;
+	String saveName;
 	
 	KeyBinding keyBinding;
-	
+
 	/**
 	 * Creates a new Game Application window of the given width and height.
 	 * This class allows exceptions from the various game components to bubble through.
@@ -156,7 +163,7 @@ public class GameApplication implements ClientListener{
 		// Requested action
 		switch(state){
 			case SINGLEPLAYER:
-				server = new Server(Client.DEFAULT_HOST, Client.DEFAULT_PORT, new MockStorage(), new ModelToJson(), "temp");
+				server = new Server(Client.DEFAULT_HOST, Client.DEFAULT_PORT, new MockStorage(), new ModelToJson(), saveName);
 			case MULTIPLAYER:
 				startGame();
 			default:
@@ -184,11 +191,11 @@ public class GameApplication implements ClientListener{
 		gameController = new GameController(this);
 		
 		//Load GUI
-		headsUpDisplay = new HeadsUpDisplay(this);
-		gameController.add(headsUpDisplay);
-		
 		ingameMenu = new IngameMenu(this);
-		gameController.add(ingameMenu);
+		gameController.insertChild(ingameMenu, 0);
+		
+		headsUpDisplay = new HeadsUpDisplay(this);
+		gameController.insertChild(headsUpDisplay, 0);
 		
 		gui.setRootPane(gameController);
 		gui.reapplyTheme();
@@ -361,6 +368,18 @@ public class GameApplication implements ClientListener{
 	
 	public KeyBinding getKeyBinding(){
 		return keyBinding;
+	}
+
+	public void captureKey(KeyEntry keyEntry) {
+		Widget root = gui.getRootPane();
+
+		if(root instanceof GUIWrapper){
+			((GUIWrapper) root).captureKey(keyEntry);
+		}
+	}
+
+	public void setupSingleplayer(String text) {
+		this.saveName = text;
 	}
 	
 }
