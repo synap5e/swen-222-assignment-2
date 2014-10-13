@@ -108,6 +108,7 @@ public class ModelToJson implements WorldSaver {
 		listOfPlayers = new MyJsonList();
 		listOfDoors = new MyJsonList();
 		listOfKeys = new MyJsonList();
+		listOfBeams = new MyJsonList();
 		
 		
 		MyJsonObject fileobject = new MyJsonObject();
@@ -169,13 +170,21 @@ public class ModelToJson implements WorldSaver {
 		r.put("Room Shape", constructRoomShape(room.getRoomShape()));
 		r.put("contains", constructContains(room));
 		r.put("door ids", constructDoorIds(room.getAllDoors()));
-		r.put("beams", constructBeams(room.getBeams()));
+		r.put("beams", constructBeams(room.getBeams(),room));
 		return r;
 	}
 	
-	private MyJsonList constructBeams(List<Beam> beams) {
+	private MyJsonList constructBeams(List<Beam> beams, Room room) {
 		MyJsonList beamsInRoom = new MyJsonList();
-		
+		for(Beam b:beams){
+			MyJsonObject beam = new MyJsonObject();
+			beam.put("position",constructPoint(b.getPosition()));
+			beam.put("id", b.getID());
+			beam.put("elevation", b.getElevation());
+			beam.put("beamDirection",construct3DVector(b.getBeamDir()));
+			beam.put("turret",b.getTurret().getID());
+			beam.put("roomBeamIsIn",room.getID());
+		}
 		return beamsInRoom;
 	}
 
@@ -284,7 +293,6 @@ public class ModelToJson implements WorldSaver {
 		object.put("shutDown",e.isShutDown());
 		object.put("strategy", constructStrategy(e.getStrategy()));
 		object.put("roomId",e.getRoom().getID());
-		object.put("roomTurretIsIn", room.getID());
 		
 	}
 
@@ -292,7 +300,7 @@ public class ModelToJson implements WorldSaver {
 		object.put("velocity", construct3DVector(e.getVelocity()));
 		object.put("teleportTo", constructPoint(e.getTeleportTo()));
 		object.put("roomId",e.getRoom().getID());
-		object.put("roomBulletIsIn", room.getID());
+		object.put("roomTeleportTo", room.getID());
 		
 	}
 
@@ -423,6 +431,7 @@ public class ModelToJson implements WorldSaver {
 		strategy.add(ts.getAngle());
 		strategy.add(ts.getBulletsShot());
 		strategy.add(constructPoint(ts.getTeleportTo()));
+		strategy.add(ts.getRoomTeleportTo().getID());
 		return strategy;
 	}
 

@@ -110,7 +110,8 @@
          "door ids":[  
             20.0,
             21.0
-         ]
+         ],
+         "beams":[]
       },
       {  
          "contains":[  
@@ -156,7 +157,8 @@
          "id": 2.0,
          "door ids":[  
             20.0
-         ]
+         ],
+         "beams":[]
       },
       {  
          "contains":[  
@@ -178,7 +180,8 @@
             22.0,
             23.0,
             24.0
-         ]
+         ],
+         "beams":[]
       },
       {  
          "contains":[  
@@ -197,7 +200,8 @@
          "id": 4.0,
          "door ids":[  
             22.0
-         ]
+         ],
+         "beams":[]
       },
       {  
          "contains":[  
@@ -208,7 +212,6 @@
                [ -10.0,  70.0 ],
                [ -10.0,  30.0 ],
                [ -30.0,  30.0 ]
-               
             ]
          },
          "Light":[ 0.5, 0.1, 0.1 ],
@@ -216,10 +219,23 @@
          "id": 5.0,
          "door ids":[  
             23.0
-         ]
+         ],
+         "beams":[]
       },
       {  
          "contains":[  
+	         {  
+		         "elevation":0.0,
+		         "name":"Rouge AI",
+		         "description":"",
+		         "position":[ 0.0, 120.0 ],
+		         "id": 52.0,
+		         "type":"Turret",
+		         "shutDown":false,
+		         "roomId":6.0,
+		         "roomTurretIsIn":6.0,
+		         "strategy": [0.0, 0.0, [0.0,60.0], 3.0]
+		      }
          ],
          "Room Shape":{  
             "points":[  
@@ -238,7 +254,8 @@
          "id": 6.0,
          "door ids":[  
             24.0
-         ]
+         ],
+         "beams":[]
       }
    ],
    "players":[  

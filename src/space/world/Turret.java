@@ -69,12 +69,12 @@ public class Turret extends NonStationary{
 
 	@Override
 	public float getCollisionRadius() {
-		return 5;
+		return 2;
 	}
 
 	@Override
 	public float getHeight() {
-		return 5;
+		return 4.9f;
 	}
 
 	/**@return whether or not the turret has been shut down*/
