@@ -186,8 +186,7 @@ public class Player extends Character implements ViewablePlayer {
 
 	@Override
 	public float getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 10;
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import space.gui.pipeline.viewable.ViewableBeam;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableRoom;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -56,6 +55,10 @@ public class Room implements ViewableRoom{
 		return true;
 	} 
 
+	/**Whether or not something has collided with a Player in the room
+	 * @param collider the entity being checked 
+	 * @return the player which has been collided with. 
+	 * null if hasnt collided with any players in the room*/
 	public Player collidedWithPlayer(Entity collider){
 		for(Entity e : entities){
 			if(e instanceof Player && collider.getPosition().sub(e.getPosition()).len() <  e.getCollisionRadius() + collider.getCollisionRadius()){
@@ -65,6 +68,10 @@ public class Room implements ViewableRoom{
 		return null;
 	}
 	
+	/**Returns which player is the closest to a position
+	 * @param position the position that will be checked
+	 * @return the player closest to the position.
+	 * null if no players in room*/
 	public Player closestPlayer(Vector2D position){
 		Player closest = null;
 		for(Entity e : entities){
@@ -105,7 +112,8 @@ public class Room implements ViewableRoom{
 		return roomShape.contains(position);
 	}
 
-
+	/**@return whether or not the circle with the position as the centre 
+	 * will be fully contained in the room*/
 	public boolean contains(Vector2D position, float radius) {
 		return roomShape.contains(position,radius);
 	}
@@ -185,6 +193,7 @@ public class Room implements ViewableRoom{
 		return roomShape;
 	}
 
+	/**@return the entities inside this room*/
 	public Set<Entity> getEntities() {
 		return entities;
 	}

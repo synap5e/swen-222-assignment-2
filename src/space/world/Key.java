@@ -1,9 +1,9 @@
 package space.world;
 
 import space.math.Vector2D;
-
+/**Represents a Key which unlocks a door or container
+ * @author Maria Libunao*/
 public class Key extends NonStationary implements Pickup {
-	private static final float COL_RADIUS = 2.2f; // the collision radius
 
 	/**
 	 * Creates a new Key entity
@@ -32,14 +32,8 @@ public class Key extends NonStationary implements Pickup {
 	
 	@Override
 	public float getCollisionRadius() {
-		return COL_RADIUS;
+		return 2.2f;
 	}
-
-	/**
-	 * Returns the door the key unlocks
-	 * 
-	 * @return
-	 */
 
 	@Override
 	public boolean canInteract(){
@@ -58,7 +52,6 @@ public class Key extends NonStationary implements Pickup {
 	
 	@Override
 	public float getHeight() {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 

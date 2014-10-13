@@ -1,11 +1,11 @@
 package space.world;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import space.math.Vector2D;
 
+/**Represents a Character. Could be a player or some non-player character*/
 public abstract class Character extends NonStationary {
 	private List<Pickup> inventory = new ArrayList<Pickup>(); // items the character is carrying
 	private Room room; // the room the character is in

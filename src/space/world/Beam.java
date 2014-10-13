@@ -4,13 +4,24 @@ import space.gui.pipeline.viewable.ViewableBeam;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
+/**Represents a laser beam which has been shot out of a BeamShooter.
+ * It shuts off a turret if the beam collides with the turret. 
+ * 
+ * @author Maria Libunao
+ */
 public class Beam extends NonStationary implements ViewableBeam {
 	private float life = 3;
-	private Vector3D beamDir;
-	private Turret turret;
-	private boolean willHit;
+	private Vector3D beamDir; //the direction of the beam
+	private Turret turret; //the turret this is trying to shut down
+	private boolean willHit; //whether or not the beam will hit the turret
 	private static final float LIFE_DURATION = 400;
 	
+	/**Constructs a new beam
+	 * @param position 
+	 * @param id
+	 * @param elevation
+	 * @param beamDirection
+	 * @param t The turret the beam is trying to shut down*/
 	public Beam(Vector2D position, int id, float elevation,Vector3D beamDirection,Turret t) {
 		super(position, id, elevation, "", "");
 		beamDir = beamDirection.normalized();
@@ -18,6 +29,13 @@ public class Beam extends NonStationary implements ViewableBeam {
 		willHit();
 	}
 
+	/**Constructs a new beam
+	 * @param position 
+	 * @param id
+	 * @param elevation
+	 * @param beamDirection
+	 * @param t The turret the beam is trying to shut down
+	 * @param life the remaining amount of the beam's life*/
 	public Beam(Vector2D position, int id, float elevation,Vector3D beamDirection,Turret t, float life) {
 		super(position, id, elevation, "", "");
 		beamDir = beamDirection.normalized();
@@ -59,15 +77,25 @@ public class Beam extends NonStationary implements ViewableBeam {
 	public float getHeight() {
 		return 1;
 	}
+	
+	@Override
+	public String getType() {
+		return "Beam";
+	}
 
+	/**@return The direction of the beam*/
 	public Vector3D getBeamDir() {
 		return beamDir;
 	}
 
+	/**@return The turret the beam is trying to shut down*/
 	public Turret getTurret() {
 		return turret;
 	}
 	
+	/**Initialises the willHit field. 
+	 * willHit is whether or not the beam will hit the target turret.
+	 * It calculates this by checking if the direction collides with the turret's radius*/
 	private void willHit(){
 		Vector2D toTurret = getPosition().sub(turret.getPosition());
 		Vector2D vector = new Vector2D(beamDir.getX(), beamDir.getZ());
@@ -76,9 +104,6 @@ public class Beam extends NonStationary implements ViewableBeam {
 		willHit = toTurret.sub(projection).len()< turret.getCollisionRadius();
 	}
 
-	@Override
-	public String getType() {
-		return "Beam";
-	}
+	
 	
 }

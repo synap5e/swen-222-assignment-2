@@ -3,6 +3,7 @@ package space.world;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.math.Vector2D;
 
+/**Represents an item which has a position and elevation*/
 public abstract class Entity implements ViewableObject {
 	private Vector2D position;
 	private int id;

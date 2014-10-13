@@ -3,16 +3,26 @@ package space.world;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
+/**Represents an item which shoots beams. 
+ * It constantly rotates until it is stopped. Once stopped, it fires beams.*/
 public class BeamShooter extends NonStationary{
-	private float yRotation;
-	private Room room;
-	private Turret turret;
-	private boolean stopped = false;
-	private int beamsShot = 0;
+	private float yRotation = 0;
+	private Room room; //the room it is in
+	private Turret turret; //the turret this is trying to shut down
+	private boolean stopped = false; //whether it's been stopped from rotating 
+	private int beamsShot = 0; //to provide a unique id
 	private float readyToShoot = 1;
 	private static final float TURN_DURATION = 500;
 	private static final float SHOOT_INTERVAL = 500;
 	
+	/**Constructs a new BeamShooter
+	 * @param position
+	 * @param id
+	 * @param elevation
+	 * @param description
+	 * @param name
+	 * @param room The room this is in
+	 * @param turret The turret it's trying to shoot down*/
 	public BeamShooter(Vector2D position, int id, float elevation,
 			String description, String name, Room room, Turret turret) {
 		super(position, id, elevation, description, name);
@@ -20,6 +30,17 @@ public class BeamShooter extends NonStationary{
 		this.turret = turret;
 	}
 	
+	/**Constructs a new BeamShooter
+	 * @param position
+	 * @param id
+	 * @param elevation
+	 * @param description
+	 * @param name
+	 * @param room The room this is in
+	 * @param turret The turret it's trying to shoot down
+	 * @param yRotation
+	 * @param stopped whether it's been stopped from rotating 
+	 * @param beamsShot how many beams it has shot*/
 	public BeamShooter(Vector2D position, int id, float elevation,
 			String description, String name, Room room, Turret turret, float yRotation, boolean stopped, int beamsShot) {
 		super(position, id, elevation, description, name);
@@ -28,17 +49,6 @@ public class BeamShooter extends NonStationary{
 		this.stopped = stopped;
 		this.beamsShot = beamsShot;
 		this.turret = turret;
-	}
-	
-	
-	@Override
-	public float getAngle() {
-		return yRotation;
-	}
-	
-	@Override
-	public boolean canClip() {
-		return true;
 	}
 	
 	@Override
@@ -77,30 +87,41 @@ public class BeamShooter extends NonStationary{
 	public float getHeight() {
 		return 1;
 	}
-	
-	public float getyRotation() {
+
+	@Override
+	public float getAngle() {
 		return yRotation;
 	}
+	
+	@Override
+	public boolean canClip() {
+		return true;
+	}
 
+	/**@return the room the beamShooter is in*/
 	public Room getRoom() {
 		return room;
 	}
 
+	/**@return the turret this is trying to shut down*/
 	public Turret getTurret() {
 		return turret;
 	}
 
+	/**@return the number of beams this has shot so far*/
 	public int getBeamsShot() {
 		return beamsShot;
 	}
-
-	private void shoot(){
-		Vector2D lookDir = Vector2D.fromPolar(yRotation, 1);
-		room.addBeam(new Beam(getPosition(), getID()+1000+beamsShot++, getHeight() + getElevation(), new Vector3D(lookDir.getX(),0,lookDir.getY()), turret));
-	}
-
+	
 	@Override
 	public String getType() {
 		return "BeamShooter";
 	}
+
+	/**Creates a new beam and puts it in the room*/
+	private void shoot(){
+		Vector2D lookDir = Vector2D.fromPolar(yRotation, 1);
+		room.addBeam(new Beam(getPosition(), getID()+1000*beamsShot++, getHeight() + getElevation(), new Vector3D(lookDir.getX(),0,lookDir.getY()), turret));
+	}
+
 }
