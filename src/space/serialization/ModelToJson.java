@@ -249,18 +249,18 @@ public class ModelToJson implements WorldSaver {
 			addFields((Button) e, object, room);
 		}
 		else if (e instanceof Bullet){
-			addFeilds((Bullet) e,object,room);
+			addFields((Bullet) e,object,room);
 		}
 		else if (e instanceof Turret){
-			addFeilds((Turret) e,object,room);
+			addFields((Turret) e,object,room);
 		}
 		else if (e instanceof BeamShooter){
-			addFeilds((BeamShooter) e, object,room);
+			addFields((BeamShooter) e, object,room);
 		}
 		return object;
 	}
 
-	private void addFeilds(BeamShooter e, MyJsonObject object, Room room) {
+	private void addFields(BeamShooter e, MyJsonObject object, Room room) {
 		object.put("room", e.getRoom().getID());
 		object.put("turret", e.getTurret().getID());
 		object.put("yRotation", e.getAngle());
@@ -271,7 +271,7 @@ public class ModelToJson implements WorldSaver {
 	}
 
 
-	private void addFeilds(Turret e, MyJsonObject object, Room room) {
+	private void addFields(Turret e, MyJsonObject object, Room room) {
 		object.put("shutDown",e.isShutDown());
 		object.put("strategy", constructStrategy(e.getStrategy()));
 		object.put("roomId",e.getRoom().getID());
@@ -279,8 +279,9 @@ public class ModelToJson implements WorldSaver {
 		
 	}
 
-	private void addFeilds(Bullet e, MyJsonObject object, Room room) {
+	private void addFields(Bullet e, MyJsonObject object, Room room) {
 		object.put("velocity", construct3DVector(e.getVelocity()));
+		object.put("teleportTo", constructPoint(e.getTeleportTo()));
 		object.put("roomId",e.getRoom().getID());
 		object.put("roomBulletIsIn", room.getID());
 		
@@ -412,6 +413,7 @@ public class ModelToJson implements WorldSaver {
 		TurretStrategyImpl ts = (TurretStrategyImpl) s;
 		strategy.add(ts.getAngle());
 		strategy.add(ts.getBulletsShot());
+		strategy.add(constructPoint(ts.getTeleportTo()));
 		return strategy;
 	}
 

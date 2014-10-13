@@ -187,7 +187,8 @@ public class JsonToModel implements WorldLoader {
 	private TurretStrategyImpl createTurretStrategyImpl(MyJsonList strategy, Turret turret) {
 		float yRot = (float) strategy.getNumber(0);
 		int  bulletsShot = (int) strategy.getNumber(1);
-		return new TurretStrategyImpl(turret,yRot,bulletsShot);
+		Vector2D teleportTo = loadPoint(strategy.getMyJsonList(3));
+		return new TurretStrategyImpl(turret,yRot,bulletsShot,teleportTo);
 	}
 
 	private void loadBullet(MyJsonObject b) {
@@ -195,6 +196,7 @@ public class JsonToModel implements WorldLoader {
 		Vector2D position = loadPoint(b.getMyJsonList("position"));
 		float elevation = (float) b.getNumber("elevation");
 		Vector3D velocity = loadVector3D(b.getMyJsonList("velocity"));
+		Vector2D teleportTo = loadPoint(b.getMyJsonList("teleportTo"));
 		Room room = null;
 		Room roomIn = null;
 		for(Room r:rooms){
@@ -206,7 +208,7 @@ public class JsonToModel implements WorldLoader {
 				roomIn = r;
 			}
 		}
-		Bullet bullet = new Bullet(position,id,elevation,room,velocity);
+		Bullet bullet = new Bullet(position,id,elevation,room,velocity,teleportTo);
 		roomIn.putInRoom(bullet);
 		entities.add(bullet);
 	}
