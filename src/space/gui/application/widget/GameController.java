@@ -9,12 +9,12 @@ import space.world.Pickup;
 import de.matthiasmann.twl.Event;
 
 public class GameController extends GUIWrapper {
-	
+
 	KeyBinding keyBinding;
 
 	public GameController(GameApplication gameApplication){
 		super(gameApplication);
-		
+
 		this.keyBinding = gameApplication.getKeyBinding();
 	}
 
@@ -27,8 +27,8 @@ public class GameController extends GUIWrapper {
     protected boolean handleEvent(Event evt) {
     	boolean returnFlag = evt.isMouseEventNoWheel();
 
-        if(super.handleEvent(evt)) {
-            return returnFlag;
+        if(super.handleEvent(evt) || gameApplication.isInventoryVisible()) {
+            return true;
         }
 
     	if (evt.getType() == Event.Type.KEY_PRESSED) {
@@ -59,10 +59,11 @@ public class GameController extends GUIWrapper {
 	        case KeyBinding.ACTION_INTERACT:
 	        	gameApplication.getClient().interactWith(gameApplication.getClient().getViewedEntity());
 	        	break;
-	           
+
 	        case KeyBinding.ACTION_RIFLE:
+	        	gameApplication.setInventoryVisible(true);
 	        	break;
-	        	
+
 	        case KeyBinding.ACTION_DROP:
 				List<Pickup> inv = gameApplication.getClient().getLocalPlayer().getInventory();
 				if (inv.size() > 0){
@@ -72,11 +73,11 @@ public class GameController extends GUIWrapper {
 					}
 				}
 	        	break;
-	
+
 	        case KeyBinding.ACTION_TORCH:
 	        	gameApplication.getClient().getLocalPlayer().setTorch(!gameApplication.getClient().getLocalPlayer().isTorchOn());
 	        	break;
-	        	
+
 	        default:
 	     	   break;
 	    }
