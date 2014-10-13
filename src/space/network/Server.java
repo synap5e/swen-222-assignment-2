@@ -81,10 +81,6 @@ public class Server {
 			throw new RuntimeException(e);
 		}
 		
-		//Keep track of how to save the world
-		this.saver = saver;
-		this.savePath = savePath;
-		
 		//Create set of used IDs
 		usedIds = new HashSet<Integer>();
 		idGenerator = new Random();
@@ -98,10 +94,13 @@ public class Server {
 			savePath += "2";
 		}
 		
+		//Keep track of how to save the world
+		this.saver = saver;
+		this.savePath = savePath;
+		
 		//Load the World
 		try {
-			//loader.loadWorld(savePath);
-			loader.loadWorld("default_world");
+			loader.loadWorld(savePath);
 		} catch (Exception e){
 			//If something went wrong assume the file didn't exist
 			loader.loadWorld("default_world");
