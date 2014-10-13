@@ -16,6 +16,7 @@ import space.gui.application.widget.GUIWrapper;
 import space.gui.application.widget.GameController;
 import space.gui.application.widget.HeadsUpDisplay;
 import space.gui.application.widget.IngameMenu;
+import space.gui.application.widget.InventoryExchangeWidget;
 import space.gui.application.widget.InventoryWidget;
 import space.gui.application.widget.KeyEntry;
 import space.gui.application.widget.MainMenu;
@@ -23,11 +24,8 @@ import space.gui.pipeline.GameRenderer;
 import space.network.Client;
 import space.network.ClientListener;
 import space.network.Server;
-import space.network.storage.MockStorage;
-import space.network.storage.WorldLoader;
 import space.serialization.JsonToModel;
 import space.serialization.ModelToJson;
-import space.world.World;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
@@ -64,6 +62,7 @@ public class GameApplication implements ClientListener{
 	GUI gui;
 
 	GameController gameController;
+	InventoryExchangeWidget inventoryExchangeWidget;
 	InventoryWidget inventoryWidget;
 
 	HeadsUpDisplay headsUpDisplay;
@@ -195,7 +194,10 @@ public class GameApplication implements ClientListener{
 		headsUpDisplay = new HeadsUpDisplay(this);
 		gameController.insertChild(headsUpDisplay, 0);
 
-		inventoryWidget = new InventoryWidget(this);
+		inventoryExchangeWidget = new InventoryExchangeWidget(this);
+		gameController.add(inventoryExchangeWidget);
+		
+		inventoryWidget  = new InventoryWidget(this);
 		gameController.add(inventoryWidget);
 
 		gui.setRootPane(gameController);
@@ -383,13 +385,26 @@ public class GameApplication implements ClientListener{
 		this.saveName = text;
 	}
 
-	public void setInventoryVisible(boolean flag){
-		captureMouse(!flag);
-
-		if(flag){
-			inventoryWidget.update(getClient().getViewedEntity());
+	public void setInventoryExchangeVisible(boolean flag){
+		if(flag && inventoryExchangeWidget.update(getClient().getViewedEntity())){
+			captureMouse(false);
+			inventoryExchangeWidget.setVisible(true);
+			
+		} else {
+			captureMouse(true);
+			inventoryExchangeWidget.setVisible(false);
 		}
+	}
 
+	public boolean isInventoryExchangeVisible(){
+		return inventoryExchangeWidget.isVisible();
+	}
+	
+	public void setInventoryVisible(boolean flag){
+		if(flag){
+			inventoryWidget.update();
+		}
+		captureMouse(!flag);
 		inventoryWidget.setVisible(flag);
 	}
 

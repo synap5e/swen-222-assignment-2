@@ -101,7 +101,10 @@ public class IngameMenu extends NestedWidget{
 
 	@Override
 	protected boolean handleEvent(Event evt) {
-		return evt.isMouseEventNoWheel();
+		if(isVisible()){
+			return evt.isMouseEventNoWheel();
+		}
+		return super.handleEvent(evt);
 	}
 	
 	@Override

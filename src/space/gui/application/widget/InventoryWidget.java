@@ -5,109 +5,180 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.matthiasmann.twl.Event;
-import de.matthiasmann.twl.Label;
 import space.gui.application.GameApplication;
+import space.gui.application.widget.label.ItemDescriptionLabel;
+import space.gui.application.widget.label.ItemLabel;
 import space.world.Container;
 import space.world.Entity;
 import space.world.Pickup;
-import space.world.Player;
+import de.matthiasmann.twl.Label;
 
 public class InventoryWidget extends NestedWidget {
 
-	public final static String SUBMIT = "Close";
+	public final static String ACCEPT = "Drop";
+	public final static String CLOSE = "Cancel";
 
-	Label submit;
+	public final static int SPACING = 10;
+	public final static int PADDING = 30;
+	
+	public final static int COLUMN = 100;
+	public final static int PANEL = 300;
+	
+	Label accept;
+	Label cancel;
+	
+	Label playerName;
 
-	List<Label> items;
-	List<Label> descriptions;
+	List<ItemLabel> playerItems;
+	List<Label> playerDescriptions;
 
-	Set<Entity> selection;
+	ItemLabel selection;
 
-	public InventoryWidget(GameApplication gameApplication) {
+	public InventoryWidget(final GameApplication gameApplication) {
 		super(gameApplication);
 
-		this.items = new ArrayList<Label>();
-		this.descriptions = new ArrayList<Label>();
-		this.selection = new HashSet<Entity>();
+		playerItems = new ArrayList<ItemLabel>();
+		playerDescriptions = new ArrayList<Label>();
+
+		selection = null;
 
 		setVisible(false);
+		
+		playerName = new Label("Player");
+		playerName.setTheme("title");
+		add(playerName);
 
-		submit = new Label(){
+		accept = new Label(ACCEPT){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				submitChanges();
 			}
 		};
-		submit.setText(SUBMIT);
-		submit.setTheme("item");
-		add(submit);
+		accept.setTheme("item");
+		add(accept);
+		
+		cancel = new Label(CLOSE){
+			@Override
+			protected void handleClick(boolean doubleClick){
+				gameApplication.setInventoryVisible(false);
+			}
+		};
+		cancel.setTheme("item");
+		add(cancel);
 
+		updatePositions(gameApplication.getWidth() / 3, gameApplication.getHeight() / 2);
+		
 	}
 
 	@Override
-	public void layout(){
-
-	}
-
-	@Override
-    protected boolean handleEvent(Event evt) {
-		if(super.handleEvent(evt)){
-			return true;
+	protected void layout(){
+		super.layout();
+		
+		int x = startX;
+		int y = startY;
+		
+		playerName.adjustSize();
+		playerName.setPosition(x, y);
+		
+		y += playerName.getHeight() + SPACING;
+		x += PADDING;
+		
+		for(int i = 0; i != playerItems.size(); i++){
+			Label item = playerItems.get(i);
+			item.adjustSize();
+			item.setPosition(x, y);
+			
+			Label description = playerDescriptions.get(i);
+			description.adjustSize();
+			description.setPosition(x + COLUMN, y);
+			
+			y += item.getHeight() + SPACING;
 		}
+		
+		y += SPACING * 2;
+		x = startX;
+		
+		accept.adjustSize();
+		accept.setPosition(x, y);
+		
+		y += accept.getHeight() + SPACING;
+		
+		cancel.adjustSize();
+		cancel.setPosition(x, y);
+	}
 
-		if(evt.getKeyCode() == Event.KEY_ESCAPE){
-			System.out.println("sdf");
-			gameApplication.setInventoryVisible(false);
+
+	public void update(){
+		resetGUI();
+		resetLists();
+		
+		accept.setEnabled(false);
+		
+		for(Pickup pickup : gameApplication.getClient().getLocalPlayer().getInventory()){
+			generatePlayerLabels((Entity) pickup);
 		}
-
-		return true;
+		
 	}
-
-	public void update(Container from){
-		update(from.getItemsContained());
-	}
-
-	private void update(List<Pickup> pickups){
-		for(Label item : items){
+	
+	private void resetGUI(){
+		for(Label item : playerItems){
 			removeChild(item);
 		}
-
-		items.clear();
-		selection.clear();
-
-		for(Pickup pickup : pickups){
-			Entity entity = (Entity) pickup;
-
-			Label item = new Label();
-			items.add(item);
-			add(item);
-
-			Label description = new Label();
-			description.setText(entity.getDescription());
-			item.setTheme("description");
-			descriptions.add(description);
-			add(description);
+		
+		for(Label item : playerDescriptions){
+			removeChild(item);
 		}
 	}
+	
+	private void resetLists(){
+		playerItems.clear();
+		playerDescriptions.clear();
+		
+		selection = null;
+	}
+	
+	private void generatePlayerLabels(Entity entity){
+		Label description = new ItemDescriptionLabel(entity.getDescription());
+		playerDescriptions.add(description);
+		add(description);
+		
+		ItemLabel item = new ItemLabel(entity, description){
+			@Override
+			protected void handleClick(boolean doubleClick){
+				setSelected(!isSelected());
 
-	public void update(Entity entity) {
-		if(entity == null || !(entity instanceof Container)){
-			return;
-		}
+				select(this);
+				
+				updateAccept();
+				reapplyTheme();
+			}
 
-		update((Container) entity);
+		};
+		playerItems.add(item);
+		add(item);
 	}
 
-	public void addSelected(Entity entity) {
-		selection.add(entity);
-	}
-
-	public void removeSelected(Entity entity) {
-		selection.remove(entity);
+	public void updateAccept() {
+		accept.setEnabled(selection != null);
 	}
 
 	public void submitChanges(){
+		gameApplication.getClient().drop(selection.getEntity());
+		
 		gameApplication.setInventoryVisible(false);
+	}
+	
+
+	private void select(ItemLabel item) {
+		if(item == selection){
+			selection = null;
+		} else {
+			if(selection != null){
+				selection.setSelected(false);
+			}
+			selection = item;
+		}
+		
+		updateAccept();
 	}
 }

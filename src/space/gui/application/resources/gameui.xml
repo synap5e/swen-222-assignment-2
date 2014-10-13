@@ -93,7 +93,8 @@
     </fontDef>
 
     <fontDef name="font.menu" filename="font/font.fnt" color="#9F9F9F">
-        <fontParam if="hover" color="white"/>
+        <fontParam if="hover + ! disabled" color="white"/>
+        <fontParam if="disabled" color="#232323"/>
     </fontDef>
 
     <fontDef name="font.title" filename="font/code.fnt" color="white">
@@ -102,7 +103,7 @@
     <fontDef name="font.gametitle" filename="font/font.fnt" color="white">
     </fontDef>
 
-    <fontDef name="font.description" filename="font/font.fnt" color="#232323">
+    <fontDef name="font.description" filename="font/font.fnt" color="#9F9F9F">
     </fontDef>
 
     <inputMapDef name="-defaultInputMap">
@@ -296,7 +297,28 @@
         <theme name="item" ref="label">
             <param name="font"><font>font.menu</font></param>
         </theme>
+        <theme name="item-selected" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
+        <theme name="description" ref="label">
+            <param name="font"><font>font.description</font></param>
+        </theme>
+
+    </theme>
+
+    <!-- Inventory exchange theme -->
+    <theme name="inventoryexchangewidget" ref="-defaults">
+        <param name="background"><image>ingamemenu.background</image></param>
+        <theme name="title" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
         <theme name="item" ref="label">
+            <param name="font"><font>font.menu</font></param>
+        </theme>
+        <theme name="item-selected" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
+        <theme name="description" ref="label">
             <param name="font"><font>font.description</font></param>
         </theme>
 

@@ -27,12 +27,35 @@ public class GameController extends GUIWrapper {
     protected boolean handleEvent(Event evt) {
     	boolean returnFlag = evt.isMouseEventNoWheel();
 
-        if(super.handleEvent(evt) || gameApplication.isInventoryVisible()) {
+        if(super.handleEvent(evt)) {
             return true;
         }
 
     	if (evt.getType() == Event.Type.KEY_PRESSED) {
+    		
     		int keyCode = evt.getKeyCode();
+            
+            if(gameApplication.isInventoryExchangeVisible()){
+            	if(keyCode == Event.KEY_ESCAPE){
+    	        	gameApplication.setInventoryExchangeVisible(false);
+            	}
+            	return true;
+            }
+            
+            if(gameApplication.isInventoryVisible()){
+            	if(keyCode == Event.KEY_ESCAPE){
+    	        	gameApplication.setInventoryVisible(false);
+            	}
+            	return true;
+            }
+            
+            if(gameApplication.isMenuVisible()){
+            	if(keyCode == Event.KEY_ESCAPE){
+    	        	gameApplication.setMenuVisible(false);
+            	}
+            	return true;
+            }
+    		
     		if(keyBinding.containsKey(keyCode)){
     			fireAction(keyBinding.getAction(keyCode));
     			return returnFlag;
@@ -54,24 +77,18 @@ public class GameController extends GUIWrapper {
     private void fireAction(String action){
 	    switch (action) {
 	        case KeyBinding.ACTION_MENU:
-	     	   	gameApplication.setMenuVisible(!gameApplication.isMenuVisible());
+	            gameApplication.setMenuVisible(true);
 	        	break;
 	        case KeyBinding.ACTION_INTERACT:
 	        	gameApplication.getClient().interactWith(gameApplication.getClient().getViewedEntity());
 	        	break;
 
 	        case KeyBinding.ACTION_RIFLE:
-	        	gameApplication.setInventoryVisible(true);
+	        	gameApplication.setInventoryExchangeVisible(true);
 	        	break;
 
-	        case KeyBinding.ACTION_DROP:
-				List<Pickup> inv = gameApplication.getClient().getLocalPlayer().getInventory();
-				if (inv.size() > 0){
-					for (Pickup p : inv){
-						gameApplication.getClient().drop((Entity) p);
-						break;
-					}
-				}
+	        case KeyBinding.ACTION_INVENTORY:
+	        	gameApplication.setInventoryVisible(true);
 	        	break;
 
 	        case KeyBinding.ACTION_TORCH:
