@@ -73,7 +73,7 @@ public class Client {
 	/**
 	 * The list of listeners to be alerted of events
 	 */
-	public List<ClientListener> listeners;
+	private List<ClientListener> listeners;
 
 	private KeyBinding keyBinding;
 	
