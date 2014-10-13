@@ -48,12 +48,12 @@ public class Teleporter extends Stationary{
 	
 	@Override
 	public float getCollisionRadius() {
-		return 0;
+		return 3;
 	}
 	
 	@Override
 	public float getHeight() {
-		return 1;
+		return 5;
 	}
 	
 	/**@return the position where this teleporter telports players to*/

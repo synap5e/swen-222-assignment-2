@@ -50,7 +50,13 @@ public class ModelFlyweight {
 														new Vector3D(0.35f,0.35f,0.35f),
 														Material.bronze
 													));	
-		
+			models.put("Teleporter", new WavefrontModel(	new File("./assets/models/teapot.obj"),
+					new Vector3D(0, 0, 0),
+					new Vector3D(0, 90, 0), 0.5f,
+					new Vector3D(0.35f,0.35f,0.35f),
+					Material.bronze
+				));	
+			
 			models.put("Bullet", new BulletModel());
 
 			openChest = new WavefrontModel(			new File("./assets/models/chest.obj"),

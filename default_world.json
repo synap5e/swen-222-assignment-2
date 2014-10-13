@@ -185,6 +185,16 @@
       },
       {  
          "contains":[  
+         	{  
+		         "elevation":0.0,
+		         "name":"Telepad 9000",
+		         "description":"Aren't these the telepads that got recalled...",
+		         "position":[ 30.0, 40.0 ],
+		         "id": 53.0,
+		         "type":"Teleporter",
+		         "teleportstoPos":[ -20.0, 40.0],
+		         "canInteract":true
+		      }
          ],
          "Room Shape":{  
             "points":[  
