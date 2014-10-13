@@ -34,7 +34,7 @@
          "position":[ 0.0, 20.0 ],
          "id": 21.0,
          "state":"CLOSED",
-         "locked":false,
+         "locked":true,
          "key": 51.0
       },
       {  
