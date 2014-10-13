@@ -160,7 +160,7 @@ public class JsonToModel implements WorldLoader {
 		Room roomIn = null;
 		for(Room r : rooms){
 			Double RoomId = (double) r.getID();
-			if(t.getNumber("RoomId")==RoomId){
+			if(t.getNumber("roomId")==RoomId){
 				room = r;
 			}
 			if(t.getNumber("roomTurretIsIn")==RoomId){
@@ -170,7 +170,7 @@ public class JsonToModel implements WorldLoader {
 		
 		Turret turret = new Turret(position, id, elevation,description,name,room);
 		boolean shutDown = t.getBoolean("shutDown");
-		TurretStrategyImpl ts = createTurretStrategyImpl(t.getMyJsonList("Strategy"), turret);
+		TurretStrategyImpl ts = createTurretStrategyImpl(t.getMyJsonList("strategy"), turret);
 		turret.setStrategy(ts);
 		turrets.add(turret);
 		if(shutDown){
@@ -187,7 +187,7 @@ public class JsonToModel implements WorldLoader {
 	private TurretStrategyImpl createTurretStrategyImpl(MyJsonList strategy, Turret turret) {
 		float yRot = (float) strategy.getNumber(0);
 		int  bulletsShot = (int) strategy.getNumber(1);
-		Vector2D teleportTo = loadPoint(strategy.getMyJsonList(3));
+		Vector2D teleportTo = loadPoint(strategy.getMyJsonList(2));
 		return new TurretStrategyImpl(turret,yRot,bulletsShot,teleportTo);
 	}
 
