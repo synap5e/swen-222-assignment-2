@@ -7,7 +7,7 @@ import space.math.Vector3D;
 /** Represents a player in the game */
 public class Player extends Character implements ViewablePlayer {
 	private int points;
-	private final float reach = 5; // how far the player can reach
+	private final float reach = 8; // how far the player can reach
 	private float jumpTime = 0;
 	private float xRotation = 90;
 	private float yRotation = 100;
