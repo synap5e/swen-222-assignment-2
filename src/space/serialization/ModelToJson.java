@@ -169,13 +169,21 @@ public class ModelToJson implements WorldSaver {
 		r.put("Room Shape", constructRoomShape(room.getRoomShape()));
 		r.put("contains", constructContains(room));
 		r.put("door ids", constructDoorIds(room.getAllDoors()));
-		r.put("beams", constructBeams(room.getBeams()));
+		r.put("beams", constructBeams(room.getBeams(),room));
 		return r;
 	}
 	
-	private MyJsonList constructBeams(List<Beam> beams) {
+	private MyJsonList constructBeams(List<Beam> beams, Room room) {
 		MyJsonList beamsInRoom = new MyJsonList();
-		
+		for(Beam b:beams){
+			MyJsonObject beam = new MyJsonObject();
+			beam.put("position",constructPoint(b.getPosition()));
+			beam.put("id", b.getID());
+			beam.put("elevation", b.getElevation());
+			beam.put("beamDirection",construct3DVector(b.getBeamDir()));
+			beam.put("turret",b.getTurret().getID());
+			beam.put("roomBeamIsIn",room.getID());
+		}
 		return beamsInRoom;
 	}
 
