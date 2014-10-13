@@ -13,6 +13,7 @@ import space.math.ConcaveHull;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.storage.WorldSaver;
+import space.world.BeamShooter;
 import space.world.Bullet;
 import space.world.Button;
 import space.world.Chest;
@@ -25,6 +26,9 @@ import space.world.Character;
 import space.world.Player;
 import space.world.Room;
 import space.world.Teleporter;
+import space.world.Turret;
+import space.world.TurretStrategy;
+import space.world.TurretStrategyImpl;
 import space.world.World;
 
 /**
@@ -45,6 +49,7 @@ public class ModelToJson implements WorldSaver {
 	MyJsonList listOfPlayers;
 	MyJsonList listOfDoors;
 	MyJsonList listOfKeys;
+	MyJsonList listOfBeams;
 
 	/**
 	 * {@inheritDoc}
@@ -246,7 +251,32 @@ public class ModelToJson implements WorldSaver {
 		else if (e instanceof Bullet){
 			addFeilds((Bullet) e,object,room);
 		}
+		else if (e instanceof Turret){
+			addFeilds((Turret) e,object,room);
+		}
+		else if (e instanceof BeamShooter){
+			addFeilds((BeamShooter) e, object,room);
+		}
 		return object;
+	}
+
+	private void addFeilds(BeamShooter e, MyJsonObject object, Room room) {
+		object.put("room", e.getRoom().getID());
+		object.put("turret", e.getTurret().getID());
+		object.put("yRotation", e.getAngle());
+		object.put("stopped", e.isStopped());
+		object.put("beamsShot",e.getBeamsShot());
+		object.put("roomId",e.getRoom().getID());
+		object.put("roomBeamShooterIsIn", room.getID());
+	}
+
+
+	private void addFeilds(Turret e, MyJsonObject object, Room room) {
+		object.put("shutDown",e.isShutDown());
+		object.put("strategy", constructStrategy(e.getStrategy()));
+		object.put("roomId",e.getRoom().getID());
+		object.put("roomTurretIsIn", room.getID());
+		
 	}
 
 	private void addFeilds(Bullet e, MyJsonObject object, Room room) {
@@ -374,6 +404,15 @@ public class ModelToJson implements WorldSaver {
 		vector.add(v.getY());
 		vector.add(v.getZ());
 		return vector;
+	}
+	
+	
+	private MyJsonList constructStrategy(TurretStrategy s) {
+		MyJsonList strategy = new MyJsonList();
+		TurretStrategyImpl ts = (TurretStrategyImpl) s;
+		strategy.add(ts.getAngle());
+		strategy.add(ts.getBulletsShot());
+		return strategy;
 	}
 
 }

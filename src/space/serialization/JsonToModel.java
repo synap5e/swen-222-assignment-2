@@ -16,6 +16,7 @@ import org.json.simple.parser.ParseException;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.storage.WorldLoader;
+import space.world.BeamShooter;
 import space.world.Bullet;
 import space.world.Button;
 import space.world.Chair;
@@ -30,6 +31,8 @@ import space.world.Player;
 import space.world.Room;
 import space.world.Table;
 import space.world.Teleporter;
+import space.world.Turret;
+import space.world.TurretStrategyImpl;
 import space.world.Wallet;
 import space.world.World;
 
@@ -40,8 +43,11 @@ public class JsonToModel implements WorldLoader {
 	Set<Entity> entities = new HashSet<Entity>();
 	Set<Room> rooms = new HashSet<Room>();
 	List<Key> keys = new ArrayList<Key>();
+	List<Turret> turrets = new ArrayList<Turret>();
 	MyJsonList buttonsJsonObjects = new MyJsonList();
 	MyJsonList bulletsJsonObjects = new MyJsonList();
+	MyJsonList turretsJsonObjects = new MyJsonList();
+	MyJsonList beamShooterObjects = new MyJsonList();
 
 	@Override
 	public void loadWorld(String savePath) {
@@ -92,6 +98,16 @@ public class JsonToModel implements WorldLoader {
 			loadBullet(b);
 		}
 		
+		for(int i=0;i<turretsJsonObjects.getSize();i++){
+			MyJsonObject t = turretsJsonObjects.getMyJsonObject(i);
+			loadTurret(t);
+		}
+		
+		for(int i=0;i<beamShooterObjects.getSize();i++){
+			MyJsonObject b = beamShooterObjects.getMyJsonObject(i);
+			loadBeamShooter(b);
+		}
+		
 		
 		for (Key key : keys){
 			if (!entities.contains(key)){
@@ -101,6 +117,77 @@ public class JsonToModel implements WorldLoader {
 		
 		
 		return new World(entities, rooms);
+	}
+
+	private void loadBeamShooter(MyJsonObject b) {
+		int id = (int) b.getNumber("id");
+		Vector2D position = loadPoint(b.getMyJsonList("position"));
+		float elevation = (float) b.getNumber("elevation");
+		String description = b.getString("description");
+		String name = b.getString("name");
+		Room room = null;
+		Room roomIn = null;
+		for(Room r : rooms){
+			Double RoomId = (double) r.getID();
+			if(b.getNumber("RoomId")==RoomId){
+				room = r;
+			}
+			if(b.getNumber("roomBeamShooterIsIn")==RoomId){
+				roomIn = r;
+			}
+		}
+		float yRotation = (float) b.getNumber("yRotation");
+		boolean stopped = b.getBoolean("stopped");
+		int beamsShot = (int) b.getNumber("beamsShot");
+		Turret turret = null;
+		for(Turret t : turrets){
+			if(b.getNumber("turretId")==t.getID()){
+				turret = t;
+			}
+		}
+		BeamShooter bs = new BeamShooter(position,id,elevation,description,name,room,turret,yRotation,stopped,beamsShot);
+		roomIn.putInRoom(bs);
+		entities.add(bs);
+	}
+
+	private void loadTurret(MyJsonObject t) {
+		int id = (int) t.getNumber("id");
+		Vector2D position = loadPoint(t.getMyJsonList("position"));
+		float elevation = (float) t.getNumber("elevation");
+		String description = t.getString("description");
+		String name = t.getString("name");
+		Room room = null;
+		Room roomIn = null;
+		for(Room r : rooms){
+			Double RoomId = (double) r.getID();
+			if(t.getNumber("RoomId")==RoomId){
+				room = r;
+			}
+			if(t.getNumber("roomTurretIsIn")==RoomId){
+				roomIn = r;
+			}
+		}
+		
+		Turret turret = new Turret(position, id, elevation,description,name,room);
+		boolean shutDown = t.getBoolean("shutDown");
+		TurretStrategyImpl ts = createTurretStrategyImpl(t.getMyJsonList("Strategy"), turret);
+		turret.setStrategy(ts);
+		turrets.add(turret);
+		if(shutDown){
+			turret.shutDown();
+		}
+		else{
+		roomIn.putInRoom(turret);
+		entities.add(turret);
+		}
+		
+		
+	}
+
+	private TurretStrategyImpl createTurretStrategyImpl(MyJsonList strategy, Turret turret) {
+		float yRot = (float) strategy.getNumber(0);
+		int  bulletsShot = (int) strategy.getNumber(1);
+		return new TurretStrategyImpl(turret,yRot,bulletsShot);
 	}
 
 	private void loadBullet(MyJsonObject b) {
@@ -283,6 +370,13 @@ public class JsonToModel implements WorldLoader {
 				else if (type.equals("Bullet")){
 					bulletsJsonObjects.add(e);
 				}
+				else if (type.equals("Turret")){
+					turretsJsonObjects.add(e);
+				}
+				else if (type.equals("BeamShooter")){
+					beamShooterObjects.add(e);
+				}
+				
 			}
 		}
 		return contained;
@@ -352,7 +446,6 @@ public class JsonToModel implements WorldLoader {
 			Double roomId = (double) r.getID();
 			if(roomId==b.getNumber("roomButtonIsIn")){
 				r.putInRoom(button);
-				System.out.println("button");
 				entities.add(button);
 			}
 		}
