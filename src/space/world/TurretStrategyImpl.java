@@ -12,6 +12,7 @@ public class TurretStrategyImpl implements TurretStrategy {
 	private int bulletsShot = 0; //helps to get unique IDs
 	private Turret turret;
 	private Vector2D teleportTo; //position players teleport to when hit by a bullet
+	private Room roomTeleportTo; //the room it teleports the player to
 	private static final float TURN_DURATION = 50;
 	private static final float ROTATION_DIFFERENCE = 4; //the amount the difference in rotation from player it will allow before shooting
 	private static final float VELOCITY = 1;
@@ -73,6 +74,11 @@ public class TurretStrategyImpl implements TurretStrategy {
 		return yRotation;
 	}
 	
+	/**@return the room the player is teleported to if hit*/
+	public Room getRoomTeleportTo() {
+		return roomTeleportTo;
+	}
+
 	/**@return the position the player is teleported to if hit*/
 	public Vector2D getTeleportTo() {
 		return teleportTo;
@@ -82,6 +88,6 @@ public class TurretStrategyImpl implements TurretStrategy {
 	private void shoot(){
 		Vector2D turretFacing = Vector2D.fromPolar(yRotation, 1);
 		Vector3D bulletVel = new Vector3D(turretFacing.getX(),0,turretFacing.getY()).mul(VELOCITY);
-		turret.getRoom().putInRoom(new Bullet(turret.getPosition(), turret.getID()+1000*bulletsShot++, turret.getHeight(), turret.getRoom(), bulletVel, teleportTo));
+		turret.getRoom().putInRoom(new Bullet(turret.getPosition(), turret.getID()+1000*bulletsShot++, turret.getHeight(), turret.getRoom(), bulletVel, teleportTo, roomTeleportTo));
 	}
 }
