@@ -153,7 +153,11 @@ public class InventoryExchangeWidget extends NestedWidget {
 			return false;
 		}
 
-		update((Container) entity);
+		Container container = (Container) entity;
+		if(container.isLocked() || !container.isOpen()){
+			return false;
+		}
+		update((Container) container);
 		
 		return true;
 	}
