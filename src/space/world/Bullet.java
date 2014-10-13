@@ -88,7 +88,9 @@ public class Bullet extends NonStationary {
 		Player p = room.collidedWithPlayer(this);
 		if(p != null /*&& p.getElevation() <= this.getElevation() && this.getElevation() <= p.getHeight() + p.getElevation()*/){
 			p.setPosition(teleportTo); //change to in front of door
+			p.getRoom().removeFromRoom(p);
 			p.setRoom(roomTeleportTo);
+		
 		}
 	}
 
