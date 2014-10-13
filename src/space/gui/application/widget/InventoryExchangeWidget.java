@@ -165,7 +165,7 @@ public class InventoryExchangeWidget extends NestedWidget {
 			return false;
 		}
 
-		return update((Container) container);
+		return update((Container) entity);
 	}
 
 	/**
