@@ -37,7 +37,7 @@ public class Button extends Stationary {
 
 	@Override
 	public float getCollisionRadius() {
-		return 0;
+		return 0.5f;
 	}
 
 	/**@return the entity which will be interacted with the push of the button*/
@@ -47,7 +47,7 @@ public class Button extends Stationary {
 
 	@Override
 	public float getHeight() {
-		return 0;
+		return 5;
 	}
 
 	@Override

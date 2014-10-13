@@ -39,9 +39,9 @@
       },
       {  
          "elevation":0.0,
-         "canInteract":true,
+         "canInteract":false,
          "isOneWay":false,
-         "description":"Door to the Teleporter Bay",
+         "description":"Door to the Teleporter Bay Door",
          "room1Wall":2.0,
          "type":"Door",
          "room1":3.0,
@@ -70,14 +70,14 @@
          "position":[ -10.0, 40.0 ],
          "id": 23.0,
          "state":"CLOSED",
-         "locked":false,
-         "key": -1.0
+         "locked":true,
+         "key": 56.0
       },
       {  
          "elevation":0.0,
          "canInteract":true,
          "isOneWay":false,
-         "description":"Supply closet door",
+         "description":"Door to Weapon Testing",
          "room1Wall":1.0,
          "type":"Door",
          "room1":3.0,
@@ -88,8 +88,8 @@
          "position":[ 0.0, 80.0 ],
          "id": 24.0,
          "state":"CLOSED",
-         "locked":false,
-         "key": -1.0
+         "locked":true,
+         "key": 56.0
       }
    ],
    "rooms":[  
@@ -162,6 +162,16 @@
       },
       {  
          "contains":[  
+        	 {  
+		         "elevation":0.0,
+		         "name":"Button for Teleporter Door",
+		         "description":"Perhaps this will open the door",
+		         "position":[ -7.0, 23.0 ],
+		         "id": 54.0,
+		         "type":"Button",
+		         "roomButtonIsIn":3.0,
+		         "entityId":22.0
+		      }
          ],
          "Room Shape":{  
             "points":[  
@@ -193,7 +203,17 @@
 		         "id": 53.0,
 		         "type":"Teleporter",
 		         "teleportstoPos":[ -20.0, 40.0],
-		         "canInteract":true
+		         "canInteract":false
+		      },
+		      {  
+		         "elevation":0.0,
+		         "name":"Button for Teleporter",
+		         "description":"Activates the teleporter",
+		         "position":[ 30.0, 60.0 ],
+		         "id": 55.0,
+		         "type":"Button",
+		         "roomButtonIsIn":4.0,
+		         "entityId":53.0
 		      }
          ],
          "Room Shape":{  
@@ -215,6 +235,10 @@
       },
       {  
          "contains":[  
+         		{  
+		              "keyId":56.0,
+		              "type":"Key"
+		         }
          ],
          "Room Shape":{  
             "points":[  
@@ -277,6 +301,14 @@
          "description":"A key",
          "position":[ 0.0, 0.0 ],
          "id": 51.0,
+         "type":"Key"
+      },
+      {  
+         "elevation":0.0,
+         "name":"Security Key 2",
+         "description":"Unlocks important rooms like Weapons Testing and the Supply Closest.",
+         "position":[ -20.0, 60.0 ],
+         "id": 56.0,
          "type":"Key"
       }
    ]
