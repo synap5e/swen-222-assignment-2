@@ -27,8 +27,8 @@ public class Bullet extends NonStationary {
 
 	@Override
 	public void update(int delta) {
-		Vector3D addTo = velocity.mul(1f/delta);
-		Vector2D newPos = getPosition().add(new Vector2D(addTo.getX(),addTo.getY()));
+		Vector3D addTo = velocity.mul(delta/1000.f);
+		Vector2D newPos = getPosition().add(new Vector2D(addTo.getX(),addTo.getZ()));
 		setPosition(newPos);
 		if(!room.contains(newPos)){//bullet has traveled outside of the room so remove it
 			room.removeFromRoom(this);

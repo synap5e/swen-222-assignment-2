@@ -12,10 +12,30 @@ public class TurretStrategyImpl implements TurretStrategy {
 	private int bulletsShot = 0; //helps to get unique IDs
 	private Turret turret;
 	private Vector2D teleportTo; //position players teleport to when hit by a bullet
-	private Room roomTeleportTo; //the room it teleports the player to
-	private static final float TURN_DURATION = 50;
-	private static final float ROTATION_DIFFERENCE = 4; //the amount the difference in rotation from player it will allow before shooting
-	private static final float VELOCITY = 1;
+	private float cooldown;
+	private Room roomTeleportTo;
+	
+	/**
+	 *  Average (deviates by up to 15%) velocity of bullets in units/second
+	 */
+	private static final float BULLETVELOCITY = 40;
+
+	/**
+	 * n.b. in degrees/second
+	 */
+	private static final float ROTAION_SPEED = 30;
+	
+	/**
+	 * degrees
+	 */
+	private static final float FIRING_TOLERANCE = 45; //the amount the difference in rotation from player it will allow before shooting
+	
+	/**
+	 * seconds
+	 */
+	private static final float FIRING_COOLDOWN = 1;
+	
+	private static final int PELLET_COUNT = 10;
 	
 	/**Constructs a new TurretStrategyImpl
 	 * @param t the turret using this strategy
@@ -47,18 +67,22 @@ public class TurretStrategyImpl implements TurretStrategy {
 	public void update(int delta) {
 		Player p = turret.getRoom().closestPlayer(turret.getPosition());
 		if(p==null){return;}
-		Vector2D lookDir = Vector2D.fromPolar(yRotation, 1);
-		Vector2D targetDir = turret.getPosition().sub(p.getPosition()).normalized();
-		float adjustRotation = lookDir.angleTo(targetDir);
-		if(adjustRotation <= ROTATION_DIFFERENCE){
-			shoot();
-		} else{
-			yRotation += delta/TURN_DURATION;
-			if(yRotation >= 360){
-				yRotation = 360 - yRotation;
+		Vector2D targetDir = p.getPosition().sub(turret.getPosition()).normalized();
+		Vector2D lookDir = Vector2D.fromPolar((float)(Math.toRadians(yRotation)), 1);
+		Vector2D rightLookDir = Vector2D.fromPolar((float)(Math.toRadians(yRotation) + Math.PI/2), 1);
+		if (lookDir.dot(targetDir) > Math.sin(Math.toRadians(FIRING_TOLERANCE)) && cooldown < 0){
+			cooldown = FIRING_COOLDOWN;
+			for (int i=0; i<PELLET_COUNT;i++){
+				shoot();
 			}
 		}
-		
+		cooldown -= delta/1000.f;
+		yRotation += Math.signum(rightLookDir.dot(targetDir)) * ROTAION_SPEED * delta/1000.f;
+		if(yRotation >= 360){
+			yRotation -= 360;
+		} else if (yRotation < 0){
+			yRotation += 360;
+		}
 	}
 
 	/**@return the amount of bullets shot*/
@@ -86,10 +110,14 @@ public class TurretStrategyImpl implements TurretStrategy {
 		return teleportTo;
 	}
 
-	/**Adds a new bullet into the room the turret is in*/
+	/**Adds a new bullet into the room the turret is in
+	 * @param targetDir */
 	private void shoot(){
-		Vector2D turretFacing = Vector2D.fromPolar(yRotation, 1);
-		Vector3D bulletVel = new Vector3D(turretFacing.getX(),0,turretFacing.getY()).mul(VELOCITY);
-		turret.getRoom().putInRoom(new Bullet(turret.getPosition(), turret.getID()+1000*bulletsShot++, turret.getHeight(), turret.getRoom(), bulletVel, teleportTo, roomTeleportTo));
+		Vector2D bulletVel2D = Vector2D.fromPolar((float) Math.toRadians(yRotation), 1);
+		Vector3D bulletVel3D = new Vector3D(
+								bulletVel2D.getX() + (float)(0.5 - Math.random())/10.f, 
+								(float)(0.5 - Math.random())/10.f, 
+								bulletVel2D.getY() + (float)(0.5 - Math.random())/10.f).mul(BULLETVELOCITY);
+		turret.getRoom().putInRoom(new Bullet(turret.getPosition(), turret.getID()+1000*bulletsShot++, turret.getHeight(), turret.getRoom(), bulletVel3D, teleportTo, roomTeleportTo));
 	}
 }

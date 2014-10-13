@@ -46,7 +46,7 @@ public class ModelFlyweight {
 			
 			models.put("Turret", new WavefrontModel(	new File("./assets/models/turret.obj"),
 														new Vector3D(0, 0, 0),
-														new Vector3D(0, 0, 0), 0.75f,
+														new Vector3D(0, 90, 0), 2,
 														new Vector3D(0.35f,0.35f,0.35f),
 														Material.bronze
 													));	

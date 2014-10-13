@@ -9,8 +9,8 @@ import space.gui.pipeline.Material;
 
 public class BulletModel implements RenderModel {
 
-	private static final float BULLET_LENGTH = 0.5f;
-	private static final float BULLET_RADIUS = 0.05f;
+	private static final float BULLET_LENGTH = 1f;
+	private static final float BULLET_RADIUS = 0.1f;
 	private static final int BULLET_LOD = 5;
 	
 	
