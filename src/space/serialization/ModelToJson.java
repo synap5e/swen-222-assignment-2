@@ -108,6 +108,7 @@ public class ModelToJson implements WorldSaver {
 		listOfPlayers = new MyJsonList();
 		listOfDoors = new MyJsonList();
 		listOfKeys = new MyJsonList();
+		listOfBeams = new MyJsonList();
 		
 		
 		MyJsonObject fileobject = new MyJsonObject();
@@ -292,7 +293,6 @@ public class ModelToJson implements WorldSaver {
 		object.put("shutDown",e.isShutDown());
 		object.put("strategy", constructStrategy(e.getStrategy()));
 		object.put("roomId",e.getRoom().getID());
-		object.put("roomTurretIsIn", room.getID());
 		
 	}
 
@@ -300,7 +300,7 @@ public class ModelToJson implements WorldSaver {
 		object.put("velocity", construct3DVector(e.getVelocity()));
 		object.put("teleportTo", constructPoint(e.getTeleportTo()));
 		object.put("roomId",e.getRoom().getID());
-		object.put("roomBulletIsIn", room.getID());
+		object.put("roomTeleportTo", room.getID());
 		
 	}
 
@@ -431,6 +431,7 @@ public class ModelToJson implements WorldSaver {
 		strategy.add(ts.getAngle());
 		strategy.add(ts.getBulletsShot());
 		strategy.add(constructPoint(ts.getTeleportTo()));
+		strategy.add(ts.getRoomTeleportTo().getID());
 		return strategy;
 	}
 
