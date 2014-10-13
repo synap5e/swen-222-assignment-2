@@ -21,10 +21,11 @@ public class TurretStrategyImpl implements TurretStrategy {
 	 * @param t the turret using this strategy
 	 * @param yRotation where the turret is facing
 	 * @param teleportTo position players teleport to when hit by a bullet*/
-	public TurretStrategyImpl(Turret t, float yRotation, Vector2D teleportTo){
+	public TurretStrategyImpl(Turret t, float yRotation, Vector2D teleportTo, Room roomTeleportTo){
 		this.turret = t;
 		this.yRotation = yRotation;
 		this.teleportTo = teleportTo;
+		this.roomTeleportTo = roomTeleportTo;
 	}
 	
 	/**Constructs a new TurretStrategyImpl
@@ -32,11 +33,12 @@ public class TurretStrategyImpl implements TurretStrategy {
 	 * @param yRotation where the turret is facing
 	 * @param bulletsShot number of bullets shot out of turret
 	 * @param teleportTo position players teleport to when hit by a bullet*/
-	public TurretStrategyImpl(Turret t, float yRotation, int bulletsShot,Vector2D teleportTo){
+	public TurretStrategyImpl(Turret t, float yRotation, int bulletsShot,Vector2D teleportTo, Room roomTeleportTo){
 		this.turret = t;
 		this.yRotation = yRotation;
 		this.teleportTo = teleportTo;
 		this.bulletsShot = bulletsShot;
+		this.roomTeleportTo = roomTeleportTo;
 	}
 	
 	/**Updates the turret. This is done by looking for the closest player in the room 
