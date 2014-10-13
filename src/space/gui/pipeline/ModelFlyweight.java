@@ -16,8 +16,8 @@ import space.world.Player;
 public class ModelFlyweight {
 
 	private HashMap<String, RenderModel> models;
-	private WavefrontModel openContainer;
-	private WavefrontModel closedContainer;
+	private WavefrontModel openChest;
+	private WavefrontModel closedChest;
 
 	public ModelFlyweight() {
 		models = new HashMap<>();
@@ -43,20 +43,27 @@ public class ModelFlyweight {
 														new Vector3D(0.35f,0.35f,0.35f),
 														Material.bronze
 				));	
+			
+			models.put("Turret", new WavefrontModel(	new File("./assets/models/turret.obj"),
+														new Vector3D(0, 0, 0),
+														new Vector3D(0, 0, 0), 0.75f,
+														new Vector3D(0.35f,0.35f,0.35f),
+														Material.bronze
+													));	
 		
 			models.put("Bullet", new BulletModel());
 
-			openContainer = new WavefrontModel(			new File("./assets/models/teapot.obj"),
-														new Vector3D(-0.5f,0,0.160f),
-														new Vector3D(0,270,0), 0.23f,
-														new Vector3D(0.15f,0.6f,0.15f),
+			openChest = new WavefrontModel(			new File("./assets/models/chest.obj"),
+														new Vector3D(0, 0, 0),
+														new Vector3D(0, 90, 0), 2,
+														new Vector3D(0.35f,0.35f,0.35f),
 														Material.bronze
 											   );
 
-			closedContainer = new WavefrontModel(		new File("./assets/models/teapot.obj"),
-														new Vector3D(-0.5f,0,0.160f),
-														new Vector3D(0,270,0), 0.23f,
-														new Vector3D(0.65f,0.3f,0.75f),
+			closedChest = new WavefrontModel(		new File("./assets/models/chestclosed.obj"),
+														new Vector3D(0, 0, 0),
+														new Vector3D(0, 90, 0), 2,
+														new Vector3D(0.35f,0.35f,0.35f),
 														Material.bronze
 												);
 
@@ -67,12 +74,12 @@ public class ModelFlyweight {
 	}
 
 	public RenderModel get(ViewableObject type) {
-		if (type instanceof OpenableContainer){
+		if (type.getType() == "Chest" && type instanceof OpenableContainer){
 			OpenableContainer cont = (OpenableContainer)type;
 			if (cont.isOpen()){
-				return openContainer;
+				return openChest;
 			} else {
-				return closedContainer;
+				return closedChest;
 			}
 		}
 		if (!models.containsKey(type.getType())){
