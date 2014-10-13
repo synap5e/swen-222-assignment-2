@@ -99,13 +99,18 @@ public class Client {
 			
 			//Load the world
 			TextMessage worldData = (TextMessage) connection.readMessage();
+			
 			loader.loadWorldFromString(worldData.getText());
+			
 			world = loader.getWorld();
+			
+			
 			for (Player p : loader.getPlayers()){
 				world.addEntity(p);
 				p.setRoom(world.getRoomAt(p.getPosition()));
 				p.getRoom().putInRoom(p);
 			}
+			System.out.println("world loaded");
 			
 			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
 		} catch (IOException e) {

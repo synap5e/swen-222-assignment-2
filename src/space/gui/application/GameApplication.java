@@ -181,11 +181,18 @@ public class GameApplication implements ClientListener{
 	 */
 	private void startGame() throws LWJGLException, IOException{
 
+		System.out.println("starting load");
+		
+		JsonToModel model = new JsonToModel();
+		System.out.println("model loaded");
+		
 		//Create the client TODO use program arguments for host and port
-		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel(), keyBinding);
+		client = new Client(serverAddress, Client.DEFAULT_PORT, model, keyBinding);
 		client.addListener(this);
+		System.out.println("client loaded");
 
 		gameController = new GameController(this);
+		System.out.println("Game controller loaded");
 
 		//Load GUI
 		ingameMenu = new IngameMenu(this);
@@ -202,6 +209,8 @@ public class GameApplication implements ClientListener{
 
 		gui.setRootPane(gameController);
 		gui.reapplyTheme();
+		
+		System.out.println("GUI Loaded");
 
         //Load Render Pipeline
 		gameRenderer = new GameRenderer(width, height);

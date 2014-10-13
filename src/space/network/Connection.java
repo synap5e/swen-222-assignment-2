@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
 import space.network.message.EntityMovedMessage;
@@ -65,8 +66,12 @@ public class Connection {
 		int length = ByteBuffer.wrap(rawLength).getInt();
 		byte[] data = new byte[length];
 		
+		
+		System.out.println("length: " + length);
 		//Wait until the entire message has been received
 		while (incoming.available() < length);
+		
+		System.out.println("data: " + data);
 		
 		incoming.read(data);
 		switch (type){
