@@ -2,8 +2,16 @@ package space.world;
 
 import space.math.Vector2D;
 
+/**Represents a Table which is furniture
+ * @author Maria Libunao*/
 public class Table extends Stationary {
 
+	/**Constructs a new Table
+	 * @param position
+	 * @param id
+	 * @param elevation
+	 * @param description
+	 * @param name*/
 	public Table(Vector2D position, int id, float elevation,
 			String description, String name) {
 		super(position, id, elevation, description, name);

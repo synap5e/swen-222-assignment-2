@@ -1,17 +1,39 @@
 package space.world;
 
 import java.util.Collection;
-import java.util.List;
 
 import space.math.Vector2D;
 
+/**Represents a chest which is a container. Entities can be placed inside the chest.
+ * The chest cannot be picked up
+ * @author Maria Libunao*/
 public class Chest extends Container {
 
+	/**Constructs a new Chest
+	 * @param position
+	 * @param id
+	 * @param elevation
+	 * @param description
+	 * @param name
+	 * @param isLocked whether or not this is locked
+	 * @param key the key that unlocks this 
+	 */
 	public Chest(Vector2D position, int id, float elevation,
 			String description, String name, boolean isLocked, Key key) {
 		super(position, id, elevation, description, name, isLocked, key);
 	}
 	
+	/**Constructs a new Container
+	 * @param position
+	 * @param id
+	 * @param elevation
+	 * @param description
+	 * @param name
+	 * @param  isLocked whether or not this is locked
+	 * @param isOpen
+	 * @param key the key that unlocks this
+	 * @param itemsContained the items which will be inside this
+	 * */
 	public Chest(Vector2D position, int id, float elevation,
 			String description, String name, boolean isLocked, Key key,boolean isOpen, Collection<Pickup> itemsContained) {
 		super(position, id, elevation, description, name, isLocked,isOpen, key,itemsContained);

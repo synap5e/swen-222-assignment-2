@@ -2,8 +2,16 @@ package space.world;
 
 import space.math.Vector2D;
 
+/**Represents a Light on the ceiling
+ * @author Maria Libunao*/
 public class Light extends Stationary {
 	
+	/**Constructs a new Light
+	 * @param position
+	 * @param id
+	 * @param elevation
+	 * @param description
+	 * @param name*/
 	public Light(Vector2D position, int id, float elevation,String description, String name) {
 		super(position, id, elevation, description, name);
 	}
@@ -15,7 +23,7 @@ public class Light extends Stationary {
 
 	@Override
 	public float getHeight() {
-		return 11;
+		return 1;
 	}
 
 	@Override

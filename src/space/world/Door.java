@@ -62,10 +62,6 @@ public class Door extends NonStationary implements ViewableDoor {
 		this.amtOpen = amtOpened;
 	}
 	
-	public boolean canInteract(){
-		return canInteract;
-	}
-	
 	@Override
 	public boolean interact(Character c,World w){
 		if(locked){
@@ -103,21 +99,6 @@ public class Door extends NonStationary implements ViewableDoor {
 	 */
 	public boolean canGoThrough() {
 		return !locked && amtOpen == 1;
-	}
-
-	@Override
-	public float getCollisionRadius() {
-		return 3;
-	}
-
-	@Override
-	public Room getRoom1() {
-		return room1;
-	}
-
-	@Override
-	public Room getRoom2() {
-		return room2;
 	}
 
 	/**
@@ -165,6 +146,7 @@ public class Door extends NonStationary implements ViewableDoor {
 	 *            The player trying to unlock
 	 */
 	public void unlock(Character c) {
+		if(!locked){return;}
 		for (Pickup i : c.getInventory()) {
 			if (i instanceof Key && key.equals(i)) { //player has key to unlock this
 				locked = false;
@@ -172,17 +154,9 @@ public class Door extends NonStationary implements ViewableDoor {
 		}
 	}
 
+	@Override
 	public float getOpenPercent() {
 		return amtOpen;
-	}
-
-	/**
-	 * Returns whether or not the door is one way
-	 * 
-	 * @return
-	 */
-	public boolean isOneWay() {
-		return oneWay;
 	}
 
 	@Override
@@ -190,12 +164,42 @@ public class Door extends NonStationary implements ViewableDoor {
 		return true;
 	}
 
-
 	@Override
 	public float getHeight() {
 		return 10;
 	}
+
+	@Override
+	public float getCollisionRadius() {
+		return 3;
+	}
+
+	@Override
+	public Room getRoom1() {
+		return room1;
+	}
+
+	@Override
+	public Room getRoom2() {
+		return room2;
+	}
 	
+	@Override
+	public boolean canInteract(){
+		return canInteract;
+	}
+	
+	@Override
+	public String getType() {
+		return "Door";
+	}
+	
+	/**Should not be able to setPosition of door
+	 * @param*/
+	@Override
+	public void setPosition(Vector2D pos){
+	}
+
 	/**
 	 * Returns whether or not this is locked
 	 *
@@ -205,18 +209,23 @@ public class Door extends NonStationary implements ViewableDoor {
 		return locked;
 	}
 
+	/**@return the current state of the door*/
 	public String getState(){
 		return state.toString();
 	}
 
+	/**@return the key that unlocks the door*/
 	public Key getKey() {
 		return key;
 	}
+	
 
-	@Override
-	public String getType() {
-		return "Door";
+	/**
+	 * Returns whether or not the door is one way
+	 * 
+	 * @return
+	 */
+	public boolean isOneWay() {
+		return oneWay;
 	}
-
-
 }

@@ -13,6 +13,7 @@ import space.math.ConcaveHull;
 import space.math.Vector2D;
 import space.math.Vector3D;
 import space.network.storage.WorldSaver;
+import space.world.Beam;
 import space.world.BeamShooter;
 import space.world.Bullet;
 import space.world.Button;
@@ -168,9 +169,17 @@ public class ModelToJson implements WorldSaver {
 		r.put("Room Shape", constructRoomShape(room.getRoomShape()));
 		r.put("contains", constructContains(room));
 		r.put("door ids", constructDoorIds(room.getAllDoors()));
+		r.put("beams", constructBeams(room.getBeams()));
 		return r;
 	}
 	
+	private MyJsonList constructBeams(List<Beam> beams) {
+		MyJsonList beamsInRoom = new MyJsonList();
+		
+		return beamsInRoom;
+	}
+
+
 	/**
 	 * A method to create and return a MyJsonObject of a room shape
 	 * 

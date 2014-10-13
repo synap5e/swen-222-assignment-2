@@ -7,26 +7,23 @@ import java.util.List;
 import space.gui.pipeline.viewable.OpenableContainer;
 import space.math.Vector2D;
 
-/**Containers like bags, backpacks, boxes, chests, or suitcases that can have other objects inside
-them. The player should be able to open and close containers, put objects inside them or get
-them out. You must be able to put one container (like a wallet) inside another container (like a
-suitcase).*/
+/**Represents a container which allows other entities to be placed inside it or take entities out of it. 
+ * Can be opened or closed and locked or unlocked. 
+ * @author Maria Libunao*/
 public abstract class Container extends NonStationary implements OpenableContainer {
 	private List<Pickup> itemsContained = new ArrayList<Pickup>(); //the object inside this container
 	private boolean isOpen = false;
 	private boolean locked;
 	private Key key;
-	/**
-	 * Constructs a new container
-	 *
+	
+	/**Constructs a new Container
 	 * @param position
-	 *            The position
 	 * @param id
-	 *            The id
 	 * @param elevation
-	 *            The elevation
 	 * @param description
-	 *            The description
+	 * @param name
+	 * @param isLocked whether or not this is locked
+	 * @param key the key that unlocks this 
 	 */
 	public Container(Vector2D position, int id, float elevation, String description, String name, boolean isLocked,Key key) {
 		super(position, id, elevation, description, name);
@@ -34,6 +31,17 @@ public abstract class Container extends NonStationary implements OpenableContain
 		this.key = key;
 	}
 	
+	/**Constructs a new Container
+	 * @param position
+	 * @param id
+	 * @param elevation
+	 * @param description
+	 * @param name
+	 * @param  isLocked whether or not this is locked
+	 * @param isOpen
+	 * @param key the key that unlocks this
+	 * @param itemsContained the items which will be inside this
+	 * */
 	public Container(Vector2D position, int id, float elevation, String description, String name, boolean isLocked, boolean isOpen,Key key, Collection<Pickup> itemsContained) {
 		super(position, id, elevation, description, name);
 		this.locked = isLocked;
@@ -42,7 +50,8 @@ public abstract class Container extends NonStationary implements OpenableContain
 		this.itemsContained.addAll(itemsContained);
 	}
 
-	/**Whether or not a Pickup can be placed inside this container
+	/**Whether or not an entity can be placed inside this container.
+	 * The height of the pickup must be less than the container's height and the container must be open
 	 * @return*/
 	public boolean canPutInside(Entity item){
 		return item instanceof Pickup && isOpen && item.getHeight() < this.getHeight();
@@ -64,17 +73,14 @@ public abstract class Container extends NonStationary implements OpenableContain
 		}
 		return false;
 	}
-
-	@Override 
-	public boolean canInteract(){
-		return true;
-	}
 	
 	@Override
 	public boolean interact(Character c,World w){
 		return openClose(c);
 	}
 	
+	/**Opens or closes the container.
+	 * @return whether the change in state has been successful*/
 	public boolean openClose(Character c){
 		if(locked){
 			unlock(c);
@@ -94,12 +100,9 @@ public abstract class Container extends NonStationary implements OpenableContain
 		return itemsContained;
 	}
 
-	@Override
-	public boolean isOpen(){
-		return isOpen;
-	}
-	
+	/**Unlocks the container if it is locked & the player unlocking it has the key*/
 	public void unlock(Character c) {
+		if(!locked){return;}
 		for (Pickup i : c.getInventory()) {
 			if (i instanceof Key && key.equals(i)) { //player has key to unlock this
 				locked = false;
@@ -107,10 +110,22 @@ public abstract class Container extends NonStationary implements OpenableContain
 		}
 	}
 	
+	@Override 
+	public boolean canInteract(){
+		return true;
+	}
+	
+	@Override
+	public boolean isOpen(){
+		return isOpen;
+	}
+	
+	/**@return the key that unlocks or locks this container*/
 	public Key getKey() {
 		return key;
 	}
 
+	/**@return whether the container is locked or not*/
 	public boolean isLocked() {
 		return locked;
 	}
