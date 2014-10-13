@@ -13,7 +13,7 @@ public class KeyBinding {
 	public final static String ACTION_INTERACT = "interact";
 	public final static String ACTION_RIFLE = "rifle";
 	public final static String ACTION_TORCH = "torch";
-	public final static String ACTION_DROP = "drop";
+	public final static String ACTION_INVENTORY = "inventory";
 	
 	public final static String MOVE_FORWARD = "forward";
 	public final static String MOVE_BACKWARD = "backward";
@@ -28,7 +28,7 @@ public class KeyBinding {
         temp.put(Event.KEY_E, ACTION_INTERACT);
         temp.put(Event.KEY_R, ACTION_RIFLE);
         temp.put(Event.KEY_F, ACTION_TORCH);
-        temp.put(Event.KEY_Q, ACTION_DROP);
+        temp.put(Event.KEY_Q, ACTION_INVENTORY);
         
         temp.put(Event.KEY_W, MOVE_FORWARD);
         temp.put(Event.KEY_S, MOVE_BACKWARD);

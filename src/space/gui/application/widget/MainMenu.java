@@ -49,9 +49,9 @@ public class MainMenu extends GUIWrapper {
 			@Override
 			protected void handleClick(boolean doubleClick){
 				boolean isVisible = singleplayerWidget.isVisible();
-				
+
 				hideWidgets();
-				
+
 				singleplayerWidget.setVisible(!isVisible);
 			}
 		};
@@ -62,22 +62,22 @@ public class MainMenu extends GUIWrapper {
 			@Override
 			protected void handleClick(boolean doubleClick){
 				boolean isVisible = multiplayerWidget.isVisible();
-				
+
 				hideWidgets();
-				
+
 				multiplayerWidget.setVisible(!isVisible);
 			}
 		};
 		menuItem.setText("Play Multiplayer");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){	
+		menuItem = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				boolean isVisible = instructionsWidget.isVisible();
-				
+
 				hideWidgets();
-				
+
 				instructionsWidget.setVisible(!isVisible);
 			}
 		};
@@ -88,9 +88,9 @@ public class MainMenu extends GUIWrapper {
 			@Override
 			protected void handleClick(boolean doubleClick){
 				boolean isVisible = controlsWidget.isVisible();
-				
+
 				hideWidgets();
-				
+
 				controlsWidget.setVisible(!isVisible);
 			}
 		};
@@ -111,10 +111,10 @@ public class MainMenu extends GUIWrapper {
 			item.setTheme("menuitem");
             add(item);
         }
-		
+
 		singleplayerWidget = new SingleplayerWidget(gameApplication);
 		add(singleplayerWidget);
-		
+
 		multiplayerWidget = new MultiplayerWidget(gameApplication);
 		add(multiplayerWidget);
 
@@ -128,20 +128,20 @@ public class MainMenu extends GUIWrapper {
     @Override
     protected void layout() {
     	super.layout();
-    	
+
         int x = 150;
         int y = getHeight() - 200;
         int midY;
 
         Collections.reverse(menuItems);
-        
+
         for(Label item : menuItems) {
             item.setPosition(x, y);
             item.adjustSize();
             y -= item.getHeight() + SPACING;
         }
 
-        midY = y + SPACING * 3;
+        midY = y + SPACING * 2;
 
         y -= 112;
         for(Label letter : title){
@@ -149,7 +149,7 @@ public class MainMenu extends GUIWrapper {
         	letter.setPosition(x, y);
         	x += letter.getWidth();
         }
-        
+
         Collections.reverse(menuItems);
 
         instructionsWidget.updatePositions((int) (getWidth() * 0.4), midY);
@@ -167,7 +167,7 @@ public class MainMenu extends GUIWrapper {
 
     	return evt.isMouseEventNoWheel();
     }
-    
+
     private void hideWidgets(){
     	singleplayerWidget.setVisible(false);
 		controlsWidget.setVisible(false);
@@ -192,7 +192,7 @@ public class MainMenu extends GUIWrapper {
 	    	timers.set(i, timer);
     	}
     }
-    
+
     private int getVisibleTimer(){
     	return 30 + (int) (Math.floor(Math.random() * 120));
     }

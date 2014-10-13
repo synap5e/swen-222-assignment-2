@@ -93,13 +93,17 @@
     </fontDef>
 
     <fontDef name="font.menu" filename="font/font.fnt" color="#9F9F9F">
-        <fontParam if="hover" color="white"/>
+        <fontParam if="hover + ! disabled" color="white"/>
+        <fontParam if="disabled" color="#232323"/>
     </fontDef>
 
     <fontDef name="font.title" filename="font/code.fnt" color="white">
     </fontDef>
 
     <fontDef name="font.gametitle" filename="font/font.fnt" color="white">
+    </fontDef>
+
+    <fontDef name="font.description" filename="font/font.fnt" color="#9F9F9F">
     </fontDef>
 
     <inputMapDef name="-defaultInputMap">
@@ -170,7 +174,7 @@
             </param>
         </theme>
     </theme>
-    
+
     <theme name="radialpopupmenu" ref="-defaults">
         <theme name="star" ref="-defaults">
             <param name="background"><image>gold-star</image></param>
@@ -216,7 +220,7 @@
         <theme name="editfield" ref="-editfield">
         </theme>
     </theme>
-    
+
     <theme name="-controlswidget" ref="-defaults">
         <theme name="instructions" ref="label">
             <param name="font"><font>normal</font></param>
@@ -225,12 +229,11 @@
             <param name="font"><font>font.menu</font></param>
         </theme>
     </theme>
-    
+
 	<!-- Main game theme -->
     <theme name="gamecontroller" ref="-defaults">
         <theme name="" ref="*"/>
 
-        <theme name="ingamecontroller" ref="-defaults" />
         <theme name="headsupdisplay" ref="-defaults" >
             <param name="font"><font>normal</font></param>
 
@@ -243,10 +246,11 @@
                 <param name="border"><border>5</border></param>
                 <param name="background"><image>hud.label.background</image></param>
             </theme>
-           
+
         </theme>
     </theme>
 
+	<!-- Main menu theme -->
     <theme name="mainmenu" ref="-defaults">
         <theme name="title" ref="label">
             <param name="font"><font>font.title</font></param>
@@ -271,6 +275,7 @@
         </theme>
     </theme>
 
+    <!-- Main menu theme -->
     <theme name="ingamemenu" ref="-defaults">
         <param name="background"><image>ingamemenu.background</image></param>
         <theme name="title" ref="label">
@@ -281,5 +286,41 @@
         </theme>
         <theme name="controlswidget" ref="-controlswidget">
         </theme>
+    </theme>
+
+    <!-- Inventory theme -->
+    <theme name="inventorywidget" ref="-defaults">
+        <param name="background"><image>ingamemenu.background</image></param>
+        <theme name="title" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
+        <theme name="item" ref="label">
+            <param name="font"><font>font.menu</font></param>
+        </theme>
+        <theme name="item-selected" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
+        <theme name="description" ref="label">
+            <param name="font"><font>font.description</font></param>
+        </theme>
+
+    </theme>
+
+    <!-- Inventory exchange theme -->
+    <theme name="inventoryexchangewidget" ref="-defaults">
+        <param name="background"><image>ingamemenu.background</image></param>
+        <theme name="title" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
+        <theme name="item" ref="label">
+            <param name="font"><font>font.menu</font></param>
+        </theme>
+        <theme name="item-selected" ref="label">
+            <param name="font"><font>normal</font></param>
+        </theme>
+        <theme name="description" ref="label">
+            <param name="font"><font>font.description</font></param>
+        </theme>
+
     </theme>
 </themes>
