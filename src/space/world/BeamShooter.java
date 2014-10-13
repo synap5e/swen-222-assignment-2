@@ -117,6 +117,11 @@ public class BeamShooter extends NonStationary{
 	public String getType() {
 		return "BeamShooter";
 	}
+	
+	/**@return whether or not this has stopped rotating*/
+	public boolean isStopped() {
+		return stopped;
+	}
 
 	/**Creates a new beam and puts it in the room*/
 	private void shoot(){
