@@ -1,38 +1,40 @@
 package space.gui.application.widget;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import space.gui.application.GameApplication;
 import space.gui.application.widget.label.ItemDescriptionLabel;
 import space.gui.application.widget.label.ItemLabel;
-import space.world.Container;
 import space.world.Entity;
 import space.world.Pickup;
 import de.matthiasmann.twl.Label;
 
+/**
+ * 
+ * 
+ * @author Matt Graham
+ */
+
 public class InventoryWidget extends NestedWidget {
 
-	public final static String ACCEPT = "Drop";
-	public final static String CLOSE = "Cancel";
+	private final static String ACCEPT = "Drop";
+	private final static String CLOSE = "Cancel";
 
-	public final static int SPACING = 10;
-	public final static int PADDING = 30;
+	private final static int SPACING = 10;
+	private final static int PADDING = 30;
 	
-	public final static int COLUMN = 100;
-	public final static int PANEL = 300;
+	private final static int COLUMN = 100;
 	
-	Label accept;
-	Label cancel;
+	private Label accept;
+	private Label cancel;
 	
-	Label playerName;
+	private Label playerName;
 
-	List<ItemLabel> playerItems;
-	List<Label> playerDescriptions;
+	private List<ItemLabel> playerItems;
+	private List<Label> playerDescriptions;
 
-	ItemLabel selection;
+	private ItemLabel selection;
 
 	public InventoryWidget(final GameApplication gameApplication) {
 		super(gameApplication);
@@ -108,6 +110,9 @@ public class InventoryWidget extends NestedWidget {
 	}
 
 
+	/**
+	 * Resets and re-populates the panel in preparation of displaying the inventory.
+	 */
 	public void update(){
 		resetGUI();
 		resetLists();
@@ -115,11 +120,14 @@ public class InventoryWidget extends NestedWidget {
 		accept.setEnabled(false);
 		
 		for(Pickup pickup : gameApplication.getClient().getLocalPlayer().getInventory()){
-			generatePlayerLabels((Entity) pickup);
+			generateLabel((Entity) pickup);
 		}
 		
 	}
 	
+	/**
+	 * Removes all item views.
+	 */
 	private void resetGUI(){
 		for(Label item : playerItems){
 			removeChild(item);
@@ -130,6 +138,9 @@ public class InventoryWidget extends NestedWidget {
 		}
 	}
 	
+	/**
+	 * Resets the various item lists.
+	 */
 	private void resetLists(){
 		playerItems.clear();
 		playerDescriptions.clear();
@@ -137,7 +148,12 @@ public class InventoryWidget extends NestedWidget {
 		selection = null;
 	}
 	
-	private void generatePlayerLabels(Entity entity){
+	/**
+	 * Create the interactive items which are part of the interface and adds them to the various lists.
+	 * 
+	 * @param entity
+	 */
+	private void generateLabel(Entity entity){
 		Label description = new ItemDescriptionLabel(entity.getDescription());
 		playerDescriptions.add(description);
 		add(description);
@@ -158,17 +174,29 @@ public class InventoryWidget extends NestedWidget {
 		add(item);
 	}
 
-	public void updateAccept() {
+	/**
+	 * Controls whether the accept button is enabled.
+	 */
+	private void updateAccept() {
 		accept.setEnabled(selection != null);
 	}
 
-	public void submitChanges(){
+	
+	/**
+	 * Submits the changes made by the user in the interface.
+	 */
+	private void submitChanges(){
 		gameApplication.getClient().drop(selection.getEntity());
 		
 		gameApplication.setInventoryVisible(false);
 	}
 	
 
+	/**
+	 * Selects the given item view.
+	 * 
+	 * @param item
+	 */
 	private void select(ItemLabel item) {
 		if(item == selection){
 			selection = null;

@@ -2,6 +2,12 @@ package space.gui.application.widget.label;
 
 import de.matthiasmann.twl.Label;
 
+/**
+ * An item's description label.
+ * 
+ * @author Matt Graham
+ */
+
 public class ItemDescriptionLabel extends Label{
 	public ItemDescriptionLabel(String text){
 		super(text);

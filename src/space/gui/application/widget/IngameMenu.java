@@ -7,6 +7,11 @@ import space.gui.application.GameApplication;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
+/**
+ * Displays the in-game pause menu.
+ * 
+ * @author Matt Graham
+ */
 
 public class IngameMenu extends NestedWidget{
 
@@ -15,9 +20,9 @@ public class IngameMenu extends NestedWidget{
 	private static final int SPACING = 15;
 
 	private List<Label> menuItems;
-	Label title;
+	private Label title;
 	
-	ControlsWidget controlsWidget;
+	private ControlsWidget controlsWidget;
 
 	public IngameMenu(final GameApplication gameApplication) {
 		super(gameApplication);

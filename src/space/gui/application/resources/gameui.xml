@@ -1,60 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE themes PUBLIC "-//www.matthiasmann.de//TWL-Theme//EN" "http://hg.l33tlabs.org/twl/raw-file/tip/src/de/matthiasmann/twl/theme/theme.dtd">
 <themes>
-    <images file="hud/item-background-highlight.png">
-        <area name="-item.background.highlight" xywh="*"/>
-    </images>
-
-    <images file="hud/item-background.png" format="RGBA">
-        <select name="item.background">
-            <alias ref="-item.background.highlight" if="armed ^ selected"/>
-            <area xywh="*"/>
-        </select>
-    </images>
-
-    <images file="hud/menu-background-highlight.png" format="RGBA">
-        <area name="-menu.background.highlight" xywh="*"/>
-    </images>
-
-    <images file="hud/menu-background.png" format="RGBA">
-        <select name="menu.background">
-            <alias ref="-menu.background.highlight" if="armed ^ selected"/>
-            <area xywh="*"/>
-        </select>
-    </images>
-
-    <images file="hud/item-placeholder.png" format="RGBA">
-        <area name="-item-placeholder-0" xywh="0,32,32,32"/>
-
-        <animation name="-item-placeholder-anim" timeSource="hover">
-            <frame ref="-item-placeholder-0" duration="100"/>
-            <frames count="11" offsetx="32" duration="100" xywh="32,32,32,32"/>
-        </animation>
-
-        <select name="button.item-placeholder.overlay" center="true">
-            <alias ref="-item-placeholder-anim" if="hover | pressed"/>
-            <alias ref="-item-placeholder-0"/>
-        </select>
-    </images>
-
-    <images file="hud/pause.png" format="RGBA">
-        <area name="button.pause.overlay" center="true" xywh="*"/>
-    </images>
-
-    <images file="hud/menu.png" format="RGBA">
-        <area name="-menu-0" xywh="0,0,36,57"/>
-
-        <animation name="-menu-anim" timeSource="hover">
-            <frame ref="-menu-0" duration="100"/>
-            <frames count="13" offsetx="36" duration="100" xywh="36,0,36,57"/>
-        </animation>
-
-        <select name="button.menu.overlay" center="true">
-            <alias ref="-menu-anim" if="hover | pressed"/>
-            <alias ref="-menu-0"/>
-        </select>
-    </images>
-
     <images file="hud/simple.png" format="RGBA">
         <area name="-borderG" border="3" xywh="60,0,9,9" splitx="L3,R3" splity="T3,B3"/>
         <area name="white" xywh="23,3,1,1"/>
@@ -68,16 +14,6 @@
             <frame ref="-field.cursor" duration="500"/>
             <frame ref="none" duration="500"/>
         </animation>
-    </images>
-
-    <images file="hud/icon-gold-star-small.png">
-        <area name="-gold-star" xywh="1,2,32,32"/>
-        <select name="gold-star">
-            <alias ref="-gold-star" if="hover"/>
-            <alias ref="-gold-star" tint="#7F7F7F"/>
-        </select>
-        <alias name="radialpopupmenu.background" ref="white" tint="#803F3F3F"/>
-
     </images>
 
     <fontDef name="normal" filename="font/font.fnt" color="white">
@@ -159,15 +95,10 @@
     </theme>
 
     <theme name="tooltipwindow" ref="-defaults">
-        <param name="background">
-            <image>-borderG</image>
-        </param>
-        <param name="border">
-            <border>background.border</border>
-        </param>
-        <param name="fadeInTime">
-            <int>0</int>
-        </param>
+        <param name="background"><image>-borderG</image></param>
+        <param name="border"><border>background.border</border></param>
+        <param name="fadeInTime"><int>0</int></param>
+
         <theme name="label" ref="label">
             <param name="font">
                 <fontDef filename="font/font.fnt" color="black"/>
@@ -175,16 +106,7 @@
         </theme>
     </theme>
 
-    <theme name="radialpopupmenu" ref="-defaults">
-        <theme name="star" ref="-defaults">
-            <param name="background"><image>gold-star</image></param>
-        </theme>
-        <param name="background"><image>radialpopupmenu.background</image></param>
-        <param name="buttonRadius"><int>16</int></param>
-        <param name="radius"><int>55</int></param>
-        <param name="border"><border>5</border></param>
-    </theme>
-
+    <!-- Generic text edit field theme -->
     <theme name="-editfield">
         <param name="font"><font>font.field</font></param>
         <param name="background"><image>field.background</image></param>
@@ -206,6 +128,7 @@
         <param name="overlay"><image>none</image></param>
     </theme>
 
+    <!-- Single/Multi player theme -->
     <theme name="-playerwidget" ref="-defaults">
         <param name="font"><font>font.field</font></param>
 
@@ -221,6 +144,7 @@
         </theme>
     </theme>
 
+    <!-- Controls theme -->
     <theme name="-controlswidget" ref="-defaults">
         <theme name="instructions" ref="label">
             <param name="font"><font>normal</font></param>

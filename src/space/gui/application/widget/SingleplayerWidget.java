@@ -1,19 +1,24 @@
 package space.gui.application.widget;
 
 import space.gui.application.GameApplication;
-import space.network.Client;
 import space.network.Server;
 import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
+/**
+ * The panel displayed to show the options of single-player mode.
+ * 
+ * @author Matt Graham
+ */
+
 public class SingleplayerWidget extends NestedWidget {
 	private final static int SPACING = 10;
 
-	Label saveLabel;
-	EditField saveField;
+	private Label saveLabel;
+	private EditField saveField;
 
-	Label submitButton;
+	private Label submitButton;
 
 	public SingleplayerWidget(final GameApplication gameApplication) {
 		super(gameApplication);

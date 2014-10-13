@@ -1,16 +1,25 @@
-package space.gui.application.widget;
+package space.gui.application.widget.wrapper;
 
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 import space.gui.application.GameApplication;
+import space.gui.application.widget.NestedWidget;
+import space.gui.application.widget.label.KeyEntry;
+
+/**
+ * GUIWrappers provide functionality for the user input to be intercepted,
+ * which is used for creatng key bindings.
+ * 
+ * @author Matt Graham
+ */
 
 public class GUIWrapper extends NestedWidget {
 
-	Label captureLabel;
+	private Label captureLabel;
 
-	boolean captureFlag;
+	private boolean captureFlag;
 
-	KeyEntry keyEntry;
+	private KeyEntry keyEntry;
 
 	public GUIWrapper(GameApplication gameApplication) {
 		super(gameApplication);
@@ -46,6 +55,9 @@ public class GUIWrapper extends NestedWidget {
 		return super.handleEvent(evt);
 	}
 
+	/**
+	 * @param keyEntry
+	 */
 	public void captureKey(KeyEntry keyEntry){
 		this.keyEntry = keyEntry;
 
@@ -53,15 +65,29 @@ public class GUIWrapper extends NestedWidget {
 		captureFlag = true;
 	}
 
+	/**
+	 * Gets whether the key presses being captured.
+	 * 
+	 * @return
+	 */
 	public boolean isCapture(){
 		return captureFlag;
 	}
 
-	public void setKey(int keyCode){
+	/**
+	 * Sets the key binder to the new key.
+	 * 
+	 * @param keyCode
+	 */
+	private void setKey(int keyCode){
 		keyEntry.setKey(keyCode);
 	}
 
-	public void reset(){
+	
+	/**
+	 * Releases the key interception.
+	 */
+	private void reset(){
 		captureFlag = false;
 		captureLabel.setVisible(false);
 	}

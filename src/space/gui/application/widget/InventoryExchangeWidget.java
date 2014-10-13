@@ -13,33 +13,39 @@ import space.world.Entity;
 import space.world.Pickup;
 import de.matthiasmann.twl.Label;
 
+/**
+ * The interface which appears when using a container to take/give items.
+ * 
+ * @author Matt Graham
+ */
+
 public class InventoryExchangeWidget extends NestedWidget {
 
-	public final static String ACCEPT = "Accept";
-	public final static String CLOSE = "Cancel";
+	private final static String ACCEPT = "Accept";
+	private final static String CLOSE = "Cancel";
 
-	public final static int SPACING = 10;
-	public final static int PADDING = 30;
+	private final static int SPACING = 10;
+	private final static int PADDING = 30;
 	
-	public final static int COLUMN = 100;
-	public final static int PANEL = 300;
+	private final static int COLUMN = 100;
+	private final static int PANEL = 300;
 	
-	Label accept;
-	Label cancel;
+	private Label accept;
+	private Label cancel;
 	
-	Label playerName;
-	Label containerName;
+	private Label playerName;
+	private Label containerName;
 
-	List<ItemLabel> playerItems;
-	List<Label> playerDescriptions;
+	private List<ItemLabel> playerItems;
+	private List<Label> playerDescriptions;
 	
-	List<ItemLabel> containerItems;
-	List<Label> containerDescriptions;
+	private List<ItemLabel> containerItems;
+	private List<Label> containerDescriptions;
 
-	Set<Entity> takeSelection;
-	Set<Entity> giveSelection;
+	private Set<Entity> takeSelection;
+	private Set<Entity> giveSelection;
 	
-	Container container;
+	private Container container;
 
 	public InventoryExchangeWidget(final GameApplication gameApplication) {
 		super(gameApplication);
@@ -148,28 +154,45 @@ public class InventoryExchangeWidget extends NestedWidget {
 		cancel.setPosition(x, y);
 	}
 	
+	/**
+	 * Determines if the given entity can have items exchanged with, and sets up the interface if so.
+	 * 
+	 * @param entity
+	 * @return
+	 */
 	public boolean update(Entity entity) {
 		if(entity == null || !(entity instanceof Container)){
 			return false;
 		}
 
-		Container container = (Container) entity;
+		return update((Container) container);
+	}
+
+	/**
+	 * Determines if the given container can have items exchanged with, and sets up the interface if so.
+	 * 
+	 * @param entity
+	 * @return
+	 */
+	public boolean update(Container container){
 		if(container.isLocked() || !container.isOpen()){
 			return false;
 		}
-		update((Container) container);
 		
-		return true;
-	}
-
-	public void update(Container container){
 		this.container = container;
 		
 		update(container.getItemsContained());
 		
 		containerName.setText(container.getName());
+		
+		return true;
 	}
 
+	/**
+	 * Generates the various lists of item views for the interface.
+	 * 
+	 * @param pickups
+	 */
 	private void update(List<Pickup> pickups){
 		resetGUI();
 		resetLists();
@@ -177,15 +200,18 @@ public class InventoryExchangeWidget extends NestedWidget {
 		accept.setEnabled(false);
 
 		for(Pickup pickup : pickups){
-			generateContainerLabels((Entity) pickup);
+			generateContainerItems((Entity) pickup);
 		}
 		
 		for(Pickup pickup : gameApplication.getClient().getLocalPlayer().getInventory()){
-			generatePlayerLabels((Entity) pickup);
+			generatePlayerItems((Entity) pickup);
 		}
 		
 	}
 	
+	/**
+	 * Removes all item views from the interface.
+	 */
 	private void resetGUI(){
 		for(Label item : playerItems){
 			removeChild(item);
@@ -204,6 +230,9 @@ public class InventoryExchangeWidget extends NestedWidget {
 		}
 	}
 	
+	/**
+	 * Resets all the various lists containing item views and selected items.
+	 */
 	private void resetLists(){
 		playerItems.clear();
 		playerDescriptions.clear();
@@ -215,7 +244,12 @@ public class InventoryExchangeWidget extends NestedWidget {
 		giveSelection.clear();
 	}
 	
-	private void generateContainerLabels(Entity entity){
+	/**
+	 * Creates the item views for the container's items and adds them to the GUI.
+	 * 
+	 * @param entity
+	 */
+	private void generateContainerItems(Entity entity){
 		Label description = new ItemDescriptionLabel(entity.getDescription());
 		containerDescriptions.add(description);
 		add(description);
@@ -242,7 +276,12 @@ public class InventoryExchangeWidget extends NestedWidget {
 		add(item);
 	}
 	
-	private void generatePlayerLabels(Entity entity){
+	/**
+	 * Creates the item views for the player's items and adds them to the GUI.
+	 * 
+	 * @param entity
+	 */
+	private void generatePlayerItems(Entity entity){
 		Label description = new ItemDescriptionLabel(entity.getDescription());
 		playerDescriptions.add(description);
 		add(description);
@@ -269,11 +308,17 @@ public class InventoryExchangeWidget extends NestedWidget {
 		add(item);
 	}
 
-	public void updateAccept() {
+	/**
+	 * Sets if the accept button is enabled.
+	 */
+	private void updateAccept() {
 		accept.setEnabled(!takeSelection.isEmpty() || !giveSelection.isEmpty());
 	}
 
-	public void submitChanges(){
+	/**
+	 * Informs the client about the changes made using the interface.
+	 */
+	private void submitChanges(){
 		for(Entity entity : takeSelection){
 			gameApplication.getClient().transfer(entity, container, gameApplication.getClient().getLocalPlayer());
 		}
@@ -284,7 +329,12 @@ public class InventoryExchangeWidget extends NestedWidget {
 		gameApplication.setInventoryExchangeVisible(false);
 	}
 	
-	public void moveToPlayer(ItemLabel item){
+	/**
+	 * Shifts an item view to the player's column.
+	 * 
+	 * @param item
+	 */
+	private void moveToPlayer(ItemLabel item){
 		playerItems.add(item);
 		playerDescriptions.add(item.getDescription());
 		
@@ -292,7 +342,12 @@ public class InventoryExchangeWidget extends NestedWidget {
 		containerDescriptions.remove(item.getDescription());
 	}
 	
-	public void moveToContainer(ItemLabel item){
+	/**
+	 * Shifts an item view to the container's column.
+	 * 
+	 * @param item
+	 */
+	private void moveToContainer(ItemLabel item){
 		playerItems.remove(item);
 		playerDescriptions.remove(item.getDescription());
 		

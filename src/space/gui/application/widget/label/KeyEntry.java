@@ -1,17 +1,28 @@
-package space.gui.application.widget;
+package space.gui.application.widget.label;
 
 import space.gui.application.GameApplication;
 import space.gui.application.KeyBinding;
 import de.matthiasmann.twl.Label;
 
+/**
+ * The controller/view of a key binding.
+ * 
+ * @author Matt Graham
+ */
+
 public class KeyEntry extends Label {
 
-	GameApplication gameApplication;
-	KeyBinding keyBinding;
+	private GameApplication gameApplication;
+	private KeyBinding keyBinding;
 
-	String action;
-	int key;
+	private String action;
+	private int key;
 
+	/**
+	 * @param gameApplication
+	 * @param action the action of the binding
+	 * @param key the initial key of the binding
+	 */
 	public KeyEntry(GameApplication gameApplication, String action, int key){
 		super();
 

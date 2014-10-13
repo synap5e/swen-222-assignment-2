@@ -7,6 +7,14 @@ import java.util.Set;
 
 import de.matthiasmann.twl.Event;
 
+/**
+ * The model of the mapping between keys and actions.
+ * It is an implementation of a two-way map as it looks up action to key,
+ * and key to actions.
+ * 
+ * @author Matt Graham
+ */
+
 public class KeyBinding {
 
 	public final static String ACTION_MENU = "menu";
@@ -20,6 +28,7 @@ public class KeyBinding {
 	public final static String MOVE_LEFT = "left";
 	public final static String MOVE_RIGHT = "right";
 	
+	//define default bindings.
 	private final static Map<Integer, String> DEFAULT_MAP;
 	static {
         Map<Integer, String> temp = new HashMap<Integer, String>();
@@ -50,11 +59,25 @@ public class KeyBinding {
 		}
 	}
 
+	/**
+	 * Adds a binding to the maps.
+	 * Note: new binding infer new actions, which shouldn't happen after initialisation.
+	 * 
+	 * @param key the key to be bound
+	 * @param action the action for the key
+	 */
 	protected void addBinding(int key, String action){
 		keyMap.put(key, action);
 		actionMap.put(action, key);
 	}
 	
+	
+	/**
+	 * Re-maps a key to a new binding.
+	 * 
+	 * @param key the key to be bound
+	 * @param action the action for the key
+	 */
 	public void changeBinding(int key, String action){
 		String previousAction = keyMap.get(key);
 		int previousKey = actionMap.get(action);
@@ -65,26 +88,62 @@ public class KeyBinding {
 		addBinding(key, action);
 	}
 
+	/**
+	 * Gets the key of an action.
+	 * 
+	 * @param action
+	 * @return the key binding to the action
+	 */
 	public int getKey(String action) {
 		return actionMap.get(action);
 	}
 	
+	/**
+	 * Gets the action of a key.
+	 * 
+	 * @param key
+	 * @return the action bound to the key
+	 */
 	public String getAction(int key) {
 		return keyMap.get(key);
 	}
 
+	
+	/**
+	 * Get whether a key has a binding.
+	 * 
+	 * @param key
+	 * @return if key has a binding
+	 */
 	public boolean containsKey(int key) {
 		return keyMap.containsKey(key);
 	}
 
+	/**
+	 * Gets the character of the key bound to the action.
+	 * 
+	 * @param action
+	 * @return the char of the key
+	 */
 	public String getKeyName(String action) {
 		return Event.getKeyNameForCode(getKey(action));
 	}
 	
+	/**
+	 * Gets the character of the key.
+	 * 
+	 * @param action
+	 * @return the char of the key
+	 */
 	public String getKeyName(int key) {
 		return Event.getKeyNameForCode(key);
 	}
 
+	/**
+	 * Gets a complete set of the key bindings
+	 * 
+	 * @return an iterable read-only set of key bindings
+	 */
 	public Set<Map.Entry<String, Integer>> getActionSet() {
 		return Collections.unmodifiableSet(actionMap.entrySet());
 	}

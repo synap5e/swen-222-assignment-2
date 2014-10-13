@@ -6,18 +6,25 @@ import java.util.Map;
 
 import space.gui.application.GameApplication;
 import space.gui.application.KeyBinding;
+import space.gui.application.widget.label.KeyEntry;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
+/**
+ * The panel which allows for a user to re-bind keys.
+ * 
+ * @author Matt Graham
+ */
+
 public class ControlsWidget extends NestedWidget{
 	
-	public final static int COLUMN = 200;
-	public final static int SPACING = 10;
+	private final static int COLUMN = 200;
+	private final static int SPACING = 10;
 	
-	List<Label> actions;
-	List<KeyEntry> keys;
+	private List<Label> actions;
+	private List<KeyEntry> keys;
 	
-	KeyBinding keyBinding;
+	private KeyBinding keyBinding;
 
 	public ControlsWidget(GameApplication gameApplication) {
 		super(gameApplication);

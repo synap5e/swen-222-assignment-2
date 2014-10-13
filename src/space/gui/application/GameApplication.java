@@ -12,14 +12,14 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-import space.gui.application.widget.GUIWrapper;
-import space.gui.application.widget.GameController;
 import space.gui.application.widget.HeadsUpDisplay;
 import space.gui.application.widget.IngameMenu;
 import space.gui.application.widget.InventoryExchangeWidget;
 import space.gui.application.widget.InventoryWidget;
-import space.gui.application.widget.KeyEntry;
-import space.gui.application.widget.MainMenu;
+import space.gui.application.widget.label.KeyEntry;
+import space.gui.application.widget.wrapper.GUIWrapper;
+import space.gui.application.widget.wrapper.GameController;
+import space.gui.application.widget.wrapper.MainMenu;
 import space.gui.pipeline.GameRenderer;
 import space.network.Client;
 import space.network.ClientListener;
@@ -46,34 +46,34 @@ public class GameApplication implements ClientListener{
 
 	public static final int MULTIPLAYER = 2;
 
-	int width;
-	int height;
+	private int width;
+	private int height;
 
-	int state;
-	boolean end;
+	private int state;
+	private boolean end;
 
-	long lastTick;
+	private long lastTick;
 
-	Server server;
-	Client client;
-	GameRenderer gameRenderer;
+	private Server server;
+	private Client client;
+	private GameRenderer gameRenderer;
 
-	LWJGLRenderer renderer;
-	GUI gui;
+	private LWJGLRenderer renderer;
+	private GUI gui;
 
-	GameController gameController;
-	InventoryExchangeWidget inventoryExchangeWidget;
-	InventoryWidget inventoryWidget;
+	private GameController gameController;
+	private InventoryExchangeWidget inventoryExchangeWidget;
+	private InventoryWidget inventoryWidget;
 
-	HeadsUpDisplay headsUpDisplay;
+	private HeadsUpDisplay headsUpDisplay;
 
-	MainMenu mainMenu;
-	IngameMenu ingameMenu;
+	private MainMenu mainMenu;
+	private IngameMenu ingameMenu;
 
-	String serverAddress;
-	String saveName;
+	private String serverAddress;
+	private String saveName;
 
-	KeyBinding keyBinding;
+	private KeyBinding keyBinding;
 
 	/**
 	 * Creates a new Game Application window of the given width and height.
@@ -134,7 +134,7 @@ public class GameApplication implements ClientListener{
 	 * @throws IOException
 	 * @throws LWJGLException
 	 */
-	public void mainMenu() throws IOException, LWJGLException{
+	private void mainMenu() throws IOException, LWJGLException{
 
 		// Reset state
 		this.end = false;
@@ -179,7 +179,7 @@ public class GameApplication implements ClientListener{
 	 * @throws IOException
 	 * @throws LWJGLException
 	 */
-	public void startGame() throws LWJGLException, IOException{
+	private void startGame() throws LWJGLException, IOException{
 
 		//Create the client TODO use program arguments for host and port
 		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel(), keyBinding);
@@ -237,7 +237,7 @@ public class GameApplication implements ClientListener{
 	/**
 	 * This method contains the game logic which is executed at each game tick.
 	 */
-	public void gameTick(){
+	private void gameTick(){
 		long now = getTime();
 		int delta = (int)(now - lastTick);
 		lastTick = now;
@@ -341,7 +341,7 @@ public class GameApplication implements ClientListener{
 	/**
 	 * CLears the OpenGL screen buffer.
 	 */
-	public void clearGLBuffer(){
+	private void clearGLBuffer(){
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 	}
@@ -361,18 +361,29 @@ public class GameApplication implements ClientListener{
 		serverAddress = address;
 	}
 
+	/**
+	 * Gets the game client
+	 * 
+	 * @return the game client
+	 */
 	public Client getClient() {
 		return client;
 	}
 
-	public int getBinding(String action) {
-		return keyBinding.getKey(action);
-	}
-
+	/**
+	 * Gets the key bindings
+	 * 
+	 * @return the key bindings model
+	 */
 	public KeyBinding getKeyBinding(){
 		return keyBinding;
 	}
 
+	/**
+	 * Indicates that the next key press will be intercepted separately from the game.
+	 * 
+	 *  @param keyEntry
+	 */
 	public void captureKey(KeyEntry keyEntry) {
 		Widget root = gui.getRootPane();
 
@@ -381,10 +392,20 @@ public class GameApplication implements ClientListener{
 		}
 	}
 
+	/**
+	 * Sets up the single player by selecting the desired save file
+	 * 
+	 * @param text file name
+	 */
 	public void setupSingleplayer(String text) {
 		this.saveName = text;
 	}
 
+	/**
+	 * Sets the inventory exchange visibility and handles the various input states.
+	 * 
+	 * @param flag
+	 */
 	public void setInventoryExchangeVisible(boolean flag){
 		if(flag && inventoryExchangeWidget.update(getClient().getViewedEntity())){
 			captureMouse(false);
@@ -396,10 +417,20 @@ public class GameApplication implements ClientListener{
 		}
 	}
 
+	/**
+	 * Gets the visibility of the inventory exchange interface
+	 * 
+	 * @return whether the inventory exchange is visible
+	 */
 	public boolean isInventoryExchangeVisible(){
 		return inventoryExchangeWidget.isVisible();
 	}
 	
+	/**
+	 * Sets the inventory visibility and handles the various input states.
+	 * 
+	 * @param flag
+	 */
 	public void setInventoryVisible(boolean flag){
 		if(flag){
 			inventoryWidget.update();
@@ -408,6 +439,11 @@ public class GameApplication implements ClientListener{
 		inventoryWidget.setVisible(flag);
 	}
 
+	/**
+	 * Gets the visibility of the inventory interface
+	 * 
+	 * @return whether the inventory is visible
+	 */
 	public boolean isInventoryVisible(){
 		return inventoryWidget.isVisible();
 	}

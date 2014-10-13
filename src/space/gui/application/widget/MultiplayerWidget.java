@@ -6,16 +6,22 @@ import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
+/**
+ * The panel displayed to show the multi-player options.
+ * 
+ * @author Matt Graham
+ */
+
 public class MultiplayerWidget extends NestedWidget {
 	private final static int SPACING = 10;
 
-	Label serverLabel;
-	EditField serverField;
+	private Label serverLabel;
+	private EditField serverField;
 
-	Label idLabel;
-	EditField idField;
+	private Label idLabel;
+	private EditField idField;
 
-	Label submitButton;
+	private Label submitButton;
 
 	public MultiplayerWidget(final GameApplication gameApplication) {
 		super(gameApplication);

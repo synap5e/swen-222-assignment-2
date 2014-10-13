@@ -1,27 +1,25 @@
-package space.gui.application.widget;
-
-import java.util.List;
+package space.gui.application.widget.wrapper;
 
 import space.gui.application.GameApplication;
 import space.gui.application.KeyBinding;
-import space.world.Entity;
-import space.world.Pickup;
 import de.matthiasmann.twl.Event;
+
+/**
+ * The GameController is the root pane of the TWL GUI.
+ * All user input (in-game) must go through this class.
+ * 
+ * @author Matt Graham
+ */
 
 public class GameController extends GUIWrapper {
 
-	KeyBinding keyBinding;
+	private KeyBinding keyBinding;
 
 	public GameController(GameApplication gameApplication){
 		super(gameApplication);
 
 		this.keyBinding = gameApplication.getKeyBinding();
 	}
-
-    @Override
-    protected void layout() {
-    	super.layout();
-    }
 
     @Override
     protected boolean handleEvent(Event evt) {
@@ -74,6 +72,11 @@ public class GameController extends GUIWrapper {
     	return false;
     }
 
+    /**
+     * Calls the functions mapped to the actions
+     * 
+     * @param action
+     */
     private void fireAction(String action){
 	    switch (action) {
 	        case KeyBinding.ACTION_MENU:

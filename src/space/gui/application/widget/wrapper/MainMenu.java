@@ -1,12 +1,22 @@
-package space.gui.application.widget;
+package space.gui.application.widget.wrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import space.gui.application.GameApplication;
+import space.gui.application.widget.ControlsWidget;
+import space.gui.application.widget.InstructionsWidget;
+import space.gui.application.widget.MultiplayerWidget;
+import space.gui.application.widget.SingleplayerWidget;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
+
+/**
+ * The root pane of the main menu screen.
+ * 
+ * @author Matt Graham
+ */
 
 public class MainMenu extends GUIWrapper {
 	private static final int SPACING = 15;
@@ -16,11 +26,11 @@ public class MainMenu extends GUIWrapper {
 
 	private List<Integer> timers;
 
-	InstructionsWidget instructionsWidget;
-	ControlsWidget controlsWidget;
+	private InstructionsWidget instructionsWidget;
+	private ControlsWidget controlsWidget;
 
-	SingleplayerWidget singleplayerWidget;
-	MultiplayerWidget multiplayerWidget;
+	private SingleplayerWidget singleplayerWidget;
+	private MultiplayerWidget multiplayerWidget;
 
 	public MainMenu(final GameApplication gameApplication){
 		super(gameApplication);
@@ -168,6 +178,9 @@ public class MainMenu extends GUIWrapper {
     	return evt.isMouseEventNoWheel();
     }
 
+    /**
+     * Hides the various additional panels.
+     */
     private void hideWidgets(){
     	singleplayerWidget.setVisible(false);
 		controlsWidget.setVisible(false);
@@ -175,6 +188,9 @@ public class MainMenu extends GUIWrapper {
 		instructionsWidget.setVisible(false);
     }
 
+    /**
+     * Controls the flashing letters in the menu.
+     */
     public void update(){
     	for(int i = 0; i != title.size(); i++){
     		Label letter = title.get(i);
@@ -193,10 +209,20 @@ public class MainMenu extends GUIWrapper {
     	}
     }
 
+    /**
+     * Provides the timing for how long a letter should be visible.
+     * 
+     * @return
+     */
     private int getVisibleTimer(){
     	return 30 + (int) (Math.floor(Math.random() * 120));
     }
 
+    /**
+     * Provides the timing for how long a letter should be hidden.
+     * 
+     * @return
+     */
     private int getHiddenTimer(){
     	return 5;
     }

@@ -12,13 +12,10 @@ import de.matthiasmann.twl.Widget;
  */
 public class NestedWidget extends Widget {
 	
-	GameApplication gameApplication;
+	protected GameApplication gameApplication;
 	
-	
-	int startX;
-	
-	
-	int startY;
+	protected int startX;
+	protected int startY;
 	
 	public NestedWidget(GameApplication gameApplication){
 		this.gameApplication = gameApplication;
@@ -29,7 +26,6 @@ public class NestedWidget extends Widget {
 	protected boolean handleEvent(Event evt) {
 		return super.handleEvent(evt);
 	}
-	
 	
     public void updatePositions(int x, int y){
     	startX = x;
