@@ -16,13 +16,10 @@ import space.world.Player;
 public class InventoryWidget extends NestedWidget {
 
 	public final static String SUBMIT = "Close";
-	
-	public final static int SPACING = 15;
-	public final static int PADDING = 5;
 
 	Label submit;
 
-	List<ItemWidget> items;
+	List<Label> items;
 	List<Label> descriptions;
 
 	Set<Entity> selection;
@@ -30,7 +27,7 @@ public class InventoryWidget extends NestedWidget {
 	public InventoryWidget(GameApplication gameApplication) {
 		super(gameApplication);
 
-		this.items = new ArrayList<ItemWidget>();
+		this.items = new ArrayList<Label>();
 		this.descriptions = new ArrayList<Label>();
 		this.selection = new HashSet<Entity>();
 
@@ -45,34 +42,12 @@ public class InventoryWidget extends NestedWidget {
 		submit.setText(SUBMIT);
 		submit.setTheme("item");
 		add(submit);
-		
-		updatePositions(gameApplication.getWidth() / 3, gameApplication.getHeight() / 2);
 
 	}
 
 	@Override
-	protected void layout(){
-		super.layout();
-		
-		int x = startX;
-		int y = startY;
-		
-		for(int i = 0; i != items.size(); i++){
-			Label item = items.get(i);
-			item.adjustSize();
-			item.setPosition(x, y);
-			
-			y += item.getHeight() + PADDING;
-			
-			Label description = descriptions.get(i);
-			description.adjustSize();
-			description.setPosition(x, y);
-			
-			y += description.getHeight() + SPACING;
-		}
-		
-		submit.adjustSize();
-		submit.setPosition(x, y);
+	public void layout(){
+
 	}
 
 	@Override
@@ -81,20 +56,11 @@ public class InventoryWidget extends NestedWidget {
 			return true;
 		}
 
-		if(isVisible() && evt.getKeyCode() == Event.KEY_ESCAPE){
+		if(evt.getKeyCode() == Event.KEY_ESCAPE){
+			System.out.println("sdf");
 			gameApplication.setInventoryVisible(false);
 		}
 
-		return true;
-	}
-	
-	public boolean update(Entity entity) {
-		if(entity == null || !(entity instanceof Container)){
-			return false;
-		}
-
-		update((Container) entity);
-		
 		return true;
 	}
 
@@ -113,16 +79,24 @@ public class InventoryWidget extends NestedWidget {
 		for(Pickup pickup : pickups){
 			Entity entity = (Entity) pickup;
 
-			ItemWidget item = new ItemWidget(entity, this);
+			Label item = new Label();
 			items.add(item);
 			add(item);
 
 			Label description = new Label();
 			description.setText(entity.getDescription());
-			description.setTheme("description");
+			item.setTheme("description");
 			descriptions.add(description);
 			add(description);
 		}
+	}
+
+	public void update(Entity entity) {
+		if(entity == null || !(entity instanceof Container)){
+			return;
+		}
+
+		update((Container) entity);
 	}
 
 	public void addSelected(Entity entity) {
@@ -135,13 +109,5 @@ public class InventoryWidget extends NestedWidget {
 
 	public void submitChanges(){
 		gameApplication.setInventoryVisible(false);
-	}
-	
-	@Override
-	public void setVisible(boolean flag){
-		if(flag){
-			layout();
-		}
-		super.setVisible(flag);
 	}
 }

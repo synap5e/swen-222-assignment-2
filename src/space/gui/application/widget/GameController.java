@@ -27,12 +27,8 @@ public class GameController extends GUIWrapper {
     protected boolean handleEvent(Event evt) {
     	boolean returnFlag = evt.isMouseEventNoWheel();
 
-        if(super.handleEvent(evt)) {
+        if(super.handleEvent(evt) || gameApplication.isInventoryVisible()) {
             return true;
-        }
-        
-        if(gameApplication.isInventoryVisible()){
-        	return false;
         }
 
     	if (evt.getType() == Event.Type.KEY_PRESSED) {
