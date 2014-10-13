@@ -64,6 +64,10 @@ public class Connection {
 		incoming.read(rawLength);
 		int length = ByteBuffer.wrap(rawLength).getInt();
 		byte[] data = new byte[length];
+		
+		//Wait until the entire message has been received
+		while (incoming.available() < length);
+		
 		incoming.read(data);
 		switch (type){
 			case TEXT:
