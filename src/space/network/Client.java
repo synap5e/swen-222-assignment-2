@@ -195,10 +195,6 @@ public class Client {
 	public boolean removeListener(ClientListener listener){
 		return listeners.remove(listener);
 	}
-
-	//TODO: remove
-	boolean torch = false;
-	boolean interact = false;
 	
 	/**
 	 * Updates the game world with changes from the server and local input.
@@ -211,26 +207,6 @@ public class Client {
 			synchronized (world) {
 				world.update(delta);
 				updatePlayer(delta);
-				
-				//TODO: Tempory code for rifling
-				if (Keyboard.isKeyDown(Keyboard.KEY_R)){
-					if (!interact){
-						interact = true;
-						Entity viewed = getViewedEntity();
-						if (viewed instanceof Container){
-							Container c = (Container) viewed;
-							if (c.isOpen()){
-								if (c.getItemsContained().size() > 0){
-									transfer((Entity) c.getItemsContained().get(0), c, localPlayer);
-								} else if (localPlayer.getInventory().size() > 0){
-									transfer((Entity) localPlayer.getInventory().get(0), localPlayer, c);
-								}
-							}
-						}
-					}
-				} else {
-					interact = false;
-				}
 			}
 		} catch (IOException e) {
 			shutdown();
