@@ -47,35 +47,37 @@ public class ModelFlyweight {
 			models.put("Turret", new WavefrontModel(	new File("./assets/models/turret.obj"),
 														new Vector3D(0, 0, 0),
 														new Vector3D(0, 90, 0), 2,
+														new Vector3D(0.65f,0.35f,0.35f),
+														Material.bronze
+													));	
+			
+			models.put("Teleporter", new WavefrontModel(new File("./assets/models/teleporter.obj"),
+														new Vector3D(0, 0, 0),
+														new Vector3D(0, 90, 0), 0.5f,
 														new Vector3D(0.35f,0.35f,0.35f),
 														Material.bronze
 													));	
-			models.put("Teleporter", new WavefrontModel(	new File("./assets/models/teleporter.obj"),
-					new Vector3D(0, 0, 0),
-					new Vector3D(0, 90, 0), 0.5f,
-					new Vector3D(0.35f,0.35f,0.35f),
-					Material.bronze
-				));	
+			
 			models.put("Button", new WavefrontModel(	new File("./assets/models/button.obj"),
-					new Vector3D(0, 0, 0),
-					new Vector3D(0, 90, 0), 1f,
-					new Vector3D(0.35f,0.35f,0.35f),
-					Material.simple
-				));	
+														new Vector3D(0, 0, 0),
+														new Vector3D(0, 90, 0), 1f,
+														new Vector3D(0.35f,0.65f,0.35f),
+														Material.simple
+													));	
 			
 			models.put("Bullet", new BulletModel());
 
 			openChest = new WavefrontModel(			new File("./assets/models/chest.obj"),
 														new Vector3D(0, 0, 0),
 														new Vector3D(0, 90, 0), 2,
-														new Vector3D(0.35f,0.35f,0.35f),
+														new Vector3D(0.35f,0.35f,0.65f),
 														Material.bronze
 											   );
 
 			closedChest = new WavefrontModel(		new File("./assets/models/chestclosed.obj"),
 														new Vector3D(0, 0, 0),
 														new Vector3D(0, 90, 0), 2,
-														new Vector3D(0.35f,0.35f,0.35f),
+														new Vector3D(0.35f,0.35f,0.65f),
 														Material.bronze
 												);
 
