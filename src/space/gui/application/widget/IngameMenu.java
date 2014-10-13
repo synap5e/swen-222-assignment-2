@@ -83,6 +83,8 @@ public class IngameMenu extends NestedWidget{
 
 	@Override
 	protected void layout() {
+		super.layout();
+		
 	    int x = PADDING_LEFT;
 	    int y = PADDING_TOP;
 

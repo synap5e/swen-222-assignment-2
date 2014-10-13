@@ -264,7 +264,7 @@ public class ModelToJson implements WorldSaver {
 		object.put("room", e.getRoom().getID());
 		object.put("turret", e.getTurret().getID());
 		object.put("yRotation", e.getAngle());
-		object.put("stopped", e.isStopped());
+		//object.put("stopped", e.isStopped());
 		object.put("beamsShot",e.getBeamsShot());
 		object.put("roomId",e.getRoom().getID());
 		object.put("roomBeamShooterIsIn", room.getID());

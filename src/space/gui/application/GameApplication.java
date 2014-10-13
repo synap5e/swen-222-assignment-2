@@ -27,6 +27,7 @@ import space.network.storage.MockStorage;
 import space.network.storage.WorldLoader;
 import space.serialization.JsonToModel;
 import space.serialization.ModelToJson;
+import space.world.Entity;
 import space.world.World;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.Widget;
@@ -384,13 +385,14 @@ public class GameApplication implements ClientListener{
 	}
 
 	public void setInventoryVisible(boolean flag){
-		captureMouse(!flag);
-
-		if(flag){
-			inventoryWidget.update(getClient().getViewedEntity());
+		if(flag && inventoryWidget.update(getClient().getViewedEntity())){
+			captureMouse(false);
+			inventoryWidget.setVisible(true);
+			
+		} else {
+			captureMouse(true);
+			inventoryWidget.setVisible(false);
 		}
-
-		inventoryWidget.setVisible(flag);
 	}
 
 	public boolean isInventoryVisible(){
