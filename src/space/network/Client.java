@@ -291,7 +291,7 @@ public class Client {
 	 * @return Whether the interaction was successful.
 	 */
 	public boolean interactWith(Entity e){
-		if(e == null){
+		if(e == null || !e.canInteract()){
 			return false;
 		}
 		
