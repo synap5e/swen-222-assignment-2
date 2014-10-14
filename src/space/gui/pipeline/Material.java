@@ -14,6 +14,12 @@ import org.lwjgl.BufferUtils;
 
 import space.math.Vector3D;
 
+/**
+ * The properties of a material.
+ * This defines a materials ambient reflection, diffuse reflection, specular reflection and sineyness
+ * @author Simon Pinfold (300280028)
+ *
+ */
 public class Material {
 
 	// materials defined at http://devernay.free.fr/cours/opengl/materials.html
@@ -175,6 +181,13 @@ public class Material {
 	private FloatBuffer diffuse;
 	private FloatBuffer specular;
 
+	/** Construct a new material using the defined reflectivness
+	 *
+	 * @param ambientV
+	 * @param diffuseV
+	 * @param specularV
+	 * @param shininess
+	 */
 	public Material(Vector3D ambientV, Vector3D diffuseV, Vector3D specularV, float shininess){
 		this.ambient = BufferUtils.createFloatBuffer(4);
 		ambient.put(new float[] { ambientV.getX(), ambientV.getY(), ambientV.getZ(), 1f});
@@ -191,6 +204,9 @@ public class Material {
 		this.shininess = shininess;
 	}
 
+	/**
+	 * Apply the material properties to the top of the attribute stack
+	 */
 	public void apply(){
 		glMaterial(GL_FRONT, GL_AMBIENT, ambient);
 

@@ -5,9 +5,9 @@ import java.util.List;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
-/**
+/** A room that can be viewed. Has all the usual walls, floor and ceiling and also holds ViewableDoors and ViewableObjects
  * 
- * @author Simon Pinfold
+ * @author Simon Pinfold (300280028)
  *
  */
 public interface ViewableRoom {
@@ -20,12 +20,29 @@ public interface ViewableRoom {
 	 */
 	public Vector2D getCentre();
 
+	/**
+	 * Gets all the ViewableWalls of this room
+	 * @return the room's walls
+	 */
 	public List<? extends ViewableWall> getWalls();
 
+	/**
+	 * Gets all the ViewableObjects contained in the room.
+	 * @return the objects in the room.
+	 */
 	public List<? extends ViewableObject> getContainedObjects();
 
+	/**
+	 * Check whether the room contains a point
+	 * @param point the point to check
+	 * @return whether the room contains point
+	 */
 	public boolean contains(Vector2D point);
 
+	/**
+	 *  Get all viewable doors of this room
+	 * @return all the doors
+	 */
 	public List<? extends ViewableDoor> getAllDoors();
 
 	/** Get the top left corner of this hull's axis
@@ -42,6 +59,10 @@ public interface ViewableRoom {
 	 */
 	public Vector2D getAABBBottomRight();
 
+	/**
+	 * Get all ViewableBeams created from this room
+	 * @return
+	 */
 	public List<? extends ViewableBeam> getBeams();
 	
 	/** Get the amount and color of light in a room. 

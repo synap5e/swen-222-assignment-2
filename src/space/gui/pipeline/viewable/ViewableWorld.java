@@ -4,9 +4,9 @@ import java.util.List;
 
 import space.math.Vector2D;
 
-/**
+/** A world consisting of viewable rooms
  * 
- * @author Simon Pinfold
+ * @author Simon Pinfold (300280028)
  *
  */
 public interface ViewableWorld {
