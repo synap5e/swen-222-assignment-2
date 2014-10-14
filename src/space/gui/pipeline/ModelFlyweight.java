@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import space.gui.pipeline.models.BulletModel;
+import space.gui.pipeline.models.DoorFrameModel;
+import space.gui.pipeline.models.DoorSurfaceModel;
 import space.gui.pipeline.models.RenderModel;
 import space.gui.pipeline.models.WavefrontModel;
 import space.gui.pipeline.viewable.OpenableContainer;
@@ -18,6 +20,11 @@ public class ModelFlyweight {
 	private HashMap<String, RenderModel> models;
 	private WavefrontModel openChest;
 	private WavefrontModel closedChest;
+	private DoorFrameModel doorFrame;
+	private DoorSurfaceModel doorSurface;
+	private int floorTexture;
+	private int wallTexture;
+	private int ceilingTexture;
 
 	public ModelFlyweight() {
 		models = new HashMap<>();
@@ -80,9 +87,15 @@ public class ModelFlyweight {
 														new Vector3D(0.35f,0.35f,0.65f),
 														Material.bronze
 												);
+			
+			doorFrame = new DoorFrameModel();
+			doorSurface = new DoorSurfaceModel();
+			
+			wallTexture = TextureLoader.loadTexture(new File("./assets/interior_wall.png"));
+			floorTexture = TextureLoader.loadTexture(new File("./assets/floor maybs.png"));
+			ceilingTexture = TextureLoader.loadTexture(new File("./assets/shiphull.png"));
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -103,5 +116,27 @@ public class ModelFlyweight {
 		}
 		return models.get(type.getType());
 	}
+	
+	public int getWallTexture() {
+		return wallTexture;
+	}
+
+	public int getCeilingTexture() {
+		return ceilingTexture;
+	}
+
+	public int getFloorTexture() {
+		return floorTexture;
+	}
+
+	public DoorSurfaceModel getDoorSurface() {
+		return doorSurface;
+	}
+
+	public DoorFrameModel getDoorFrame() {
+		return doorFrame;
+	}
+
+	
 
 }

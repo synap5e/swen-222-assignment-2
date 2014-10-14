@@ -62,7 +62,6 @@ public class GameRenderer {
 	public void loadModels(ViewableWorld world) {
 		this.models = new ModelFlyweight();// new HashMap<Class<? extends ViewableObject>, RenderModel>();
 		
-		RoomModel.loadModels();
 		roomModels = new HashMap<>();
 		for (ViewableRoom room : world.getViewableRooms()){
 			roomModels.put(room, new RoomModel(room, models));
