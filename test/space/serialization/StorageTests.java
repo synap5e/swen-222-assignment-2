@@ -17,6 +17,9 @@ import space.world.Entity;
 import space.world.Key;
 import space.world.Player;
 import space.world.Room;
+import space.world.Teleporter;
+import space.world.Turret;
+import space.world.TurretStrategyImpl;
 import space.world.World;
 
 public class StorageTests {
@@ -24,11 +27,10 @@ public class StorageTests {
 	private static final int PLAYER_ID = 9001;
 
 	@Test
-	public void testSaveAndLoad() throws SaveFileNotAccessibleException,
-			SaveFileNotValidException {
+	public void testSaveAndLoad() throws SaveFileNotAccessibleException,SaveFileNotValidException {
 		String savepath = "testSaveAndLoad";
 
-		World w = createTestWorld();
+		World w = createTestWorldRoomsandDoorsandPlayer();
 		new ModelToJson().saveWorld(savepath, w, new ArrayList<Player>());
 
 		WorldLoader loader = new JsonToModel();
@@ -41,9 +43,8 @@ public class StorageTests {
 	}
 
 	@Test
-	public void testStringRepresentionSaveAndLoad()
-			throws SaveFileNotValidException {
-		World w = createTestWorld();
+	public void testStringRepresentionSaveAndLoad()throws SaveFileNotValidException {
+		World w = createTestWorldRoomsandDoorsandPlayer();
 		String json = new ModelToJson().representWorldAsString(w);
 
 		WorldLoader loader = new JsonToModel();
@@ -54,8 +55,34 @@ public class StorageTests {
 		assertEquals(PLAYER_ID, ps.get(0).getID());
 		match(w, loaded, false);
 	}
+	
+	@Test
+	public void testTurretsandStrategy()throws SaveFileNotValidException {
+		World w = createTestWorldTurretsandStratandTeleporter();
+		String json = new ModelToJson().representWorldAsString(w);
 
-	private World createTestWorld() {
+		WorldLoader loader = new JsonToModel();
+		loader.loadWorldFromString(json);
+		World loaded = loader.getWorld();
+		match(w, loaded, false);
+	}
+	
+	@Test
+	public void testException()throws SaveFileNotValidException {
+		World w = createTestWorldRoomsandDoorsandPlayer();
+		String json = new ModelToJson().representWorldAsString(w);
+		WorldLoader loader = new JsonToModel();
+		try{
+		loader.loadWorldFromString("notjson");
+		new AssertionError("this should be caught by exception");
+		}
+		catch(SaveFileNotValidException e) {
+			assert true;
+		}
+
+	}
+
+	private World createTestWorldRoomsandDoorsandPlayer() {
 		World world = new World();
 		Room r = new Room(new Vector3D(.4f, .4f, .4f), 1, "temp",
 				Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20),
@@ -87,6 +114,25 @@ public class StorageTests {
 		world.addEntity(p);
 		return world;
 	}
+	
+	private World createTestWorldTurretsandStratandTeleporter() {
+		World world = new World();
+		Room r = new Room(new Vector3D(.2f, .4f, .7f), 1, "temp",
+				Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20),
+						new Vector2D(20, -20), new Vector2D(-20, -20)));
+		world.addRoom(r);
+		Room r2 = new Room(new Vector3D(.1f, .01f, .01f), 2, "light",
+				Arrays.asList(new Vector2D(-20, -20), new Vector2D(20, -20),
+						new Vector2D(20, -40), new Vector2D(-20, -40)));
+		world.addRoom(r2);
+		Teleporter t = new Teleporter(new Vector2D(10, 15),new Vector2D(1, 5), 10, (float) 0.01, "A Teleporter", "Tele", true);
+		Turret tur = new Turret(new Vector2D(2,3), 2, (float) 0.1,"pew pew", "turret", r2);
+		TurretStrategyImpl ts = new TurretStrategyImpl(tur,10f,new Vector2D(1,2), r);
+		tur.setStrategy(ts);
+		world.addEntity(t);
+		world.addEntity(tur);
+		return world;
+	}
 
 	private void match(World original, World loaded, boolean allowPlayers) {
 		for (Room r : original.getRooms().values()) {
@@ -95,12 +141,12 @@ public class StorageTests {
 			for (Entity e : r.getEntities()) {
 				if (!(e instanceof Player) || allowPlayers) {
 					Entity oe = loaded.getEntity(e.getID());
-					assertTrue(other.containsEntity(oe));
-					assertEquals(e.getClass(), oe.getClass());
+					assertTrue("the room must contain the entity",other.containsEntity(oe));
+					assertEquals("the clesses of the entities must be the same",e.getClass(), oe.getClass());
 					if (e instanceof Container) {
 						Container c = (Container) e;
 						Container oc = (Container) oe;
-						assertEquals(c.getItemsContained().size(), oc
+						assertEquals("the size of container should be the same",c.getItemsContained().size(), oc
 								.getItemsContained().size());
 						for (int i = 0; i < c.getItemsContained().size(); ++i) {
 							Entity p = (Entity) c.getItemsContained().get(i);
@@ -108,6 +154,18 @@ public class StorageTests {
 							assertEquals(p.getID(), op.getID());
 							assertEquals(p.getClass(), op.getClass());
 						}
+					}
+					if(e instanceof Turret){
+						Turret t = (Turret) e;
+						Turret ot = (Turret) oe;
+						assertEquals("the ids should be the same",t.getID(),ot.getID());
+						assertEquals("j","j");
+						assertEquals("the strategies should be the same",t.getStrategy().hashCode(),ot.getStrategy().hashCode());
+					}
+					if(e instanceof Teleporter){
+						Teleporter t = (Teleporter) e;
+						Teleporter ot = (Teleporter) oe;
+						assertEquals("the ids should be the same",t.getID(),ot.getID());
 					}
 				}
 			}
