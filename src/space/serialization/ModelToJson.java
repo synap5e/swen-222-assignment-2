@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import space.math.ConcaveHull;
 import space.math.Vector2D;
 import space.math.Vector3D;
-import space.network.storage.WorldSaver;
 import space.world.Beam;
 import space.world.BeamShooter;
 import space.world.Bullet;

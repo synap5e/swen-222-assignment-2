@@ -1,6 +1,7 @@
-package space.network.storage;
+package space.serialization;
 
 import java.util.List;
+
 import space.world.Player;
 import space.world.World;
 
@@ -15,15 +16,18 @@ public interface WorldLoader {
 	 * Load the world from a save file. The world must not contain any players.
 	 * 
 	 * @param savePath the path of the save file
+	 * @throws SaveFileNotAccessibleException 
+	 * @throws SaveFileNotValidException 
 	 */
-	public void loadWorld(String savePath);
+	public void loadWorld(String savePath) throws SaveFileNotAccessibleException, SaveFileNotValidException;
 	
 	/**
 	 * Load the world from a string representation the world. The world can contain players.
 	 * 
 	 * @param world the string representation of the world
+	 * @throws SaveFileNotAccessibleException 
 	 */
-	public void loadWorldFromString(String world);
+	public void loadWorldFromString(String world) throws SaveFileNotValidException;
 	
 	/**
 	 * Get the world that has been loaded.
