@@ -36,13 +36,45 @@ import space.math.Vector3D;
  */
 public class RoomModel {
 
+	private static final float WALL_HEIGHT = 11;
+
+	
+	/** What size to make the quads that make up a wall.
+	 * Walls must be tessellated for secular light to display
+	 * correctly.
+	 */
+	private static final float TESSELLATION_SIZE = 0.5f;
+
+	/** How many tessellated squares does a wall texture cover */
+	private static final float TEXTURE_TESSELLATION_MULTIPLE = 22;
+	
 	private int displayList;
+	private Material ceilingMaterial;
+	private Material wallMaterial;
+
+	
 	private HashMap<ViewableDoor, Float> doorRotations = new HashMap<ViewableDoor, Float>();
-	private ViewableRoom room;;
+	private ViewableRoom room;
+
+	
 	public RoomModel(ViewableRoom room, ModelFlyweight models){
+		wallMaterial = new Material(
+				new Vector3D(0.2f, 0.2f, 0.2f),
+				new Vector3D(1, 1, 1),
+				new Vector3D(0.6f, 0.6f, 0.6f),
+				0.5f
+		);
+		ceilingMaterial = new Material(
+				new Vector3D(0.4f, 0.4f, 0.4f),
+				new Vector3D(1, 1, 1),
+				new Vector3D(0.3f, 0.3f, 0.3f),
+				0.5f
+		);
+		this.room = room;
+		
 		// pre-compile the viewmodel for all static models, the walls and the ceiling
 		this.displayList = createDisplayList(room, models);
-		this.room = room;
+				
 	}
 
 	public void render(ModelFlyweight models) {
@@ -58,7 +90,7 @@ public class RoomModel {
 			glPushMatrix();
 			glTranslatef(door.getPosition().getX(), door.getOpenPercent()*DoorFrameModel.DOOR_HEIGHT, door.getPosition().getY());
 			glRotatef(angle, 0, -1, 0);
-			doorSurface.render();
+			models.getDoorSurface().render();
 			glPopMatrix();
 			
 		}
@@ -70,58 +102,6 @@ public class RoomModel {
 		}
 
 		glPopAttrib();
-	}
-
-
-
-	private static final float WALL_HEIGHT = 11;
-
-	
-	/** What size to make the quads that make up a wall.
-	 * Walls must be tessellated for secular light to display
-	 * correctly.
-	 */
-	private static final float TESSELLATION_SIZE = 0.5f;
-
-	/** How many tessellated squares does a wall texture cover */
-	private static final float TEXTURE_TESSELLATION_MULTIPLE = 22;
-
-	private static int wallTexture;
-	private static int floorTexture;
-	private static int ceilingTexture;
-
-	private static Material wallMaterial;
-	private static Material ceilingMaterial;
-	//private static int doorDisplayList;
-	//private static int doorTexture;
-	private static DoorFrameModel doorFrame;
-	private static DoorSurfaceModel doorSurface;
-
-	public static void loadModels() {
-		wallMaterial = new Material(
-				new Vector3D(0.2f, 0.2f, 0.2f),
-				new Vector3D(1, 1, 1),
-				new Vector3D(0.6f, 0.6f, 0.6f),
-				0.5f
-		);
-		ceilingMaterial = new Material(
-				new Vector3D(0.4f, 0.4f, 0.4f),
-				new Vector3D(1, 1, 1),
-				new Vector3D(0.3f, 0.3f, 0.3f),
-				0.5f
-		);
-
-		try {
-			wallTexture = TextureLoader.loadTexture(new File("./assets/interior_wall.png"));
-			floorTexture = TextureLoader.loadTexture(new File("./assets/floor maybs.png"));
-			ceilingTexture = TextureLoader.loadTexture(new File("./assets/shiphull.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		doorFrame = new DoorFrameModel();
-		doorSurface = new DoorSurfaceModel();
 	}
 
 	private int createDisplayList(ViewableRoom room, ModelFlyweight models){
@@ -139,7 +119,7 @@ public class RoomModel {
 		glEnable(GL_TEXTURE_2D);
 
 		wallMaterial.apply();
-		glBindTexture(GL_TEXTURE_2D, wallTexture);
+		glBindTexture(GL_TEXTURE_2D, models.getWallTexture());
 
 		glBegin(GL_QUADS);
 		
@@ -168,14 +148,14 @@ public class RoomModel {
 		}
 		glEnd();
 		
-		glBindTexture(GL_TEXTURE_2D, floorTexture);
+		glBindTexture(GL_TEXTURE_2D, models.getFloorTexture());
 		ceilingMaterial.apply();
 		glNormal3f(0,1,0);
 		glBegin(GL_QUADS);
 		renderYPlane(room, 0, true);
 		glEnd();
 
-		glBindTexture(GL_TEXTURE_2D, ceilingTexture);
+		glBindTexture(GL_TEXTURE_2D, models.getCeilingTexture());
 		ceilingMaterial.apply();
 		glNormal3f(0,-1,0);
 		glBegin(GL_QUADS);
@@ -197,7 +177,7 @@ public class RoomModel {
 			glPushMatrix();
 			glTranslatef(door.getPosition().getX(), 0, door.getPosition().getY());
 			glRotatef(angle, 0, -1, 0);
-			doorFrame.render();
+			models.getDoorFrame().render();
 			glPopMatrix();
 		}
 
