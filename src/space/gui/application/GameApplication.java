@@ -70,6 +70,8 @@ public class GameApplication implements ClientListener{
 
 		quit();
 	}
+	
+	
 
 	/**
 	 * Displays the main menu.
@@ -85,7 +87,13 @@ public class GameApplication implements ClientListener{
 		// Requested action
 		switch(state){
 			case SINGLEPLAYER:
-				server = new Server(Server.DEFAULT_HOST, Server.DEFAULT_PORT, new JsonToModel(), new ModelToJson(), saveName);
+				try{
+					server = new Server(Server.DEFAULT_HOST, Server.DEFAULT_PORT, new JsonToModel(), new ModelToJson(), saveName);
+				} catch(Exception e){
+					gameDisplay.showError(e);
+					mainMenu();
+					return;
+				}
 			case MULTIPLAYER:
 				startGame();
 			default:
@@ -103,7 +111,13 @@ public class GameApplication implements ClientListener{
 		reset();
 		
 		//Create the client TODO use program arguments for host and port
-		client = new Client(serverAddress, Server.DEFAULT_PORT, new JsonToModel(), gameDisplay.getKeyBinding(), playerId);
+		try{
+			client = new Client(serverAddress, Server.DEFAULT_PORT, new JsonToModel(), gameDisplay.getKeyBinding(), playerId);
+		} catch(Exception e){
+			gameDisplay.showError(e);
+			mainMenu();
+			return;
+		}
 		client.addListener(this);
 		client.addDisplayListener(gameDisplay);
 

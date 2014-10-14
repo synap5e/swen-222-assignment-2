@@ -140,8 +140,10 @@ public class Server {
 	 * @param loader the loader that will load save file
 	 * @param saver the saver that will save the world
 	 * @param savePath the path of the save file. If the default world location it will be changes to a different path.
+	 * @throws SaveFileNotValidException 
+	 * @throws SaveFileNotAccessibleException 
 	 */
-	public Server(String host, int port, WorldLoader loader, WorldSaver saver, String savePath){
+	public Server(String host, int port, WorldLoader loader, WorldSaver saver, String savePath) throws SaveFileNotAccessibleException, SaveFileNotValidException{
 		//Create the list of client connections
 		connections = new HashMap<Integer, Connection>();
 		inactivePlayers = new HashMap<Integer, Player>();
@@ -176,12 +178,7 @@ public class Server {
 			loader.loadWorld(savePath);
 		} catch (Exception e){
 			//If something went wrong assume the file didn't exist
-			try {
-				loader.loadWorld(DEFAULT_WORLD);
-			} catch (Exception e1) {
-				//If the world failed to load, critical fail
-				throw new RuntimeException(e1);
-			}
+			loader.loadWorld(DEFAULT_WORLD);
 		}
 		world = loader.getWorld();
 		//Mark the IDs of all the entities in the world as used
