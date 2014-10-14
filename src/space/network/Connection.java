@@ -18,11 +18,15 @@ import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
 
 /**
+ * Connection wraps a socket, providing a clean interface for reading and sending messages via the socket.
  * 
  * @author James Greenwood-Thessman (300289004)
  */
 public class Connection {
 	
+	/*
+	 * Message Types 
+	 */
 	private static final int TEXT = 0;
 	private static final int PLAYER_JOINING = 1;
 	private static final int ENTITY_MOVED = 2;
@@ -35,10 +39,26 @@ public class Connection {
 	private static final int TRANSFER = 9;
 	private static final int UNKNOWN = -1;
 
+	/**
+	 * The socket to send and receive from.
+	 */
 	private Socket socket;
+	
+	/**
+	 * The output stream to send messages on.
+	 */
 	private OutputStream outgoing;
+	
+	/**
+	 * The input stream to read messages from.
+	 */
 	private InputStream incoming;
 	
+	/**
+	 * Create a connection that wraps the socket.
+	 * 
+	 * @param connectedSocket the socket to wrap
+	 */
 	public Connection(Socket connectedSocket){
 		socket = connectedSocket;
 		try {
@@ -50,14 +70,30 @@ public class Connection {
 		}
 	}
 	
+	/**
+	 * Whether a message has been received, and is able to be read.
+	 * 
+	 * @return Whether a message has been received. Only the header must have been received before it is able to be read.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public boolean hasMessage() throws IOException{
-			return incoming.available() > 0;
+			return incoming.available() > 5;
 	}
 	
+	/**
+	 * Whether the socket has been closed.
+	 * @return Whether the socket is closed.
+	 */
 	public boolean isClosed(){
 		return socket.isClosed();
 	}
 	
+	/**
+	 * Reads a message that has been received from the socket.
+	 * 
+	 * @return The received message.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public Message readMessage() throws IOException{
 		int type = incoming.read();
 		byte[] rawLength = new byte[4];
@@ -91,28 +127,51 @@ public class Connection {
 			case TRANSFER:
 				return new TransferMessage(data);
 			default:
-				//TODO: decide how to deal with format error
 				return null;
 		}
 	}
 	
+	/**
+	 * Sends a message via the socket.
+	 * 
+	 * @param message the message to send.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	public void sendMessage(Message message) throws IOException{
 		int type = typeOf(message);
 		byte[] data = message.toByteArray();
 		
+		//Send the header
 		outgoing.write(type);
 		ByteBuffer length = ByteBuffer.allocate(4);
 		length.putInt(data.length);
 		outgoing.write(length.array());
+		
+		//Send the data
 		outgoing.write(data);
 	}
 	
+	/**
+	 * Closes the connection by closing the socket.
+	 */
+	public void close(){
+		try {
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Determines the type of a message.
+	 * @param message the message to determine the type of
+	 * @return An integer representation of the type.
+	 */
 	private int typeOf(Message message){
-		//TODO: decide how whether this is the best way to determine the type of a message
 		if (message instanceof TextMessage) return TEXT;
 		else if (message instanceof PlayerJoiningMessage) return PLAYER_JOINING;
 		else if (message instanceof EntityMovedMessage) return ENTITY_MOVED;
-		else if (message instanceof EntityRotationMessage) return ENTITY_ROTATED; //TODO: Check actual class when it exists
+		else if (message instanceof EntityRotationMessage) return ENTITY_ROTATED;
 		else if (message instanceof DisconnectMessage) return DISCONNECT;
 		else if (message instanceof ShutdownMessage) return SHUTDOWN;
 		else if (message instanceof JumpMessage) return JUMP;
@@ -120,14 +179,5 @@ public class Connection {
 		else if (message instanceof DropPickupMessage) return DROP_PICKUP;
 		else if (message instanceof TransferMessage) return TRANSFER;
 		else return UNKNOWN;
-	}
-	
-	public void close(){
-		try {
-			socket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }

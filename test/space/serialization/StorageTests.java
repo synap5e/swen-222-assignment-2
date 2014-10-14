@@ -1,21 +1,21 @@
 package space.serialization;
  
- import static org.junit.Assert.*;
- 
- import java.util.ArrayList;
- import java.util.List;
- 
- import org.junit.Test;
- 
- import space.math.Vector2D;
- import space.network.storage.MockStorage;
- import space.network.storage.WorldLoader;
+import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.Test;
+import space.math.Vector2D;
+import space.math.Vector3D;
+import space.network.storage.WorldLoader;
+import space.world.Chest;
 import space.world.Container;
- import space.world.Entity;
-import space.world.Pickup;
- import space.world.Player;
- import space.world.Room;
- import space.world.World;
+import space.world.Door;
+import space.world.Entity;
+import space.world.Key;
+import space.world.Player;
+import space.world.Room;
+import space.world.World;
  
  public class StorageTests {
  
@@ -52,15 +52,30 @@ import space.world.Pickup;
 	}
  
  	private World createTestWorld(){
- 		MockStorage loader = new MockStorage();
- 		loader.loadWorld("");
- 		World w = loader.getWorld();
+ 		World world = new World();
+		Room r = new Room(new Vector3D(.4f, .4f, .4f), 1, "temp", Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20), new Vector2D(20, -20), new Vector2D(-20, -20)));
+		world.addRoom(r);
+		Room r2 = new Room(new Vector3D(.1f, .01f, .01f), 2, "dark", Arrays.asList(new Vector2D(-20, -20), new Vector2D(20, -20), new Vector2D(20, -40), new Vector2D(-20, -40)));
+		world.addRoom(r2);
+		Key k = new Key(new Vector2D(5f, 5f), 4, 0, "A key", "Key");
+		Chest c = new Chest(new Vector2D(-5,-5), 90, 0, "holds the key", "teapot", false, null);
+		Door d = new Door(new Vector2D(0, -20), 3, "It can be opened", "Door", r, r2, false, true, k, true);
+		r.addDoor(3, d);
+		r2.addDoor(1, d);
+		world.addEntity(d);
+		world.addEntity(k);
+		world.addEntity(c);
+		//r.putInRoom(k);
+		c.interact(null, world); //open
+		c.putInside(k);
+		r.putInRoom(c);
+		c.interact(null, world); //close
  		Player p = new Player(new Vector2D(0, 0), PLAYER_ID, "Player");
- 		System.out.println(w.getRoomAt(p.getPosition()));
- 		p.setRoom(w.getRoomAt(p.getPosition()));
+ 		System.out.println(world.getRoomAt(p.getPosition()));
+ 		p.setRoom(world.getRoomAt(p.getPosition()));
  		p.getRoom().putInRoom(p);
- 		w.addEntity(p);
- 		return w;
+ 		world.addEntity(p);
+ 		return world;
  	}
  	
  	private void match(World original, World loaded, boolean allowPlayers){
