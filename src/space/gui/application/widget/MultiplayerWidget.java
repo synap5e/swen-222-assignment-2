@@ -54,13 +54,7 @@ public class MultiplayerWidget extends NestedWidget {
 		submitButton = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				int id = 0;
-				try{
-					id = Integer.valueOf(idField.getText());
-				} catch(NumberFormatException e){
-					
-				}
-				gameApplication.setupMultiplayer(serverField.getText(), id);
+				gameApplication.setupMultiplayer(serverField.getText(), idField.getText());
 				gameApplication.setGameState(GameApplication.MULTIPLAYER);
 			}
 		};

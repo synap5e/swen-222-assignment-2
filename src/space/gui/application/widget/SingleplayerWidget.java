@@ -54,15 +54,9 @@ public class SingleplayerWidget extends NestedWidget {
 		submitButton = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				int id = 0;
-				try{
-					id = Integer.valueOf(idField.getText());
-				} catch(NumberFormatException e){
-					
-				}
-				
+
 				gameApplication.setupSingleplayer(saveField.getText());
-				gameApplication.setupMultiplayer(id);
+				gameApplication.setupMultiplayer(idField.getText());
 				
 				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
 			}

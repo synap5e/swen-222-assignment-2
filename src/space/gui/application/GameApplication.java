@@ -74,6 +74,8 @@ public class GameApplication implements ClientListener{
 	private String saveName;
 
 	private KeyBinding keyBinding;
+	
+	private int playerId;
 
 	/**
 	 * Creates a new Game Application window of the given width and height.
@@ -182,7 +184,7 @@ public class GameApplication implements ClientListener{
 	private void startGame() throws LWJGLException, IOException{
 
 		//Create the client TODO use program arguments for host and port
-		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel(), keyBinding);
+		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel(), keyBinding, playerId);
 		client.addListener(this);
 
 		gameController = new GameController(this);
@@ -357,8 +359,15 @@ public class GameApplication implements ClientListener{
 	 * @param address the address of the server to connect
 	 * @param id your given player to load in the remote game
 	 */
-	public void setupMultiplayer(String address, int id) {
+	public void setupMultiplayer(String address, String idString) {
 		serverAddress = address;
+		
+		int id = Client.DEFAULT_ID;
+		try{
+			id = Integer.valueOf(idString);
+		} catch(NumberFormatException e){ }
+		
+		playerId = id;
 	}
 	
 	/**
@@ -366,8 +375,8 @@ public class GameApplication implements ClientListener{
 	 *
 	 * @param id your given player to load in the remote game
 	 */
-	public void setupMultiplayer(int id) {
-		setupMultiplayer(Client.DEFAULT_HOST, id);
+	public void setupMultiplayer(String idString) {
+		setupMultiplayer(Client.DEFAULT_HOST, idString);
 	}
 
 
