@@ -10,7 +10,7 @@ import de.matthiasmann.twl.Label;
 /**
  * Displays the in-game pause menu.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class IngameMenu extends NestedWidget{

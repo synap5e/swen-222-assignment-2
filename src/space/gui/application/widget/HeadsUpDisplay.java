@@ -11,7 +11,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel which displays live information for the user.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class HeadsUpDisplay extends NestedWidget {

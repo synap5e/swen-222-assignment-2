@@ -9,7 +9,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel displayed to show the multi-player options.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class MultiplayerWidget extends NestedWidget {

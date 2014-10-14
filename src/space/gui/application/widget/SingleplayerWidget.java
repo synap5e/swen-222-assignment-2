@@ -9,7 +9,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel displayed to show the options of single-player mode.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class SingleplayerWidget extends NestedWidget {

@@ -7,7 +7,7 @@ import de.matthiasmann.twl.Label;
 /**
  * Panel displaying the game's instructions.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class InstructionsWidget extends NestedWidget {

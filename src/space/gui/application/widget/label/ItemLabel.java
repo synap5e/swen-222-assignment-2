@@ -4,9 +4,9 @@ import space.world.Entity;
 import de.matthiasmann.twl.Label;
 
 /**
+ * The view class of an an entity.
  * 
- * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class ItemLabel extends Label{

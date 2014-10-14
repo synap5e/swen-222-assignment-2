@@ -35,7 +35,7 @@ import de.matthiasmann.twl.theme.ThemeManager;
  * The GameApplication class is the main runtime of the game,
  * holding the various game loops for the different sections of the game's flow.
  *
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class GameApplication implements ClientListener{

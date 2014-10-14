@@ -7,7 +7,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The controller/view of a key binding.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class KeyEntry extends Label {

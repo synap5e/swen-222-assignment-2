@@ -12,7 +12,7 @@ import de.matthiasmann.twl.Event;
  * It is an implementation of a two-way map as it looks up action to key,
  * and key to actions.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class KeyBinding {

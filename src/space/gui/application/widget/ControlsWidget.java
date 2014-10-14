@@ -13,7 +13,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel which allows for a user to re-bind keys.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class ControlsWidget extends NestedWidget{

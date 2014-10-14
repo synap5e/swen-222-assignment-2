@@ -8,7 +8,7 @@ import de.matthiasmann.twl.Event;
  * The GameController is the root pane of the TWL GUI.
  * All user input (in-game) must go through this class.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class GameController extends GUIWrapper {

@@ -8,7 +8,7 @@ import de.matthiasmann.twl.Widget;
  * Widgets which are part of the widget tree displayed from the Game Application should extend NestedWidget.
  * A NestedWodget will expand to the size of the Game Application and provides additional methods of layout purposes.
  * 
- * @author Matt Graham 
+ * @author Matt Graham 300211545
  */
 public class NestedWidget extends Widget {
 	
