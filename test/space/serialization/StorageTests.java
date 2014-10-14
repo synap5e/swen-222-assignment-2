@@ -1,13 +1,15 @@
 package space.serialization;
  
 import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.Test;
+
 import space.math.Vector2D;
 import space.math.Vector3D;
-import space.network.storage.WorldLoader;
 import space.world.Chest;
 import space.world.Container;
 import space.world.Door;
