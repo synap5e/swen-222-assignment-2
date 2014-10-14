@@ -10,7 +10,7 @@ import de.matthiasmann.twl.Label;
 /**
  * Displays the in-game pause menu.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class IngameMenu extends NestedWidget{
@@ -21,6 +21,8 @@ public class IngameMenu extends NestedWidget{
 
 	private List<Label> menuItems;
 	private Label title;
+	
+	private Label playerId;
 	
 	private ControlsWidget controlsWidget;
 
@@ -33,10 +35,13 @@ public class IngameMenu extends NestedWidget{
 
 		this.menuItems = new ArrayList<Label>();
 
-		title = new Label();
-		title.setText("Paused");
+		title = new Label("Paused");
 		title.setTheme("title");
 		add(title);
+		
+		playerId = new Label(gameApplication.getClient().getLocalPlayer().getName());
+		playerId.setTheme("title");
+		add(playerId);
 
 		Label menuItem = new Label(){
 			@Override
@@ -90,6 +95,11 @@ public class IngameMenu extends NestedWidget{
 	protected void layout() {
 	    int x = PADDING_LEFT;
 	    int y = PADDING_TOP;
+	    
+	    playerId.setPosition(x, y);
+	    playerId.adjustSize();
+	    
+	    y += playerId.getHeight() + SPACING;
 
 	    title.setPosition(x, y);
 	    title.adjustSize();
@@ -102,6 +112,7 @@ public class IngameMenu extends NestedWidget{
 	        item.adjustSize();
 	        y += item.getHeight() + SPACING;
 	    }
+	    
 	}
 
 	@Override

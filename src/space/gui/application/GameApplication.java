@@ -35,7 +35,7 @@ import de.matthiasmann.twl.theme.ThemeManager;
  * The GameApplication class is the main runtime of the game,
  * holding the various game loops for the different sections of the game's flow.
  *
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class GameApplication implements ClientListener{
@@ -74,6 +74,8 @@ public class GameApplication implements ClientListener{
 	private String saveName;
 
 	private KeyBinding keyBinding;
+	
+	private int playerId;
 
 	/**
 	 * Creates a new Game Application window of the given width and height.
@@ -182,7 +184,7 @@ public class GameApplication implements ClientListener{
 	private void startGame() throws LWJGLException, IOException{
 
 		//Create the client TODO use program arguments for host and port
-		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel(), keyBinding);
+		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel(), keyBinding, playerId);
 		client.addListener(this);
 
 		gameController = new GameController(this);
@@ -357,9 +359,26 @@ public class GameApplication implements ClientListener{
 	 * @param address the address of the server to connect
 	 * @param id your given player to load in the remote game
 	 */
-	public void setupMultiplayer(String address, int id) {
+	public void setupMultiplayer(String address, String idString) {
 		serverAddress = address;
+		
+		int id = Client.DEFAULT_ID;
+		try{
+			id = Integer.valueOf(idString);
+		} catch(NumberFormatException e){ }
+		
+		playerId = id;
 	}
+	
+	/**
+	 * Sets up the multi-player environment for connecting to a game.
+	 *
+	 * @param id your given player to load in the remote game
+	 */
+	public void setupMultiplayer(String idString) {
+		setupMultiplayer(Client.DEFAULT_HOST, idString);
+	}
+
 
 	/**
 	 * Gets the game client

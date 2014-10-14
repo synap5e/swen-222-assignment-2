@@ -16,7 +16,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The interface which appears when using a container to take/give items.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class InventoryExchangeWidget extends NestedWidget {

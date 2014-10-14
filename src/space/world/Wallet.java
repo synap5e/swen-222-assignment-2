@@ -67,7 +67,7 @@ public class Wallet extends Container implements Pickup {
 
 	@Override
 	public float getCollisionRadius() {
-		return 0;
+		return 2;
 	}
 
 	@Override

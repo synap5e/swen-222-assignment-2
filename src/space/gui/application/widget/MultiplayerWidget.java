@@ -9,7 +9,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel displayed to show the multi-player options.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class MultiplayerWidget extends NestedWidget {
@@ -54,13 +54,7 @@ public class MultiplayerWidget extends NestedWidget {
 		submitButton = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				int id = 0;
-				try{
-					id = Integer.valueOf(idField.getText());
-				} catch(NumberFormatException e){
-					
-				}
-				gameApplication.setupMultiplayer(serverField.getText(), id);
+				gameApplication.setupMultiplayer(serverField.getText(), idField.getText());
 				gameApplication.setGameState(GameApplication.MULTIPLAYER);
 			}
 		};

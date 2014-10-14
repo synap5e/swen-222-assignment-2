@@ -11,9 +11,9 @@ import space.world.Pickup;
 import de.matthiasmann.twl.Label;
 
 /**
+ * The interface used to view/drop the current player's items.
  * 
- * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class InventoryWidget extends NestedWidget {

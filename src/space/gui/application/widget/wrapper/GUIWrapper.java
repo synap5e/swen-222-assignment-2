@@ -10,7 +10,7 @@ import space.gui.application.widget.label.KeyEntry;
  * GUIWrappers provide functionality for the user input to be intercepted,
  * which is used for creatng key bindings.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class GUIWrapper extends NestedWidget {

@@ -15,7 +15,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The root pane of the main menu screen.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class MainMenu extends GUIWrapper {
