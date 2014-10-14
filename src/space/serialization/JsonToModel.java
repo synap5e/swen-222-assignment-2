@@ -142,7 +142,7 @@ public class JsonToModel implements WorldLoader {
 		Room roomIn = null;
 		for(Room r : rooms){
 			Double RoomId = (double) r.getID();
-			if(b.getNumber("RoomId")==RoomId){
+			if(b.getNumber("roomId")==RoomId){
 				room = r;
 			}
 			if(b.getNumber("roomBeamShooterIsIn")==RoomId){
@@ -217,7 +217,7 @@ public class JsonToModel implements WorldLoader {
 		Room roomTel = null;
 		for(Room r:rooms){
 			Double RoomId = (double) r.getID();
-			if(b.getNumber("RoomId")==RoomId){
+			if(b.getNumber("roomId")==RoomId){
 				room=r;
 			}
 			if(b.getNumber("roomTeleportTo")==RoomId){
@@ -495,10 +495,12 @@ public class JsonToModel implements WorldLoader {
 	//UTILITY METHODS
 	private Vector2D loadPoint(MyJsonList e) {
 		return new Vector2D((float) (e.getNumber(0)), (float) (e.getNumber(1)));
-	}
+		}
 	
 	private Vector3D loadVector3D(MyJsonList e) {
 		return new Vector3D((float) (e.getNumber(0)), (float) (e.getNumber(1)),(float) (e.getNumber(2)));
+		
+	
 	}
 
 }
