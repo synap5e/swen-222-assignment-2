@@ -39,6 +39,10 @@ public class GameRenderer {
 	 */
 	public static final boolean DEBUG_MODELS = false;
 
+	private static final float BEAM_RADIUS = 0.1f;
+
+	private static final float BEAM_LENGTH = 500;
+
 	private int height;
 	private int width;
 
@@ -258,7 +262,7 @@ public class GameRenderer {
 					glPushMatrix();
 					glTranslatef(beam.getPosition().getX(), beam.getElevation(), beam.getPosition().getY());
 					glRotatef((float)Math.toDegrees(angle), axis.getX(), axis.getY(), axis.getZ());
-					c.draw(0.02f, 0.02f, 50, 10, 10);
+					c.draw(BEAM_RADIUS, BEAM_RADIUS, BEAM_LENGTH, 10, 10);
 					glPopMatrix();
 				}
 			}
