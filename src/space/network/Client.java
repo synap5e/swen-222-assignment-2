@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
 import space.gui.application.KeyBinding;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -22,16 +20,13 @@ import space.network.message.JumpMessage;
 import space.network.message.Message;
 import space.network.message.PlayerJoiningMessage;
 import space.network.message.EntityRotationMessage;
-import space.network.message.ShutdownMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
 import space.network.storage.WorldLoader;
 import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
-import space.world.Pickup;
 import space.world.Player;
-import space.world.Room;
 import space.world.World;
 
 /**
@@ -43,9 +38,14 @@ import space.world.World;
  */
 public class Client {
 	
-	
+	/**
+	 * The default host to connect to.
+	 */
 	public final static String DEFAULT_HOST = "localhost";
 	
+	/**
+	 * The default port to connect to.
+	 */
 	public final static int DEFAULT_PORT = 1234;
 
 	/**
@@ -68,13 +68,19 @@ public class Client {
 	 */
 	private boolean active;
 	
+	/**
+	 * Whether the client is running
+	 */
 	private boolean stillAlive;
 	
 	/**
 	 * The list of listeners to be alerted of events
 	 */
-	public List<ClientListener> listeners;
+	private List<ClientListener> listeners;
 
+	/**
+	 * The binding between actions and keys
+	 */
 	private KeyBinding keyBinding;
 	
 	/**
@@ -87,6 +93,7 @@ public class Client {
 	 */
 	public Client(String host, int port, WorldLoader loader, KeyBinding keyBinding, int prevId){
 		this.keyBinding = keyBinding;
+		
 		//Connect to the server
 		try {
 			connection = new Connection(new Socket(host, port));
@@ -107,6 +114,7 @@ public class Client {
 				p.getRoom().putInRoom(p);
 			}
 			
+			//Get the local player
 			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
@@ -118,7 +126,8 @@ public class Client {
 		//Create list of listeners
 		listeners = new ArrayList<ClientListener>();
 		
-		new Thread(new MessageHandler()).start();
+		//Start handling incoming messages
+		new Thread(new MessageHandler(this, connection)).start();
 	}
 	
 	/**
@@ -150,6 +159,16 @@ public class Client {
 	}
 	
 	/**
+	 * Shuts down the client and alerts all client listeners of the reason.
+	 * 
+	 * @param reason a brief explanation of why the client has shutdown
+	 */
+	public void shutdown(String reason){
+		shutdown();
+		alertListenersOfShutdown(reason);
+	}
+	
+	/**
 	 * Gets the local player.
 	 * 
 	 * @return The local player.
@@ -174,6 +193,15 @@ public class Client {
 	 */
 	public void setActive(boolean isActive){
 		this.active = isActive;
+	}
+	
+	/**
+	 * Gets whether the client is running.
+	 * 
+	 * @return Whether the client is running.
+	 */
+	public boolean isRunning() {
+		return stillAlive;
 	}
 	
 	/**
@@ -249,7 +277,12 @@ public class Client {
 			//Check the player was looking vertically at the entity
 			float t = (intersection.getX()-pos.getX())/look.getX();
 			float y = localPlayer.getEyeHeight()+look.getY()*t;
-			if (y < e.getElevation() || y > e.getElevation()+e.getHeight()) continue;
+			if (y < e.getElevation()){
+				t = (e.getElevation()-localPlayer.getEyeHeight())/look.getY();
+				intersection.setX(pos.getX()+look.getX()*t);
+				intersection.setY(pos.getY()+look.getZ()*t);
+				if (intersection.sub(e.getPosition()).sqLen() > e.getCollisionRadius()*e.getCollisionRadius()) continue;
+			} else if (y > e.getElevation()+e.getHeight()) continue;
 			
 			//If that entity is the closest, the player must be looking at it
 			float distanceBetween = e.getPosition().sub(intersection).sqLen();
@@ -291,12 +324,14 @@ public class Client {
 	 * @return Whether the interaction was successful.
 	 */
 	public boolean interactWith(Entity e){
+		//Ensure there is an entity to interact with
 		if(e == null || !e.canInteract()){
 			return false;
 		}
 		
 		boolean interactionSuccessful = e.interact(localPlayer, world);
 		
+		//Alert the server of the interaction
 		if (interactionSuccessful){
 			sendMessage(new InteractionMessage(localPlayer.getID(), e.getID()));
 		}
@@ -329,6 +364,13 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * Transfers a pickup from a container to a player.
+	 * 
+	 * @param pickup the entity being transferred
+	 * @param from the container containing the entity
+	 * @param to the player that will hold the entity
+	 */
 	public void transfer(Entity pickup, Container from, Player to){
 		if (from.getItemsContained().contains(pickup)){
 			System.out.println("test");
@@ -340,6 +382,13 @@ public class Client {
 		}
 	}
 
+	/**
+	 * Transfers a pickup from a player to a container.
+	 * 
+	 * @param pickup the entity being transferred
+	 * @param from the player whose inventory contains the entity
+	 * @param to the container that will hold the entity
+	 */
 	public void transfer(Entity pickup, Player from, Container to){
 		if (from.getInventory().contains(pickup) && to.canPutInside(pickup)){
 			from.getInventory().remove(pickup);
@@ -447,186 +496,6 @@ public class Client {
 		//Inform all the listeners
 		for (ClientListener listener : listeners){
 			listener.onConnectionClose(reason);
-		}
-	}
-	
-	/**
-	 * MessageHandler handles incoming messages from the server and applies them to the world.
-	 * 
-	 * @author James Greenwood-Thessman (300289004)
-	 */
-	private class MessageHandler implements Runnable {
-		
-		@Override
-		public void run() {
-			try {
-				while (stillAlive){
-					while (connection.hasMessage()){
-						Message message = connection.readMessage();
-						
-						//Ensure the world is able to be modified
-						synchronized (world) {
-							//Add any new players
-							if (message instanceof PlayerJoiningMessage){
-								handlePlayerJoin((PlayerJoiningMessage) message);
-							//Remove disconnected players
-							} else if (message instanceof DisconnectMessage){
-								handlePlayerDisconnect((DisconnectMessage) message);
-							//Move remotely controlled entities
-							} else if (message instanceof EntityMovedMessage){
-								handleMove((EntityMovedMessage) message);
-							//Rotate remote player
-							} else if (message instanceof EntityRotationMessage){
-								handlePlayerLook((EntityRotationMessage) message);
-							//Make player jump
-							} else if (message instanceof JumpMessage){
-								handlePlayerJump((JumpMessage) message);
-							//Make player interact with entity
-							} else if (message instanceof InteractionMessage){
-								handleInteraction((InteractionMessage) message);
-							//Drop a pickup from a player
-							} else if (message instanceof DropPickupMessage){
-								handleDrop((DropPickupMessage) message);
-							//Transfer an entity between player and a container
-							} else if (message instanceof TransferMessage){
-								handleTransfer((TransferMessage) message);
-							//Remote shutdown
-							} else if (message instanceof ShutdownMessage){
-								shutdown();
-								alertListenersOfShutdown("Server has shutdown");
-								return;
-							} else {
-								//TODO: Decide when to log
-								System.out.println(connection.readMessage());
-							}
-						}
-					}
-					
-					//Sleep, iterating over the loop roughly 60 times a second
-					try {
-						Thread.sleep(17);
-					} catch (InterruptedException e) {
-					}
-				}
-			} catch (IOException e){
-				shutdown();
-				alertListenersOfShutdown("Connection to server has been lost");
-			}
-		}
-
-		/**
-		 * Handles a remote player joining the game.
-		 * 
-		 * @param playerJoined the message containing the information about this player
-		 */
-		private void handlePlayerJoin(PlayerJoiningMessage playerJoined){
-			Player p = new Player(new Vector2D(0, 0), playerJoined.getPlayerID(), "Player");
-			world.addEntity(p);
-			p.setRoom(world.getRoomAt(p.getPosition()));
-			p.getRoom().putInRoom(p);
-		}
-		
-		/**
-		 * Handles a remote player disconnecting from the game.
-		 * 
-		 * @param playerDisconnected the message containing the information about this player
-		 */
-		private void handlePlayerDisconnect(DisconnectMessage playerDisconnected){
-			Entity e = world.getEntity(playerDisconnected.getPlayerID());
-			
-			//Remove from the room and world
-			world.getRoomAt(e.getPosition()).removeFromRoom(e);
-			//world.removeEntity(e);
-		}
-		
-		/**
-		 * Handles an entity moving.
-		 * 
-		 * @param entityMoved the message containing the information about the moving entity
-		 */
-		private void handleMove(EntityMovedMessage entityMoved){
-			Entity e = world.getEntity(entityMoved.getEntityID());
-			
-			//Move the room the entity is in if required
-			Room from = world.getRoomAt(e.getPosition());
-			Room to = world.getRoomAt(entityMoved.getNewPosition());
-			if (to != from){
-				from.removeFromRoom(e);
-				to.putInRoom(e);
-			}
-			
-			//Move the entity
-			e.setPosition(entityMoved.getNewPosition());
-		}
-		
-		/**
-		 * Handles dropping an entity from a remote player's inventory.
-		 * 
-		 * @param drop the message containing information about the drop
-		 */
-		private void handleDrop(DropPickupMessage drop){
-			Player p = (Player) world.getEntity(drop.getPlayerId());
-			Entity e = world.getEntity(drop.getPickupId());
-			world.dropEntity(p, e, drop.getPosition());
-		}
-		
-		/**
-		 * Handles rotating a remote player's look direction.
-		 * 
-		 * @param playerRotated the message containing the information about the rotation
-		 */
-		private void handlePlayerLook(EntityRotationMessage playerRotated){
-			Player p = (Player) world.getEntity(playerRotated.getID());
-			p.setXRotation(playerRotated.getXRotation());
-			p.setYRotation(playerRotated.getYRotation());
-		}
-		
-		/**
-		 * Handles a remote player interacting with an entity.
-		 * 
-		 * @param interaction the message containing the information about the interaction
-		 */
-		private void handleInteraction(InteractionMessage interaction){
-			Entity e = world.getEntity(interaction.getEntityID());
-			Player p = (Player) world.getEntity(interaction.getPlayerID());
-			
-			if (e.canInteract()){
-				e.interact(p, world);
-			}
-		}
-		
-		/**
-		 * Handles a remote player jumping.
-		 * 
-		 * @param jumpingPlayer the message containing the information about the jumping player
-		 */
-		private void handlePlayerJump(JumpMessage jumpingPlayer){
-			Player p = (Player) world.getEntity(jumpingPlayer.getPlayerID());
-			p.jump();
-		}
-		
-		/**
-		 * Handles the transfer of an entity between a player and a container.
-		 * 
-		 * @param transfer the message containing the information about the transfer
-		 */
-		private void handleTransfer(TransferMessage transfer){
-			//Get the entities involved
-			Entity e = world.getEntity(transfer.getEntityID());
-			Player p = (Player) world.getEntity(transfer.getPlayerID());
-			Container c = (Container) world.getEntity(transfer.getContainerID());
-
-			if (transfer.fromPlayer()){
-				if (p.getInventory().contains(e) && c.canPutInside(e)){
-					p.getInventory().remove(e);
-					c.putInside(e);
-				}
-			} else {
-				if (c.getItemsContained().contains(e)){
-					c.removeContainedItem(e);
-					p.pickup(e);
-				}
-			}
 		}
 	}
 }

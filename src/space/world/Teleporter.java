@@ -31,14 +31,20 @@ public class Teleporter extends Stationary{
 	
 	@Override
 	public boolean interact(Character c, World world){
-		Room room = world.getRoomAt(teleportsToPos);
-		if(room.isPositionVacant(teleportsToPos, c)){
-			c.setPosition(teleportsToPos);
-			c.getRoom().removeFromRoom(c);
-			room.putInRoom(c);
-			c.setRoom(room);
+		Room room = world.getRoomAt(getPosition());
+		Character charOnTeleporter = room.collidedWithPlayer(this);
+		if(charOnTeleporter == null){
+			return false;
 		}
-		return true;
+		Room otherRoom = world.getRoomAt(teleportsToPos);
+		if(otherRoom.isPositionVacant(teleportsToPos, charOnTeleporter)){
+			charOnTeleporter.setPosition(teleportsToPos);
+			charOnTeleporter.getRoom().removeFromRoom(charOnTeleporter);
+			otherRoom.putInRoom(charOnTeleporter);
+			charOnTeleporter.setRoom(otherRoom);
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
