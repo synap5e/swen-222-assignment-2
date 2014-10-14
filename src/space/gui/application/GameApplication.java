@@ -191,6 +191,7 @@ public class GameApplication implements ClientListener{
 	@Override
 	public void onConnectionClose(String reason) {
 		setGameState(MAINMENU);
+		gameDisplay.captureMouse(false);
 	}
 
 	/**
