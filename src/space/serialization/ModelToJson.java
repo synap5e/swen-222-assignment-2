@@ -389,7 +389,9 @@ public class ModelToJson implements WorldSaver {
 
 	private void addFields(Character e, MyJsonObject object) {
 		object.put("inventory", constructHeldItems(e.getInventory()));
+		if(e.getRoom()!=null){
 		object.put("room", e.getRoom().getID());
+		}
 		if (e instanceof Player) {
 			Player p = (Player) e;
 			object.put("points", p.getPoints());
