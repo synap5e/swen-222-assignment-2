@@ -8,8 +8,8 @@ import de.matthiasmann.twl.Label;
  * @author Matt Graham 300211545
  */
 
-public class ItemDescriptionLabel extends Label{
-	public ItemDescriptionLabel(String text){
+public class ItemDescription extends Label{
+	public ItemDescription(String text){
 		super(text);
 		setTheme("description");
 	}
