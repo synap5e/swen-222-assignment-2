@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.KeyBinding;
 import space.gui.application.widget.label.KeyEntry;
 import de.matthiasmann.twl.Event;
@@ -13,7 +13,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel which allows for a user to re-bind keys.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class ControlsWidget extends NestedWidget{
@@ -26,12 +26,12 @@ public class ControlsWidget extends NestedWidget{
 	
 	private KeyBinding keyBinding;
 
-	public ControlsWidget(GameApplication gameApplication) {
-		super(gameApplication);
+	public ControlsWidget(GameDisplay gameDisplay) {
+		super(gameDisplay);
 		
 		setVisible(false);
 		
-		this.keyBinding = gameApplication.getKeyBinding();
+		this.keyBinding = gameDisplay.getKeyBinding();
 		
 		this.actions = new ArrayList<Label>();
 		this.keys = new ArrayList<KeyEntry>();
@@ -43,7 +43,7 @@ public class ControlsWidget extends NestedWidget{
 			actions.add(label);
 			add(label);
 			
-			KeyEntry entry = new KeyEntry(gameApplication, binding.getKey(), binding.getValue());
+			KeyEntry entry = new KeyEntry(gameDisplay, binding.getKey(), binding.getValue());
 			keys.add(entry);
 			add(entry);
 		}

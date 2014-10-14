@@ -294,6 +294,30 @@
 		         "roomId":6.0,
 		         "roomTurretIsIn":6.0,
 		         "strategy": [0.0, 0.0, [0.0,60.0], 3.0]
+		      },
+		      {  
+		         "elevation":0.0,
+		         "name":"Beam Shooter",
+		         "description":"This beam shooter should be able to take the AI out",
+		         "position":[ 30.0, 120.0 ],
+		         "id": 59.0,
+		         "type":"BeamShooter",
+		         "stopped":false,
+		         "roomId":6.0,
+		         "roomBeamShooterIsIn":6.0,
+		         "yRotation": 0.0,
+		         "beamsShot":0.0,
+		         "turretId":52.0
+		      },
+		      {  
+		         "elevation":0.0,
+		         "name":"Button for Beam Shooter",
+		         "description":"Activates the beam. Better time it right",
+		         "position":[ -30.0, 120.0 ],
+		         "id": 60.0,
+		         "type":"Button",
+		         "roomButtonIsIn":6.0,
+		         "entityId":59.0
 		      }
          ],
          "Room Shape":{  

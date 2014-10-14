@@ -1,6 +1,7 @@
 package space.gui.application.widget;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.network.Client;
 import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;
@@ -9,7 +10,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel displayed to show the multi-player options.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class MultiplayerWidget extends NestedWidget {
@@ -23,8 +24,8 @@ public class MultiplayerWidget extends NestedWidget {
 
 	private Label submitButton;
 
-	public MultiplayerWidget(final GameApplication gameApplication) {
-		super(gameApplication);
+	public MultiplayerWidget(final GameApplication gameApplication, final GameDisplay gameDisplay) {
+		super(gameDisplay);
 		
 		setVisible(false);
 		
@@ -54,13 +55,7 @@ public class MultiplayerWidget extends NestedWidget {
 		submitButton = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				int id = 0;
-				try{
-					id = Integer.valueOf(idField.getText());
-				} catch(NumberFormatException e){
-					
-				}
-				gameApplication.setupMultiplayer(serverField.getText(), id);
+				gameApplication.setupMultiplayer(serverField.getText(), idField.getText());
 				gameApplication.setGameState(GameApplication.MULTIPLAYER);
 			}
 		};

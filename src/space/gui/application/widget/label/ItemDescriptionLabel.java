@@ -5,7 +5,7 @@ import de.matthiasmann.twl.Label;
 /**
  * An item's description label.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class ItemDescriptionLabel extends Label{

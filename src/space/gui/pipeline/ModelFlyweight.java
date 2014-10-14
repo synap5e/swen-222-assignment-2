@@ -9,8 +9,8 @@ import space.gui.pipeline.models.DoorFrameModel;
 import space.gui.pipeline.models.DoorSurfaceModel;
 import space.gui.pipeline.models.RenderModel;
 import space.gui.pipeline.models.WavefrontModel;
-import space.gui.pipeline.viewable.OpenableContainer;
 import space.gui.pipeline.viewable.ViewableObject;
+import space.gui.pipeline.viewable.ViewableOpenable;
 import space.math.Vector3D;
 
 /** The set of models that are required for the rendering and a mapping from each objects
@@ -79,6 +79,12 @@ public class ModelFlyweight {
 					Material.bronze
 				));
 
+			models.put("BeamShooter", new WavefrontModel(new File("./assets/models/teapot.obj"),
+					new Vector3D(0, 0, 0),
+					new Vector3D(0, 270, 0), 0.5f,
+					new Vector3D(0.35f,0.35f,0.35f),
+					Material.bronze
+				));
 
 			models.put("Button", new WavefrontModel(	new File("./assets/models/button.obj"),
 														new Vector3D(0, 0, 0),
@@ -123,8 +129,8 @@ public class ModelFlyweight {
 	public RenderModel get(ViewableObject type) {
 		// chests are the one exception in that they have 2 models.
 		// one for open and for closed.
-		if (type.getType() == "Chest" && type instanceof OpenableContainer){
-			OpenableContainer cont = (OpenableContainer)type;
+		if (type.getType() == "Chest" && type instanceof ViewableOpenable){
+			ViewableOpenable cont = (ViewableOpenable)type;
 			if (cont.isOpen()){
 				return openChest;
 			} else {

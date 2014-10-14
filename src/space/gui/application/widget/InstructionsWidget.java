@@ -1,13 +1,13 @@
 package space.gui.application.widget;
 
-import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
 /**
  * Panel displaying the game's instructions.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class InstructionsWidget extends NestedWidget {
@@ -19,7 +19,7 @@ public class InstructionsWidget extends NestedWidget {
 	private Label text;
 
 
-	public InstructionsWidget(GameApplication gameApplication) {
+	public InstructionsWidget(GameDisplay gameApplication) {
 		super(gameApplication);
 
 		setVisible(false);

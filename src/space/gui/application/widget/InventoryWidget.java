@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.widget.label.ItemDescriptionLabel;
 import space.gui.application.widget.label.ItemLabel;
 import space.world.Entity;
@@ -11,9 +12,9 @@ import space.world.Pickup;
 import de.matthiasmann.twl.Label;
 
 /**
+ * The interface used to view/drop the current player's items.
  * 
- * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class InventoryWidget extends NestedWidget {
@@ -35,10 +36,14 @@ public class InventoryWidget extends NestedWidget {
 	private List<Label> playerDescriptions;
 
 	private ItemLabel selection;
+	
+	GameApplication gameApplication;
 
-	public InventoryWidget(final GameApplication gameApplication) {
-		super(gameApplication);
+	public InventoryWidget(final GameApplication gameApplication, final GameDisplay gameDisplay) {
+		super(gameDisplay);
 
+		this.gameApplication = gameApplication;
+		
 		playerItems = new ArrayList<ItemLabel>();
 		playerDescriptions = new ArrayList<Label>();
 
@@ -62,13 +67,13 @@ public class InventoryWidget extends NestedWidget {
 		cancel = new Label(CLOSE){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setInventoryVisible(false);
+				gameDisplay.setInventoryVisible(false);
 			}
 		};
 		cancel.setTheme("item");
 		add(cancel);
 
-		updatePositions(gameApplication.getWidth() / 3, gameApplication.getHeight() / 2);
+		updatePositions(gameDisplay.getWidth() / 3, gameDisplay.getHeight() / 2);
 		
 	}
 
@@ -113,13 +118,13 @@ public class InventoryWidget extends NestedWidget {
 	/**
 	 * Resets and re-populates the panel in preparation of displaying the inventory.
 	 */
-	public void update(){
+	public void update(List<Pickup> pickups){
 		resetGUI();
 		resetLists();
 		
 		accept.setEnabled(false);
 		
-		for(Pickup pickup : gameApplication.getClient().getLocalPlayer().getInventory()){
+		for(Pickup pickup : pickups){
 			generateLabel((Entity) pickup);
 		}
 		
@@ -188,7 +193,7 @@ public class InventoryWidget extends NestedWidget {
 	private void submitChanges(){
 		gameApplication.getClient().drop(selection.getEntity());
 		
-		gameApplication.setInventoryVisible(false);
+		gameDisplay.setInventoryVisible(false);
 	}
 	
 

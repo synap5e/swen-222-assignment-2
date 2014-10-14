@@ -12,7 +12,7 @@ import org.lwjgl.opengl.Display;
  * Main bootstrap for the game.
  * Manages options pre-game.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class Bootstrap {

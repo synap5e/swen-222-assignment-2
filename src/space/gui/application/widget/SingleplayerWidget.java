@@ -1,6 +1,7 @@
 package space.gui.application.widget;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.network.Server;
 import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;
@@ -9,7 +10,7 @@ import de.matthiasmann.twl.Label;
 /**
  * The panel displayed to show the options of single-player mode.
  * 
- * @author Matt Graham
+ * @author Matt Graham 300211545
  */
 
 public class SingleplayerWidget extends NestedWidget {
@@ -17,11 +18,14 @@ public class SingleplayerWidget extends NestedWidget {
 
 	private Label saveLabel;
 	private EditField saveField;
+	
+	private Label idLabel;
+	private EditField idField;
 
 	private Label submitButton;
 
-	public SingleplayerWidget(final GameApplication gameApplication) {
-		super(gameApplication);
+	public SingleplayerWidget(final GameApplication gameApplication, final GameDisplay gameDisplay) {
+		super(gameDisplay);
 		
 		setVisible(false);
 		
@@ -37,10 +41,24 @@ public class SingleplayerWidget extends NestedWidget {
 		saveField.setText(Server.DEFAULT_SAVE);
 		add(saveField);
 		
+		idLabel = new Label();
+		idLabel.setText("ID (Optional):");
+		idLabel.setTheme("label");
+		add(idLabel);
+
+		idField = new EditField();
+		idField.setEnabled(true);
+		idField.setTheme("editfield");
+		idField.setMultiLine(false);
+		add(idField);
+		
 		submitButton = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
+
 				gameApplication.setupSingleplayer(saveField.getText());
+				gameApplication.setupMultiplayer(idField.getText());
+				
 				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
 			}
 		};
@@ -55,15 +73,23 @@ public class SingleplayerWidget extends NestedWidget {
     	int y = startY;
     	
     	saveLabel.adjustSize();
+    	idLabel.adjustSize();
     	
-    	x += Math.max(saveLabel.getWidth(), saveLabel.getWidth());
+    	x += Math.max(saveLabel.getWidth(), idLabel.getWidth());
 
     	saveLabel.setPosition(x - saveLabel.getWidth(), y);
     	
     	saveField.setPosition(x + SPACING, y - 2);
     	saveField.setSize(200, 20);
     	
-    	y += saveLabel.getHeight() + SPACING * 2;
+    	y += saveField.getHeight() + SPACING;
+    	
+    	idLabel.setPosition(x - idLabel.getWidth(), y);
+    	
+    	idField.setPosition(x + SPACING, y - 2);
+    	idField.setSize(200, 20);
+    	
+    	y += idLabel.getHeight() + SPACING * 2;
     	x += SPACING;
     	
     	submitButton.adjustSize();

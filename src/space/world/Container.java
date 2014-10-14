@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import space.gui.pipeline.viewable.OpenableContainer;
+import space.gui.pipeline.viewable.ViewableOpenable;
 import space.math.Vector2D;
 
 /**Represents a container which allows other entities to be placed inside it or take entities out of it. 
  * Can be opened or closed and locked or unlocked. 
  * @author Maria Libunao*/
-public abstract class Container extends NonStationary implements OpenableContainer {
+public abstract class Container extends NonStationary implements ViewableOpenable, Lockable {
 	private List<Pickup> itemsContained = new ArrayList<Pickup>(); //the object inside this container
 	private boolean isOpen = false;
 	private boolean locked;
