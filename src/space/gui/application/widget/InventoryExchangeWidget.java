@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.widget.label.ItemDescriptionLabel;
 import space.gui.application.widget.label.ItemLabel;
 import space.world.Container;
@@ -46,9 +47,13 @@ public class InventoryExchangeWidget extends NestedWidget {
 	private Set<Entity> giveSelection;
 	
 	private Container container;
+	
+	private GameApplication gameApplication;
 
-	public InventoryExchangeWidget(final GameApplication gameApplication) {
-		super(gameApplication);
+	public InventoryExchangeWidget(final GameApplication gameApplication, final GameDisplay gameDisplay) {
+		super(gameDisplay);
+		
+		this.gameApplication = gameApplication;
 
 		playerItems = new ArrayList<ItemLabel>();
 		playerDescriptions = new ArrayList<Label>();
@@ -83,14 +88,14 @@ public class InventoryExchangeWidget extends NestedWidget {
 		cancel = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setInventoryExchangeVisible(false);
+				gameDisplay.setInventoryExchangeVisible(false);
 			}
 		};
 		cancel.setText(CLOSE);
 		cancel.setTheme("item");
 		add(cancel);
 
-		updatePositions(gameApplication.getWidth() / 3, gameApplication.getHeight() / 2);
+		updatePositions(gameDisplay.getWidth() / 3, gameDisplay.getHeight() / 2);
 		
 	}
 
@@ -153,20 +158,6 @@ public class InventoryExchangeWidget extends NestedWidget {
 		cancel.adjustSize();
 		cancel.setPosition(x, y);
 	}
-	
-	/**
-	 * Determines if the given entity can have items exchanged with, and sets up the interface if so.
-	 * 
-	 * @param entity
-	 * @return
-	 */
-	public boolean update(Entity entity) {
-		if(entity == null || !(entity instanceof Container)){
-			return false;
-		}
-
-		return update((Container) entity);
-	}
 
 	/**
 	 * Determines if the given container can have items exchanged with, and sets up the interface if so.
@@ -174,14 +165,10 @@ public class InventoryExchangeWidget extends NestedWidget {
 	 * @param entity
 	 * @return
 	 */
-	public boolean update(Container container){
-		if(container.isLocked() || !container.isOpen()){
-			return false;
-		}
-		
+	public boolean update(Container container, List<Pickup> playerPickups){
 		this.container = container;
 		
-		update(container.getItemsContained());
+		update(container.getItemsContained(), playerPickups);
 		
 		containerName.setText(container.getName());
 		
@@ -193,7 +180,7 @@ public class InventoryExchangeWidget extends NestedWidget {
 	 * 
 	 * @param pickups
 	 */
-	private void update(List<Pickup> pickups){
+	private void update(List<Pickup> pickups, List<Pickup> playerPickups){
 		resetGUI();
 		resetLists();
 		
@@ -203,7 +190,7 @@ public class InventoryExchangeWidget extends NestedWidget {
 			generateContainerItems((Entity) pickup);
 		}
 		
-		for(Pickup pickup : gameApplication.getClient().getLocalPlayer().getInventory()){
+		for(Pickup pickup : playerPickups){
 			generatePlayerItems((Entity) pickup);
 		}
 		
@@ -326,7 +313,7 @@ public class InventoryExchangeWidget extends NestedWidget {
 			gameApplication.getClient().transfer(entity, gameApplication.getClient().getLocalPlayer(), container);
 		}
 		
-		gameApplication.setInventoryExchangeVisible(false);
+		gameDisplay.setInventoryExchangeVisible(false);
 	}
 	
 	/**

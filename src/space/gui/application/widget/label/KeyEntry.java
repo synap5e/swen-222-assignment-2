@@ -1,6 +1,6 @@
 package space.gui.application.widget.label;
 
-import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.KeyBinding;
 import de.matthiasmann.twl.Label;
 
@@ -12,24 +12,24 @@ import de.matthiasmann.twl.Label;
 
 public class KeyEntry extends Label {
 
-	private GameApplication gameApplication;
+	private GameDisplay gameApplication;
 	private KeyBinding keyBinding;
 
 	private String action;
 	private int key;
 
 	/**
-	 * @param gameApplication
+	 * @param gameDisplay
 	 * @param action the action of the binding
 	 * @param key the initial key of the binding
 	 */
-	public KeyEntry(GameApplication gameApplication, String action, int key){
+	public KeyEntry(GameDisplay gameDisplay, String action, int key){
 		super();
 
 		setTheme("entry");
 
-		this.gameApplication = gameApplication;
-		this.keyBinding = gameApplication.getKeyBinding();
+		this.gameApplication = gameDisplay;
+		this.keyBinding = gameDisplay.getKeyBinding();
 		this.action = action;
 		this.key = key;
 

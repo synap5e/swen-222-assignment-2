@@ -49,14 +49,46 @@ public class KeyBinding {
 
 	private Map<Integer, String> keyMap;
 	private Map<String, Integer> actionMap;
-
+	
+	private boolean isActive;
+	
+	/**
+	 * Create a new key binding model with the default bindings.
+	 */
 	public KeyBinding(){
+		this(DEFAULT_MAP);
+	}
+
+	/**
+	 * Creates a new key binding model with the given bindings.
+	 * 
+	 * @param defaultMap the initial key bindings
+	 */
+	public KeyBinding(Map<Integer, String> defaultMap){
 		this.keyMap = new HashMap<Integer, String>();
 		this.actionMap = new HashMap<String, Integer>();
 		
-		for(int key : DEFAULT_MAP.keySet()){
-			addBinding(key, DEFAULT_MAP.get(key));
+		for(int key : defaultMap.keySet()){
+			addBinding(key, defaultMap.get(key));
 		}
+	}
+	
+	/**
+	 * Sets whether user input is allowed.
+	 * 
+	 * @param flag
+	 */
+	public void setActive(boolean flag){
+		isActive = flag;
+	}
+	
+	/**
+	 * Gets whether user input is allowed.
+	 * 
+	 * @return
+	 */
+	public boolean isActive(){
+		return isActive;
 	}
 
 	/**

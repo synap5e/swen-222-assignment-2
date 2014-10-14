@@ -1,6 +1,7 @@
 package space.gui.application.widget;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.network.Client;
 import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;
@@ -23,8 +24,8 @@ public class MultiplayerWidget extends NestedWidget {
 
 	private Label submitButton;
 
-	public MultiplayerWidget(final GameApplication gameApplication) {
-		super(gameApplication);
+	public MultiplayerWidget(final GameApplication gameApplication, final GameDisplay gameDisplay) {
+		super(gameDisplay);
 		
 		setVisible(false);
 		

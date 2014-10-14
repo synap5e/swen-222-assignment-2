@@ -7,7 +7,7 @@ import space.math.Vector2D;
  * 
  * @author Maria Libunao
  */
-public class Door extends NonStationary implements ViewableDoor {
+public class Door extends NonStationary implements ViewableDoor, Lockable {
 	private enum OpeningState {OPEN, OPENING, CLOSED, CLOSING};
 	private boolean locked;	
 	private Key key;
