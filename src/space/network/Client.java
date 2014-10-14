@@ -24,6 +24,7 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.EntityRotationMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
+import space.serialization.SaveFileNotValidException;
 import space.serialization.WorldLoader;
 import space.world.Container;
 import space.world.Door;
@@ -123,6 +124,9 @@ public class Client {
 			
 			//Get the local player
 			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
+		} catch (SaveFileNotValidException e){
+			//Client failed to load world, critical failure
+			throw new RuntimeException(e);
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);

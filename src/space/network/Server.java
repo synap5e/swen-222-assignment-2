@@ -26,6 +26,8 @@ import space.network.message.EntityRotationMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
 import space.network.message.ShutdownMessage;
+import space.serialization.SaveFileNotAccessibleException;
+import space.serialization.SaveFileNotValidException;
 import space.serialization.WorldLoader;
 import space.serialization.WorldSaver;
 import space.world.Container;
@@ -164,7 +166,12 @@ public class Server {
 			loader.loadWorld(savePath);
 		} catch (Exception e){
 			//If something went wrong assume the file didn't exist
-			loader.loadWorld(DEFAULT_WORLD);
+			try {
+				loader.loadWorld(DEFAULT_WORLD);
+			} catch (Exception e1) {
+				//If the world failed to load, critical fail
+				throw new RuntimeException(e1);
+			}
 		}
 		world = loader.getWorld();
 		//Mark the IDs of all the entities in the world as used
