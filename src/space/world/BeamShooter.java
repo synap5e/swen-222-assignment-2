@@ -12,8 +12,9 @@ public class BeamShooter extends NonStationary{
 	private boolean stopped = false; //whether it's been stopped from rotating 
 	private int beamsShot = 0; //to provide a unique id
 	private float readyToShoot = 1;
-	private static final float TURN_DURATION = 500;
+	private static final float TURN_DURATION = 100;
 	private static final float SHOOT_INTERVAL = 500;
+	private int timeSinceRotate = 0;
 	
 	/**Constructs a new BeamShooter
 	 * @param position
@@ -53,10 +54,14 @@ public class BeamShooter extends NonStationary{
 	
 	@Override
 	public void update(int delta) {
+		timeSinceRotate += delta;
 		if(!stopped){//keeps turning unless stopped
-			yRotation += delta/TURN_DURATION;
-			if(yRotation >= 360){
-				yRotation = 360 - yRotation;
+			if (timeSinceRotate > TURN_DURATION){
+				yRotation += 10;
+				timeSinceRotate = 0;
+				if(yRotation >= 360){
+					yRotation = 360 - yRotation;
+				}
 			}
 		} else {//shoots when stopped
 			if(readyToShoot ==1){

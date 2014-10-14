@@ -280,7 +280,7 @@ public class ModelToJson implements WorldSaver {
 
 	private void addFields(BeamShooter e, MyJsonObject object, Room room) {
 		object.put("room", e.getRoom().getID());
-		object.put("turret", e.getTurret().getID());
+		object.put("turretId", e.getTurret().getID());
 		object.put("yRotation", e.getAngle());
 		object.put("stopped", e.isStopped());
 		object.put("beamsShot",e.getBeamsShot());

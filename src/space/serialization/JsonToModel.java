@@ -90,11 +90,6 @@ public class JsonToModel implements WorldLoader {
 			entities.add(loadDoor(d));
 		}
 		
-		for(int i=0;i<buttonsJsonObjects.getSize();i++){
-			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
-			loadButton(b);
-		}
-		
 		for(int i=0;i<bulletsJsonObjects.getSize();i++){
 			MyJsonObject b = bulletsJsonObjects.getMyJsonObject(i);
 			loadBullet(b);
@@ -109,6 +104,11 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject b = beamShooterObjects.getMyJsonObject(i);
 			loadBeamShooter(b);
 		}
+		for(int i=0;i<buttonsJsonObjects.getSize();i++){
+			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
+			loadButton(b);
+		}
+		
 		for(int i=0;i<beamsJsonObjects.getSize();i++){
 			MyJsonObject b = beamsJsonObjects.getMyJsonObject(i);
 			Room roomIn = null;
