@@ -15,7 +15,6 @@ import org.json.simple.parser.ParseException;
 
 import space.math.Vector2D;
 import space.math.Vector3D;
-import space.network.storage.WorldLoader;
 import space.world.Beam;
 import space.world.BeamShooter;
 import space.world.Bullet;
@@ -52,24 +51,18 @@ public class JsonToModel implements WorldLoader {
 	MyJsonList beamsJsonObjects = new MyJsonList();
 
 	@Override
-	public void loadWorld(String savePath) {
-
+	public void loadWorld(String savePath) throws SaveFileNotAccessibleException, SaveFileNotValidException {
 		JSONParser p = new JSONParser();
 		try {
 			jsonObj = new MyJsonObject((JSONObject) p.parse(new FileReader(new File(savePath + ".json"))));
-		} catch (FileNotFoundException e) {
-			System.out.println(e);
-		} catch (IOException e) {
-			System.out.println(e);
+		} catch (IOException e){
+			throw new SaveFileNotAccessibleException("The save file " + savePath + " was not accessible", e);
 		} catch (ParseException e) {
-			System.out.println(e);
+			throw new SaveFileNotValidException("The save file " + savePath + " was not valid", e);
 		}
 		
-		
 		world = createWorld(jsonObj);
-		
 	}
-
 	private World createWorld(MyJsonObject json) {
 
 		MyJsonList keyJsonObjects = json.getMyJsonList("keys");
@@ -90,10 +83,6 @@ public class JsonToModel implements WorldLoader {
 			entities.add(loadDoor(d));
 		}
 		
-		for(int i=0;i<buttonsJsonObjects.getSize();i++){
-			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
-			loadButton(b);
-		}
 		
 		for(int i=0;i<bulletsJsonObjects.getSize();i++){
 			MyJsonObject b = bulletsJsonObjects.getMyJsonObject(i);
@@ -109,6 +98,12 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject b = beamShooterObjects.getMyJsonObject(i);
 			loadBeamShooter(b);
 		}
+		
+		for(int i=0;i<buttonsJsonObjects.getSize();i++){
+			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
+			loadButton(b);
+		}
+	
 		for(int i=0;i<beamsJsonObjects.getSize();i++){
 			MyJsonObject b = beamsJsonObjects.getMyJsonObject(i);
 			Room roomIn = null;
@@ -247,13 +242,12 @@ public class JsonToModel implements WorldLoader {
 	}
 
 	@Override
-	public void loadWorldFromString(String wrld) {
+	public void loadWorldFromString(String wrld) throws SaveFileNotValidException{
 		JSONParser p = new JSONParser();
 			try {
 				jsonObj = new MyJsonObject((JSONObject) p.parse(wrld));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SaveFileNotValidException("The string was not formatted correctly", e);
 			}		
 		world = createWorld(jsonObj);
 

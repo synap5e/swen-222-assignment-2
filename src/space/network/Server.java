@@ -11,7 +11,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
 import org.lwjgl.Sys;
+
 import space.math.Vector2D;
 import space.network.message.DisconnectMessage;
 import space.network.message.DropPickupMessage;
@@ -23,9 +25,9 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.EntityRotationMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
-import space.network.storage.WorldLoader;
-import space.network.storage.WorldSaver;
 import space.network.message.ShutdownMessage;
+import space.serialization.WorldLoader;
+import space.serialization.WorldSaver;
 import space.world.Container;
 import space.world.Entity;
 import space.world.Pickup;
