@@ -47,11 +47,6 @@ public class Client {
 	public final static String DEFAULT_HOST = "localhost";
 	
 	/**
-	 * The default port to connect to.
-	 */
-	public final static int DEFAULT_PORT = 1234;
-	
-	/**
 	 * The default player id.
 	 */
 	public final static int DEFAULT_ID = -1;

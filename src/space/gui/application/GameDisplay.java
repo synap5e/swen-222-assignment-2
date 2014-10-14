@@ -122,8 +122,6 @@ public class GameDisplay implements DisplayListener {
 		return Display.isCloseRequested() || end;
 	}
 	
-
-	
 	/**
 	 * DIsplay the main menu onto the screen.
 	 * 
@@ -131,7 +129,7 @@ public class GameDisplay implements DisplayListener {
 	 * @throws LWJGLException
 	 * @throws IOException
 	 */
-	public void displayMenu(GameApplication gameApplication) throws LWJGLException, IOException{
+	protected void displayMenu(GameApplication gameApplication) throws LWJGLException, IOException{
 		mainMenu = new MainMenu(gameApplication, this);
 		gui.setRootPane(mainMenu);
 
@@ -168,7 +166,7 @@ public class GameDisplay implements DisplayListener {
 	 * 
 	 * @param gameApplication
 	 */
-	public void displayGame(GameApplication gameApplication){
+	protected void displayGame(GameApplication gameApplication){
 		gameController = new GameController(gameApplication, this);
 
 		//Load GUI
@@ -194,7 +192,7 @@ public class GameDisplay implements DisplayListener {
      *
      * @param flag
      */
-    public void captureMouse(boolean flag) {
+	protected void captureMouse(boolean flag) {
     	if(!Display.isActive()){
     		return;
     	}

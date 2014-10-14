@@ -29,8 +29,7 @@ public class MultiplayerWidget extends NestedWidget {
 		
 		setVisible(false);
 		
-		serverLabel = new Label();
-		serverLabel.setText("Server Hostname:");
+		serverLabel = new Label("Server Hostname:");
 		serverLabel.setTheme("label");
 		add(serverLabel);
 
@@ -41,8 +40,7 @@ public class MultiplayerWidget extends NestedWidget {
 		serverField.setText(Client.DEFAULT_HOST);
 		add(serverField);
 
-		idLabel = new Label();
-		idLabel.setText("ID (Optional):");
+		idLabel = new Label("ID (Optional):");
 		idLabel.setTheme("label");
 		add(idLabel);
 
@@ -52,14 +50,13 @@ public class MultiplayerWidget extends NestedWidget {
 		idField.setMultiLine(false);
 		add(idField);
 
-		submitButton = new Label(){
+		submitButton = new Label("Launch"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				gameApplication.setupMultiplayer(serverField.getText(), idField.getText());
 				gameApplication.setGameState(GameApplication.MULTIPLAYER);
 			}
 		};
-		submitButton.setText("Launch");
 		submitButton.setTheme("submit");
 		add(submitButton);
 	}

@@ -4,8 +4,6 @@ import space.gui.application.GameDisplay;
 import space.gui.application.KeyBinding;
 import space.gui.pipeline.viewable.ViewableOpenable;
 import space.network.Client;
-import space.world.Container;
-import space.world.Door;
 import space.world.Entity;
 import space.world.Lockable;
 import de.matthiasmann.twl.FPSCounter;

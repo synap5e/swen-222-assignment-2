@@ -5,7 +5,7 @@ import java.util.List;
 
 import space.gui.application.GameApplication;
 import space.gui.application.GameDisplay;
-import space.gui.application.widget.label.ItemDescriptionLabel;
+import space.gui.application.widget.label.ItemDescription;
 import space.gui.application.widget.label.ItemLabel;
 import space.world.Entity;
 import space.world.Pickup;
@@ -159,7 +159,7 @@ public class InventoryWidget extends NestedWidget {
 	 * @param entity
 	 */
 	private void generateLabel(Entity entity){
-		Label description = new ItemDescriptionLabel(entity.getDescription());
+		Label description = new ItemDescription(entity.getDescription());
 		playerDescriptions.add(description);
 		add(description);
 		

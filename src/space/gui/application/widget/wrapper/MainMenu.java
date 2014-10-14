@@ -56,7 +56,7 @@ public class MainMenu extends GUIWrapper {
 			timers.add(timer);
 		}
 
-		Label menuItem = new Label(){
+		Label menuItem = new Label("Play Singleplayer"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				boolean isVisible = singleplayerWidget.isVisible();
@@ -66,10 +66,9 @@ public class MainMenu extends GUIWrapper {
 				singleplayerWidget.setVisible(!isVisible);
 			}
 		};
-		menuItem.setText("Play Singleplayer");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){
+		menuItem = new Label("Play Multiplayer"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				boolean isVisible = multiplayerWidget.isVisible();
@@ -79,7 +78,6 @@ public class MainMenu extends GUIWrapper {
 				multiplayerWidget.setVisible(!isVisible);
 			}
 		};
-		menuItem.setText("Play Multiplayer");
 		menuItems.add(menuItem);
 
 		menuItem = new Label(){
@@ -95,7 +93,7 @@ public class MainMenu extends GUIWrapper {
 		menuItem.setText("Instructions");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){
+		menuItem = new Label("Controls"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				boolean isVisible = controlsWidget.isVisible();
@@ -105,16 +103,14 @@ public class MainMenu extends GUIWrapper {
 				controlsWidget.setVisible(!isVisible);
 			}
 		};
-		menuItem.setText("Controls");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){
+		menuItem = new Label("Exit"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				gameApplication.setGameState(GameApplication.QUIT);
 			}
 		};
-		menuItem.setText("Exit");
 		menuItems.add(menuItem);
 
 
