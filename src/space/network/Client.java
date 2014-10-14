@@ -277,7 +277,12 @@ public class Client {
 			//Check the player was looking vertically at the entity
 			float t = (intersection.getX()-pos.getX())/look.getX();
 			float y = localPlayer.getEyeHeight()+look.getY()*t;
-			if (y < e.getElevation() || y > e.getElevation()+e.getHeight()) continue;
+			if (y < e.getElevation()){
+				t = (e.getElevation()-localPlayer.getEyeHeight())/look.getY();
+				intersection.setX(pos.getX()+look.getX()*t);
+				intersection.setY(pos.getY()+look.getZ()*t);
+				if (intersection.sub(e.getPosition()).sqLen() > e.getCollisionRadius()*e.getCollisionRadius()) continue;
+			} else if (y > e.getElevation()+e.getHeight()) continue;
 			
 			//If that entity is the closest, the player must be looking at it
 			float distanceBetween = e.getPosition().sub(intersection).sqLen();
