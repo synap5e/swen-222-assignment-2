@@ -24,7 +24,7 @@ import space.world.World;
  	private static final int PLAYER_ID = 9001;
  	
  	@Test
- 	public void testSaveAndLoad() {
+ 	public void testSaveAndLoad() throws SaveFileNotAccessibleException, SaveFileNotValidException {
  		String savepath = "testSaveAndLoad";
  		
  		World w = createTestWorld();
@@ -40,7 +40,7 @@ import space.world.World;
  	}
 	
 	@Test
-	public void testStringRepresentionSaveAndLoad() {
+	public void testStringRepresentionSaveAndLoad() throws SaveFileNotValidException {
 		World w = createTestWorld();
 		String json = new ModelToJson().representWorldAsString(w);
 		

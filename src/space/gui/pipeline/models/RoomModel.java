@@ -18,7 +18,7 @@ import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.Material;
 import space.gui.pipeline.ModelFlyweight;
 import space.gui.pipeline.TextureLoader;
-import space.gui.pipeline.viewable.OpenableContainer;
+import space.gui.pipeline.viewable.ViewableOpenable;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableNonStationary;
 import space.gui.pipeline.viewable.ViewableObject;
@@ -96,7 +96,7 @@ public class RoomModel {
 		}
 		// draw all nonstationary objects and openable containers dynamically
 		for (ViewableObject vob : room.getContainedObjects()){
-			if (vob instanceof ViewableNonStationary || vob instanceof OpenableContainer){
+			if (vob instanceof ViewableNonStationary || vob instanceof ViewableOpenable){
 				drawObject(vob, models);
 			}
 		}
@@ -166,7 +166,7 @@ public class RoomModel {
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_COLOR_MATERIAL);
 		for (ViewableObject viewableObject : room.getContainedObjects()){
-			if (viewableObject instanceof ViewableStationary && !(viewableObject instanceof OpenableContainer)){
+			if (viewableObject instanceof ViewableStationary && !(viewableObject instanceof ViewableOpenable)){
 				drawObject(viewableObject, models);
 			}
 		}

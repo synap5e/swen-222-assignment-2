@@ -24,6 +24,7 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.EntityRotationMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
+import space.serialization.SaveFileNotValidException;
 import space.serialization.WorldLoader;
 import space.world.Container;
 import space.world.Door;
@@ -71,11 +72,6 @@ public class Client {
 	private Player localPlayer;
 	
 	/**
-	 * Whether the client is active and should take user input.
-	 */
-	private boolean active;
-	
-	/**
 	 * Whether the client is running
 	 */
 	private boolean stillAlive;
@@ -84,6 +80,11 @@ public class Client {
 	 * The list of listeners to be alerted of events
 	 */
 	private List<ClientListener> listeners;
+	
+	/**
+	 * The list of listeners to be alerted of display events
+	 */
+	private List<DisplayListener> displayListeners;
 
 	/**
 	 * The binding between actions and keys
@@ -123,6 +124,9 @@ public class Client {
 			
 			//Get the local player
 			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
+		} catch (SaveFileNotValidException e){
+			//Client failed to load world, critical failure
+			throw new RuntimeException(e);
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);
@@ -132,6 +136,9 @@ public class Client {
 		
 		//Create list of listeners
 		listeners = new ArrayList<ClientListener>();
+		
+		displayListeners = new ArrayList<DisplayListener>();
+		
 		
 		//Start handling incoming messages
 		new Thread(new MessageHandler(this, connection)).start();
@@ -194,15 +201,6 @@ public class Client {
 	}
 	
 	/**
-	 * Sets whether the client is actively accepting user input.
-	 * 
-	 * @param isActive whether the client should accept user input
-	 */
-	public void setActive(boolean isActive){
-		this.active = isActive;
-	}
-	
-	/**
 	 * Gets whether the client is running.
 	 * 
 	 * @return Whether the client is running.
@@ -229,6 +227,26 @@ public class Client {
 	 */
 	public boolean removeListener(ClientListener listener){
 		return listeners.remove(listener);
+	}
+	
+	/**
+	 * Adds a display listener to the client. The listener will be alerted of display events that occur.
+	 * 
+	 * @param listener the display listener to add
+	 * @return Whether the display listener was added successfully
+	 */
+	public boolean addDisplayListener(DisplayListener listener){
+		return displayListeners.add(listener);
+	}
+	
+	/**
+	 * Removes a display listener to the client. The listener will no longer be alerted of display events that occur.
+	 * 
+	 * @param listener the display listener to remove
+	 * @return Whether the display listener was removed successfully
+	 */
+	public boolean removeDisplayListener(DisplayListener listener){
+		return displayListeners.remove(listener);
 	}
 	
 	/**
@@ -413,7 +431,7 @@ public class Client {
 	 * @throws IOException 
 	 */
 	private void updatePlayer(int delta) throws IOException{
-		if (!active) return;
+		if (!keyBinding.isActive()) return;
 		
 		//Update the players viewing direction
 		int dx = Mouse.getDX();
@@ -503,6 +521,29 @@ public class Client {
 		//Inform all the listeners
 		for (ClientListener listener : listeners){
 			listener.onConnectionClose(reason);
+		}
+	}
+
+
+	/**
+	 * Determines if the entity can be rifled, 
+	 * and alerts the display to show the interface to do so.
+	 * 
+	 * @param viewedEntity the entity to be rifled
+	 */
+	public void rifleContainer(Entity viewedEntity) {
+		if(viewedEntity == null || !(viewedEntity instanceof Container)){
+			return;
+		}
+		
+		Container container = (Container) viewedEntity;
+
+		if(container.isLocked() || !container.isOpen()){
+			return;
+		}
+		
+		for (DisplayListener listener : displayListeners){
+			listener.onInventoryExchange(container, getLocalPlayer().getInventory());
 		}
 	}
 }

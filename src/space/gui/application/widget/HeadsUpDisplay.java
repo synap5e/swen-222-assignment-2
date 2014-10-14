@@ -1,10 +1,13 @@
 package space.gui.application.widget;
 
-import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.KeyBinding;
-import space.gui.pipeline.viewable.OpenableContainer;
+import space.gui.pipeline.viewable.ViewableOpenable;
 import space.network.Client;
+import space.world.Container;
+import space.world.Door;
 import space.world.Entity;
+import space.world.Lockable;
 import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.Label;
 
@@ -26,8 +29,8 @@ public class HeadsUpDisplay extends NestedWidget {
     
     private Label viewPrompt;
 	
-	public HeadsUpDisplay(GameApplication gameApplication){
-		super(gameApplication);
+	public HeadsUpDisplay(GameDisplay gameDisplay){
+		super(gameDisplay);
 
         fpsCounter = new FPSCounter();
         add(fpsCounter);
@@ -84,18 +87,31 @@ public class HeadsUpDisplay extends NestedWidget {
 			viewPrompt.setText("");
 			viewPrompt.setVisible(false);
 			
-		} else if(entity != null && entity.getDescription() != viewDescription.getText()){
-			viewDescription.setText(entity.getDescription());
-			viewDescription.setVisible(true);
+		} else if(entity != null){
+			if(entity.getDescription() != viewDescription.getText()){
+				viewDescription.setText(entity.getDescription());
+				viewDescription.setVisible(true);
+			}
 			
 			if(entity.canInteract()){
-				String message = gameApplication.getKeyBinding().getKeyName(KeyBinding.ACTION_INTERACT) + " - Interact";
+				String message = gameDisplay.getKeyBinding().getKeyName(KeyBinding.ACTION_INTERACT) + " - Interact";
 				
-				if(entity instanceof OpenableContainer){
-					message += "\n" + gameApplication.getKeyBinding().getKeyName(KeyBinding.ACTION_RIFLE) + " - Rifle Contents";
+				if(entity instanceof Lockable){
+					if(((Lockable) entity).isLocked()){
+						message += " (Locked)";
+					}
 				}
-				viewPrompt.setText(message);
-				viewPrompt.setVisible(true);
+				
+				if(entity instanceof ViewableOpenable){
+					if(((ViewableOpenable) entity).isOpen()){
+						message += "\n" + gameDisplay.getKeyBinding().getKeyName(KeyBinding.ACTION_RIFLE) + " - Rifle Contents";
+					}
+				}
+				
+				if(viewPrompt.getText() != message){
+					viewPrompt.setText(message);
+					viewPrompt.setVisible(true);
+				}
 			}
 		}
 	}

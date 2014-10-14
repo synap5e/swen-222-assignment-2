@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.widget.ControlsWidget;
 import space.gui.application.widget.InstructionsWidget;
 import space.gui.application.widget.MultiplayerWidget;
@@ -32,8 +33,8 @@ public class MainMenu extends GUIWrapper {
 	private SingleplayerWidget singleplayerWidget;
 	private MultiplayerWidget multiplayerWidget;
 
-	public MainMenu(final GameApplication gameApplication){
-		super(gameApplication);
+	public MainMenu(final GameApplication gameApplication, final GameDisplay gameDisplay){
+		super(gameDisplay);
 
 		this.menuItems = new ArrayList<Label>();
 		this.title = new ArrayList<Label>();
@@ -122,16 +123,16 @@ public class MainMenu extends GUIWrapper {
             add(item);
         }
 
-		singleplayerWidget = new SingleplayerWidget(gameApplication);
+		singleplayerWidget = new SingleplayerWidget(gameApplication, gameDisplay);
 		add(singleplayerWidget);
 
-		multiplayerWidget = new MultiplayerWidget(gameApplication);
+		multiplayerWidget = new MultiplayerWidget(gameApplication, gameDisplay);
 		add(multiplayerWidget);
 
-		instructionsWidget = new InstructionsWidget(gameApplication);
+		instructionsWidget = new InstructionsWidget(gameDisplay);
 		add(instructionsWidget);
 
-		controlsWidget = new ControlsWidget(gameApplication);
+		controlsWidget = new ControlsWidget(gameDisplay);
 		add(controlsWidget);
 	}
 

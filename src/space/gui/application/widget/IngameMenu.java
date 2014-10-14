@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
@@ -26,8 +27,8 @@ public class IngameMenu extends NestedWidget{
 	
 	private ControlsWidget controlsWidget;
 
-	public IngameMenu(final GameApplication gameApplication) {
-		super(gameApplication);
+	public IngameMenu(final GameApplication gameApplication, final GameDisplay gameDisplay) {
+		super(gameDisplay);
 
 		controlsWidget = null;
 		
@@ -43,40 +44,36 @@ public class IngameMenu extends NestedWidget{
 		playerId.setTheme("title");
 		add(playerId);
 
-		Label menuItem = new Label(){
+		Label menuItem = new Label("Resume"){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.setMenuVisible(false);
+				gameDisplay.setMenuVisible(false);
 			}
 		};
-		menuItem.setText("Resume");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){
+		menuItem = new Label("Controls"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				controlsWidget.setVisible(!controlsWidget.isVisible());
 			}
 		};
-		menuItem.setText("Controls");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){
+		menuItem = new Label("Disconnect"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 				gameApplication.setGameState(GameApplication.MAINMENU);
 			}
 		};
-		menuItem.setText("Disconnect");
 		menuItems.add(menuItem);
 
-		menuItem = new Label(){
+		menuItem = new Label("Exit"){
 			@Override
 			protected void handleClick(boolean doubleClick){
-				gameApplication.stop();
+				gameDisplay.stop();
 			}
 		};
-		menuItem.setText("Exit");
 		menuItems.add(menuItem);
 
 		for(Label item : menuItems) {
@@ -85,7 +82,7 @@ public class IngameMenu extends NestedWidget{
 	    }
 		
 		
-		controlsWidget = new ControlsWidget(gameApplication);
+		controlsWidget = new ControlsWidget(gameDisplay);
 		add(controlsWidget);
 		
 		controlsWidget.updatePositions(400, 200);
