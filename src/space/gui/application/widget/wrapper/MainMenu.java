@@ -238,6 +238,8 @@ public class MainMenu extends GUIWrapper {
      * @param text the error message
      */
     public void showError(String text){
+    	hideWidgets();
+    	
     	errorMessage.setText(text);
     	errorMessage.setVisible(true);
     	
