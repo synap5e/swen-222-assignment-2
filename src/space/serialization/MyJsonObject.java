@@ -52,7 +52,7 @@ public class MyJsonObject {
 	 * puts a double value into myjsonobject
 	 * 
 	 * @param key
-	 *            string eky
+	 *            string key
 	 * @param value
 	 *            double value to add
 	 */
