@@ -102,15 +102,9 @@ public class Connection {
 		byte[] data = new byte[length];
 		
 		//Wait until the entire message has been received
-		int recieved = 0;
-		int available;
-		while ((available = incoming.available()) < length){
-			incoming.read(data, recieved, available);
-			length -= available;
-			recieved += available;
-		}
-		incoming.read(data, recieved, length);
+		while (incoming.available() < length);
 		
+		incoming.read(data);
 		switch (type){
 			case TEXT:
 				return new TextMessage(data);
