@@ -75,6 +75,6 @@ public class EntityMovedMessage implements Message {
 
 	@Override
 	public String toString(){
-		return "[Entity]: Entity with the id \"" + entityID + "\" moved to " + newPosition;
+		return "[Move]: Entity with the id \"" + entityID + "\" moved to " + newPosition;
 	}
 }

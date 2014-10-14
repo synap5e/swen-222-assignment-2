@@ -1,7 +1,6 @@
 package space.network.message;
 
 import java.nio.ByteBuffer;
-
 import space.math.Vector2D;
 
 /**
