@@ -119,6 +119,7 @@ public class Client {
 			
 			//Get the local player
 			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
+			World.staticMainPlayerHack = localPlayer;
 		} catch (SaveFileNotValidException e){
 			//Client failed to load world, critical failure
 			throw new RuntimeException(e);
@@ -255,6 +256,11 @@ public class Client {
 			synchronized (world) {
 				world.update(delta);
 				updatePlayer(delta);
+
+				if (World.positionStale){
+					connection.sendMessage(new EntityMovedMessage(localPlayer.getID(), localPlayer.getPosition()));
+					World.positionStale = false;
+				}
 			}
 		} catch (IOException e) {
 			shutdown();

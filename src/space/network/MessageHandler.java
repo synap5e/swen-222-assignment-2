@@ -89,10 +89,10 @@ class MessageHandler implements Runnable {
 				}
 				
 				//Sleep, iterating over the loop roughly 60 times a second
-				try {
+				/*try {
 					Thread.sleep(17);
 				} catch (InterruptedException e) {
-				}
+				}*/
 			}
 		} catch (IOException e){
 			client.shutdown("Connection to server has been lost");
@@ -139,6 +139,7 @@ class MessageHandler implements Runnable {
 		Room from = world.getRoomAt(e.getPosition());
 		Room to = world.getRoomAt(entityMoved.getNewPosition());
 		if (to != from){
+			System.out.println("Updating room of " + e);
 			from.removeFromRoom(e);
 			to.putInRoom(e);
 		}

@@ -86,11 +86,11 @@ public class Bullet extends NonStationary {
 	/**Checks whether the bullet has collided with any players. If so, move that player back to a position*/
 	private void checkCollidedWithPlayer(){
 		Player p = room.collidedWithPlayer(this);
-		if(p != null /*&& p.getElevation() <= this.getElevation() && this.getElevation() <= p.getHeight() + p.getElevation()*/){
+		if(p != null && p == World.staticMainPlayerHack /*&& p.getElevation() <= this.getElevation() && this.getElevation() <= p.getHeight() + p.getElevation()*/){
 			p.setPosition(teleportTo); //change to in front of door
 			p.getRoom().removeFromRoom(p);
 			p.setRoom(roomTeleportTo);
-		
+			World.positionStale = true;
 		}
 	}
 

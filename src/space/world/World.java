@@ -10,6 +10,8 @@ import space.gui.pipeline.viewable.ViewableWorld;
 import space.math.Vector2D;
 
 public class World implements ViewableWorld{
+	public static Player staticMainPlayerHack;
+	public static boolean positionStale = false;
 	private Map<Integer,Entity> entities = new HashMap<Integer,Entity>(); //mapping from id to entity
 	private Map<Integer,Room> rooms = new HashMap<Integer,Room>(); //mapping from id to room
 	
@@ -32,6 +34,10 @@ public class World implements ViewableWorld{
 	 * @param c The character that will be moved
 	 * @param newPos Where the character will be moved to if move is valid*/
 	public void moveCharacter(Character c, Vector2D newPos){
+		if (c != staticMainPlayerHack){
+			c.setPosition(newPos);
+			return;
+		}
 		Room room = c.getRoom();
 		boolean byOpenDoor = false;
 
