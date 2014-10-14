@@ -48,6 +48,16 @@ import space.world.World;
 public class Server {
 	
 	/**
+	 * The default host.
+	 */
+	public final static String DEFAULT_HOST = "0.0.0.0";
+
+	/**
+	 * The default port.
+	 */
+	public final static int DEFAULT_PORT = 1234;
+
+	/**
 	 * The time between when the server saves the game. Set to 5 minutes.
 	 */
 	private static final int TIME_BETWEEN_SAVES = 300000;

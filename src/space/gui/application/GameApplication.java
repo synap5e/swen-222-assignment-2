@@ -85,7 +85,7 @@ public class GameApplication implements ClientListener{
 		// Requested action
 		switch(state){
 			case SINGLEPLAYER:
-				server = new Server(Client.DEFAULT_HOST, Client.DEFAULT_PORT, new JsonToModel(), new ModelToJson(), saveName);
+				server = new Server(Server.DEFAULT_HOST, Server.DEFAULT_PORT, new JsonToModel(), new ModelToJson(), saveName);
 			case MULTIPLAYER:
 				startGame();
 			default:
@@ -103,7 +103,7 @@ public class GameApplication implements ClientListener{
 		reset();
 		
 		//Create the client TODO use program arguments for host and port
-		client = new Client(serverAddress, Client.DEFAULT_PORT, new JsonToModel(), gameDisplay.getKeyBinding(), playerId);
+		client = new Client(serverAddress, Server.DEFAULT_PORT, new JsonToModel(), gameDisplay.getKeyBinding(), playerId);
 		client.addListener(this);
 		client.addDisplayListener(gameDisplay);
 
