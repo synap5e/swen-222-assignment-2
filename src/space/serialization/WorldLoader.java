@@ -25,8 +25,9 @@ public interface WorldLoader {
 	 * Load the world from a string representation the world. The world can contain players.
 	 * 
 	 * @param world the string representation of the world
+	 * @throws SaveFileNotAccessibleException 
 	 */
-	public void loadWorldFromString(String world);
+	public void loadWorldFromString(String world) throws SaveFileNotValidException;
 	
 	/**
 	 * Get the world that has been loaded.

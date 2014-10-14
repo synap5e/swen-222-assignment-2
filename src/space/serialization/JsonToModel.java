@@ -83,10 +83,6 @@ public class JsonToModel implements WorldLoader {
 			entities.add(loadDoor(d));
 		}
 		
-		for(int i=0;i<buttonsJsonObjects.getSize();i++){
-			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
-			loadButton(b);
-		}
 		
 		for(int i=0;i<bulletsJsonObjects.getSize();i++){
 			MyJsonObject b = bulletsJsonObjects.getMyJsonObject(i);
@@ -102,6 +98,12 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject b = beamShooterObjects.getMyJsonObject(i);
 			loadBeamShooter(b);
 		}
+		
+		for(int i=0;i<buttonsJsonObjects.getSize();i++){
+			MyJsonObject b = buttonsJsonObjects.getMyJsonObject(i);
+			loadButton(b);
+		}
+	
 		for(int i=0;i<beamsJsonObjects.getSize();i++){
 			MyJsonObject b = beamsJsonObjects.getMyJsonObject(i);
 			Room roomIn = null;
@@ -240,13 +242,12 @@ public class JsonToModel implements WorldLoader {
 	}
 
 	@Override
-	public void loadWorldFromString(String wrld) {
+	public void loadWorldFromString(String wrld) throws SaveFileNotValidException{
 		JSONParser p = new JSONParser();
 			try {
 				jsonObj = new MyJsonObject((JSONObject) p.parse(wrld));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SaveFileNotValidException("The string was not formatted correctly", e);
 			}		
 		world = createWorld(jsonObj);
 
