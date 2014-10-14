@@ -183,7 +183,7 @@
             ]
          },
          "Light":[ 0.08, 0.01, 0.01 ],
-         "description":"A dim dark hallway. Use [F] to toggle your flashlight.",
+         "description":"A dim dark hallway. Your flashlight might come in handy.",
          "id": 3.0,
          "door ids":[  
             21.0,
@@ -346,15 +346,15 @@
    "keys":[  
       {  
          "elevation":0.0,
-         "name":"Hall Key",
-         "description":"A key",
+         "name":"Hall Keycard",
+         "description":"A keycard",
          "position":[ 0.0, 0.0 ],
          "id": 51.0,
          "type":"Key"
       },
       {  
          "elevation":0.0,
-         "name":"Security Key 2",
+         "name":"Security Keycard 2",
          "description":"Unlocks Weapons Testing and the Supply Closet",
          "position":[ 0.0, 0.0 ],
          "id": 56.0,
