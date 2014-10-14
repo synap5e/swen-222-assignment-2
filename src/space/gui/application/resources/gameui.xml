@@ -197,6 +197,10 @@
 
         <theme name="singleplayerwidget" ref="-playerwidget">
         </theme>
+
+        <theme name="label" ref="label">
+               <param name="font"><font>normal</font></param>
+        </theme>
     </theme>
 
     <!-- Main menu theme -->

@@ -93,40 +93,34 @@ public class Client {
 	 * @param port the port of the server
 	 * @param loader the world loader that will load the world sent by the server
 	 * @param prevId the previous ID used when connecting to the server
+	 * @throws IOException 
+	 * @throws SaveFileNotValidException 
 	 */
-	public Client(String host, int port, WorldLoader loader, KeyBinding keyBinding, int prevId){
+	public Client(String host, int port, WorldLoader loader, KeyBinding keyBinding, int prevId) throws IOException, SaveFileNotValidException{
 		this.keyBinding = keyBinding;
 		
 		//Connect to the server
-		try {
-			connection = new Connection(new Socket(host, port));
-			
-			//Request to join the game
-			connection.sendMessage(new PlayerJoiningMessage(prevId));
-			
-			//Create the local player, using the ID supplied by the server
-			PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
-			
-			//Load the world
-			TextMessage worldData = (TextMessage) connection.readMessage();
-			loader.loadWorldFromString(worldData.getText());
-			world = loader.getWorld();
-			for (Player p : loader.getPlayers()){
-				world.addEntity(p);
-				p.setRoom(world.getRoomAt(p.getPosition()));
-				p.getRoom().putInRoom(p);
-			}
-			
-			//Get the local player
-			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
-		} catch (SaveFileNotValidException e){
-			//Client failed to load world, critical failure
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			//Client failed to connect, critical failure
-			throw new RuntimeException(e);
+		connection = new Connection(new Socket(host, port));
+		
+		//Request to join the game
+		connection.sendMessage(new PlayerJoiningMessage(prevId));
+		
+		//Create the local player, using the ID supplied by the server
+		PlayerJoiningMessage joinConfirmation = (PlayerJoiningMessage) connection.readMessage();
+		
+		//Load the world
+		TextMessage worldData = (TextMessage) connection.readMessage();
+		loader.loadWorldFromString(worldData.getText());
+		world = loader.getWorld();
+		for (Player p : loader.getPlayers()){
+			world.addEntity(p);
+			p.setRoom(world.getRoomAt(p.getPosition()));
+			p.getRoom().putInRoom(p);
 		}
 		
+		//Get the local player
+		localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
+
 		stillAlive = true;
 		
 		//Create list of listeners
@@ -146,8 +140,10 @@ public class Client {
 	 * @param port the port of the server
 	 * @param loader the world loader that will load the world sent by the server
 	 * @param keyBinding the key bindings model
+	 * @throws SaveFileNotValidException 
+	 * @throws IOException 
 	 */
-	public Client(String host, int port, WorldLoader loader, KeyBinding keyBinding){
+	public Client(String host, int port, WorldLoader loader, KeyBinding keyBinding) throws IOException, SaveFileNotValidException{
 		this(host, port, loader, keyBinding, -1);
 	}
 	

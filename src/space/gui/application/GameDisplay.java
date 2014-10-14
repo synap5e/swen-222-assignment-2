@@ -305,4 +305,8 @@ public class GameDisplay implements DisplayListener {
 		setInventoryExchangeVisible(true);
 	}
 
+	public void showError(Exception e) {
+		mainMenu.showError(e.getMessage());
+	}
+
 }

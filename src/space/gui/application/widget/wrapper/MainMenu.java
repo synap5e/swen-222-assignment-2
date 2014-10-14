@@ -32,6 +32,8 @@ public class MainMenu extends GUIWrapper {
 
 	private SingleplayerWidget singleplayerWidget;
 	private MultiplayerWidget multiplayerWidget;
+	
+	private Label errorMessage;
 
 	public MainMenu(final GameApplication gameApplication, final GameDisplay gameDisplay){
 		super(gameDisplay);
@@ -39,6 +41,10 @@ public class MainMenu extends GUIWrapper {
 		this.menuItems = new ArrayList<Label>();
 		this.title = new ArrayList<Label>();
 		this.timers = new ArrayList<Integer>();
+		
+		errorMessage = new Label();
+		errorMessage.setTheme("label");
+		add(errorMessage);
 
 		String titleString = "SPACE";
 
@@ -183,6 +189,8 @@ public class MainMenu extends GUIWrapper {
 		controlsWidget.setVisible(false);
 		multiplayerWidget.setVisible(false);
 		instructionsWidget.setVisible(false);
+		
+		errorMessage.setVisible(false);
     }
 
     /**
@@ -223,4 +231,18 @@ public class MainMenu extends GUIWrapper {
     private int getHiddenTimer(){
     	return 5;
     }
+    
+    /**
+     * Displays an error to the user.
+     * 
+     * @param text the error message
+     */
+    public void showError(String text){
+    	errorMessage.setText(text);
+    	errorMessage.setVisible(true);
+    	
+    	errorMessage.adjustSize();
+    	errorMessage.setPosition((getWidth() - errorMessage.getWidth()) / 2, getHeight() - errorMessage.getHeight() - 20);
+    }
+
 }
