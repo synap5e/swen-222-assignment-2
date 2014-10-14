@@ -130,7 +130,7 @@ public class BeamShooter extends NonStationary{
 
 	/**Creates a new beam and puts it in the room*/
 	private void shoot(){
-		Vector2D lookDir = Vector2D.fromPolar(yRotation, 1);
+		Vector2D lookDir = Vector2D.fromPolar((float) Math.toRadians(yRotation), 1);
 		room.addBeam(new Beam(getPosition(), getID()+1000*beamsShot++, getHeight() + getElevation(), new Vector3D(lookDir.getX(),0,lookDir.getY()), turret));
 	}
 

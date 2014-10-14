@@ -81,7 +81,7 @@ public class ModelFlyweight {
 
 			models.put("BeamShooter", new WavefrontModel(new File("./assets/models/teapot.obj"),
 					new Vector3D(0, 0, 0),
-					new Vector3D(0, 270, 0), 0.5f,
+					new Vector3D(0, 0, 0), 0.5f,
 					new Vector3D(0.35f,0.35f,0.35f),
 					Material.bronze
 				));
