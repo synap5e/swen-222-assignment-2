@@ -7,14 +7,34 @@ import org.lwjgl.util.glu.Disk;
 
 import space.gui.pipeline.Material;
 
+/** A model for a bullet
+ * 
+ * @author Simon Pinfold (300280028)
+ *
+ */
 public class BulletModel implements RenderModel {
 
+	/**
+	 *  The length of the bullet (unitles, but relative to all other models)
+	 */
 	private static final float BULLET_LENGTH = 1f;
+	
+	/**
+	 * The radius of the cylynder of the bullet
+	 */
 	private static final float BULLET_RADIUS = 0.1f;
+	
+	/**
+	 * The levels of detail on the bullet.
+	 * This corresponds to the number of slices and strips for the quadrics
+	 */
 	private static final int BULLET_LOD = 5;
 	
 	
 	@Override
+	/** 
+	 * {@inheritdoc}
+	 */
 	public void render() {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 

@@ -9,20 +9,27 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.lwjgl.opengl.Util;
 import org.lwjgl.util.glu.Sphere;
 
 import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.Material;
 import space.math.Vector3D;
 
-/**
+/** A model loaded from a Wavefront object file
  * 
- * @author Simon Pinfold
+ * Requires that all faces are triangles and that all vertices have defined normals
+ * 
+ * @author Simon Pinfold (300280028)
  *
  */
 public class WavefrontModel implements RenderModel{
 
+	/**
+	 * A simple struct holding the indices for a face's vertices and corresponding normals
+	 * 
+	 * @author Simon Pinfold (300280028)
+	 *
+	 */
 	private static class Face {
 		int v1, v2, v3;
 		int n1, n2, n3;
@@ -41,6 +48,17 @@ public class WavefrontModel implements RenderModel{
 
 	private Vector3D color;
 
+	/**
+	 * Load a wavefront model from the provided file
+	 * 
+	 * @param f the file containing the wavefront model
+	 * @param offset the offset vector from (0,0,0) to apply to all vertices. Used for when the model does not use the same origin as what we want.
+	 * @param eulerRotation The three rotations (around x, around y, around z) in degrees, packed into a vector to apply to all vertices in the mode.
+	 * @param scale The scale to apply to all vertices in the model
+	 * @param color The color for the model
+	 * @param mat The material properties
+	 * @throws IOException if reading the file fails
+	 */
 	public WavefrontModel(File f, Vector3D offset, Vector3D eulerRotation, float scale, Vector3D color, Material mat) throws IOException {
 		this.offset = offset;
 		this.eulerRotation = eulerRotation;
@@ -59,10 +77,18 @@ public class WavefrontModel implements RenderModel{
 	}
 	
 	@Override
+	/** 
+	 * {@inheritdoc}
+	 */
 	public void render() {
 		glCallList(displayList);
 	}
 
+	/**
+	 * Parse a line of a wavefront file
+	 * 
+	 * @param line the line
+	 */
 	private void parseLine(String line) {
 		String[] elems = line.trim().split(" ");
 		if (elems[0].equals("v")){
@@ -74,6 +100,11 @@ public class WavefrontModel implements RenderModel{
 		}
 	}
 
+	/**
+	 * Add the defined face
+	 * 
+	 * @param elems each vertex's index and normal's index
+	 */
 	private void addFace(String[] elems) {
 		Face f = new Face();
 
@@ -123,6 +154,9 @@ public class WavefrontModel implements RenderModel{
 					);
 	}
 
+	/**
+	 * Pre-compute the vertex data
+	 */
 	private void createDisplayList(){
 		this.displayList = glGenLists(1);
 		glNewList(displayList, GL_COMPILE);

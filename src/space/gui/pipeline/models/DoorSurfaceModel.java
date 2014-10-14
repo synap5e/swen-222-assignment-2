@@ -8,8 +8,17 @@ import java.io.IOException;
 import space.gui.pipeline.Material;
 import space.gui.pipeline.TextureLoader;
 
+/** A mode for the surface of a door.
+ * Basically a textured quad.
+ * 
+ * @author Simon Pinfold (300280028)
+ *
+ */
 public class DoorSurfaceModel implements RenderModel {
 
+	/**
+	 * The display list of the pre-compiled vertex data (relative to this model only)
+	 */
 	private int doorDisplayList;
 	
 
@@ -17,8 +26,18 @@ public class DoorSurfaceModel implements RenderModel {
 		doorDisplayList = createDoorDisplayList();
 	}
 	
+	/**
+	 * The texture ID for the door
+	 */
 	private static int doorTexture = 0;
+
+	/** 
+	 * Compile the vertex data into a display list
+	 *  
+	 * @return the compiled display list
+	 */
 	private static int createDoorDisplayList() {
+		// load the texture only once
 		if (doorTexture == 0){
 			try {
 				doorTexture = TextureLoader.loadTexture(new File("./assets/door.png"));
@@ -37,6 +56,8 @@ public class DoorSurfaceModel implements RenderModel {
 		
 		Material.chrome.apply();
 
+		
+		// draw a quad the size of the door
 		glBegin(GL_QUADS);
 		glNormal3f(0, 0, -1);
 		glTexCoord2f(1,	0);
@@ -60,6 +81,9 @@ public class DoorSurfaceModel implements RenderModel {
 	}
 	
 	@Override
+	/** 
+	 * {@inheritdoc}
+	 */
 	public void render() {
 		glCallList(doorDisplayList);
 	}

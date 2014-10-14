@@ -2,22 +2,15 @@ package space.gui.pipeline.models;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.lwjgl.util.glu.Cylinder;
-import org.lwjgl.util.glu.Disk;
-import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.glu.Sphere;
 
 import space.gui.pipeline.GameRenderer;
 import space.gui.pipeline.Material;
 import space.gui.pipeline.ModelFlyweight;
-import space.gui.pipeline.TextureLoader;
 import space.gui.pipeline.viewable.OpenableContainer;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableNonStationary;
@@ -29,16 +22,21 @@ import space.math.Segment2D;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
-/**
+/** A model of a specific ViewableRoom.
+ * As well as rendering the walls, floor and ceiling the room is responsible
+ * for rendering all attached doors (in there current openness state) and all entities contained within.
  *
- * @author Simon Pinfold
+ * @author Simon Pinfold (300280028)
  *
  */
 public class RoomModel {
 
+	/**
+	 * The height of the walls
+	 */
 	private static final float WALL_HEIGHT = 11;
 
-	
+
 	/** What size to make the quads that make up a wall.
 	 * Walls must be tessellated for secular light to display
 	 * correctly.
@@ -47,16 +45,39 @@ public class RoomModel {
 
 	/** How many tessellated squares does a wall texture cover */
 	private static final float TEXTURE_TESSELLATION_MULTIPLE = 22;
-	
+
+	/**
+	 * The pre-compiled vertex data of walls, floor, ceiling, doorframes and all stationary objects
+	 */
 	private int displayList;
+
+	/**
+	 * The material properties for the ceiling (ambient, diffuse, specular, shininess)
+	 */
 	private Material ceilingMaterial;
+
+	/**
+	 * The material properties for the walls
+	 */
 	private Material wallMaterial;
 
-	
+	/**
+	 * All the viewable doors for this room at their correct rotations (to sit on the walls)
+	 */
 	private HashMap<ViewableDoor, Float> doorRotations = new HashMap<ViewableDoor, Float>();
+
+	/**
+	 * The ViewableRoom this is modeling
+	 */
 	private ViewableRoom room;
 
-	
+	/** Create a new RoomModel for the specified room, using the provided models.
+	 *
+	 * This will also compile all stationary objects in the room into the room's model
+	 *
+	 * @param room The room this is a mode of
+	 * @param models The models to use
+	 */
 	public RoomModel(ViewableRoom room, ModelFlyweight models){
 		wallMaterial = new Material(
 				new Vector3D(0.2f, 0.2f, 0.2f),
@@ -71,29 +92,32 @@ public class RoomModel {
 				0.5f
 		);
 		this.room = room;
-		
+
 		// pre-compile the viewmodel for all static models, the walls and the ceiling
 		this.displayList = createDisplayList(room, models);
-				
+
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public void render(ModelFlyweight models) {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glCallList(this.displayList);
-		
-		
+
 		// doors are nonstationary so need to be rendered dynamically
 		for (Entry<ViewableDoor, Float> e : doorRotations.entrySet()) {
 			ViewableDoor door = e.getKey();
 			float angle = e.getValue();
-			
+
 			glPushMatrix();
 			glTranslatef(door.getPosition().getX(), door.getOpenPercent()*DoorFrameModel.DOOR_HEIGHT, door.getPosition().getY());
 			glRotatef(angle, 0, -1, 0);
 			models.getDoorSurface().render();
 			glPopMatrix();
-			
+
 		}
+
 		// draw all nonstationary objects and openable containers dynamically
 		for (ViewableObject vob : room.getContainedObjects()){
 			if (vob instanceof ViewableNonStationary || vob instanceof OpenableContainer){
@@ -122,11 +146,11 @@ public class RoomModel {
 		glBindTexture(GL_TEXTURE_2D, models.getWallTexture());
 
 		glBegin(GL_QUADS);
-		
+
 		for (ViewableWall wall : room.getWalls()) {
-			
+
 			List<? extends ViewableDoor> doors = wall.getDoors();
-			
+
 			float x1 = wall.getStart().getX();
 			float x2 = wall.getEnd().getX();
 
@@ -139,7 +163,7 @@ public class RoomModel {
 			glNormal3f(normal.getX(), normal.getY(), normal.getZ());
 
 			renderWall(wall, doors);
-			
+
 			Vector2D wallVector2D = wall.getEnd().sub(wall.getStart());
 			float angle = (float) Math.toDegrees(wallVector2D.getPolarAngle());
 			for (ViewableDoor door : doors){
@@ -147,7 +171,7 @@ public class RoomModel {
 			}
 		}
 		glEnd();
-		
+
 		glBindTexture(GL_TEXTURE_2D, models.getFloorTexture());
 		ceilingMaterial.apply();
 		glNormal3f(0,1,0);
@@ -190,7 +214,7 @@ public class RoomModel {
 	private void drawObject(ViewableObject viewableObject, ModelFlyweight models) {
 		glPushMatrix();
 		glTranslatef(viewableObject.getPosition().getX(), viewableObject.getElevation(), viewableObject.getPosition().getY());
-		
+
 		if (GameRenderer.DEBUG_MODELS){
 			glPushAttrib(GL_ALL_ATTRIB_BITS);
 			glDisable(GL_CULL_FACE);
@@ -207,7 +231,7 @@ public class RoomModel {
 			glPopMatrix();
 			glPopAttrib();
 		}
-		
+
 		glRotated(viewableObject.getAngle(), 0, -1, 0);
 		models.get(viewableObject).render();
 		glPopMatrix();
