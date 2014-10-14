@@ -148,7 +148,7 @@ public class GameApplication implements ClientListener{
 		client.update(delta);
 
 		// update renderer
-		gameRenderer.renderTick(delta, client.getLocalPlayer(), client.getWorld());
+		gameRenderer.renderTick(client.getLocalPlayer(), client.getWorld());
 
 
 		// update gui
