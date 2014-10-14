@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 import space.gui.application.KeyBinding;
 import space.gui.pipeline.viewable.ViewableDoor;
 import space.gui.pipeline.viewable.ViewableWall;
@@ -22,7 +24,8 @@ import space.network.message.PlayerJoiningMessage;
 import space.network.message.EntityRotationMessage;
 import space.network.message.TextMessage;
 import space.network.message.TransferMessage;
-import space.network.storage.WorldLoader;
+import space.serialization.SaveFileNotValidException;
+import space.serialization.WorldLoader;
 import space.world.Container;
 import space.world.Door;
 import space.world.Entity;
@@ -121,6 +124,9 @@ public class Client {
 			
 			//Get the local player
 			localPlayer = (Player) world.getEntity(joinConfirmation.getPlayerID());
+		} catch (SaveFileNotValidException e){
+			//Client failed to load world, critical failure
+			throw new RuntimeException(e);
 		} catch (IOException e) {
 			//Client failed to connect, critical failure
 			throw new RuntimeException(e);

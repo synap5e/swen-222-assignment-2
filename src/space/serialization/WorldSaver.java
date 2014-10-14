@@ -1,4 +1,4 @@
-package space.network.storage;
+package space.serialization;
 
 import java.util.List;
 import space.world.Player;
