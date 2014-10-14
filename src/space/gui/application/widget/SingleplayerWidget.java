@@ -79,7 +79,7 @@ public class SingleplayerWidget extends NestedWidget {
     	saveField.setPosition(x + SPACING, y - 2);
     	saveField.setSize(200, 20);
     	
-    	y += saveField.getHeight() + SPACING;
+    	y += saveLabel.getHeight() + SPACING;
     	
     	idLabel.setPosition(x - idLabel.getWidth(), y);
     	
