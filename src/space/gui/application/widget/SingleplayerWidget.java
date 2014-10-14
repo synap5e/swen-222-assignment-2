@@ -29,8 +29,7 @@ public class SingleplayerWidget extends NestedWidget {
 		
 		setVisible(false);
 		
-		saveLabel = new Label();
-		saveLabel.setText("Save File:");
+		saveLabel = new Label("Save File:");
 		saveLabel.setTheme("label");
 		add(saveLabel);
 
@@ -41,8 +40,7 @@ public class SingleplayerWidget extends NestedWidget {
 		saveField.setText(Server.DEFAULT_SAVE);
 		add(saveField);
 		
-		idLabel = new Label();
-		idLabel.setText("ID (Optional):");
+		idLabel = new Label("ID (Optional):");
 		idLabel.setTheme("label");
 		add(idLabel);
 
@@ -52,7 +50,7 @@ public class SingleplayerWidget extends NestedWidget {
 		idField.setMultiLine(false);
 		add(idField);
 		
-		submitButton = new Label(){
+		submitButton = new Label("Launch"){
 			@Override
 			protected void handleClick(boolean doubleClick){
 
@@ -62,7 +60,6 @@ public class SingleplayerWidget extends NestedWidget {
 				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
 			}
 		};
-		submitButton.setText("Launch");
 		submitButton.setTheme("submit");
 		add(submitButton);
 	}

@@ -7,7 +7,7 @@ import java.util.Set;
 
 import space.gui.application.GameApplication;
 import space.gui.application.GameDisplay;
-import space.gui.application.widget.label.ItemDescriptionLabel;
+import space.gui.application.widget.label.ItemDescription;
 import space.gui.application.widget.label.ItemLabel;
 import space.world.Container;
 import space.world.Entity;
@@ -237,7 +237,7 @@ public class InventoryExchangeWidget extends NestedWidget {
 	 * @param entity
 	 */
 	private void generateContainerItems(Entity entity){
-		Label description = new ItemDescriptionLabel(entity.getDescription());
+		Label description = new ItemDescription(entity.getDescription());
 		containerDescriptions.add(description);
 		add(description);
 		
@@ -269,7 +269,7 @@ public class InventoryExchangeWidget extends NestedWidget {
 	 * @param entity
 	 */
 	private void generatePlayerItems(Entity entity){
-		Label description = new ItemDescriptionLabel(entity.getDescription());
+		Label description = new ItemDescription(entity.getDescription());
 		playerDescriptions.add(description);
 		add(description);
 		
