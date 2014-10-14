@@ -17,6 +17,9 @@ public class SingleplayerWidget extends NestedWidget {
 
 	private Label saveLabel;
 	private EditField saveField;
+	
+	private Label idLabel;
+	private EditField idField;
 
 	private Label submitButton;
 
@@ -37,10 +40,30 @@ public class SingleplayerWidget extends NestedWidget {
 		saveField.setText(Server.DEFAULT_SAVE);
 		add(saveField);
 		
+		idLabel = new Label();
+		idLabel.setText("ID (Optional):");
+		idLabel.setTheme("label");
+		add(idLabel);
+
+		idField = new EditField();
+		idField.setEnabled(true);
+		idField.setTheme("editfield");
+		idField.setMultiLine(false);
+		add(idField);
+		
 		submitButton = new Label(){
 			@Override
 			protected void handleClick(boolean doubleClick){
+				int id = 0;
+				try{
+					id = Integer.valueOf(idField.getText());
+				} catch(NumberFormatException e){
+					
+				}
+				
 				gameApplication.setupSingleplayer(saveField.getText());
+				gameApplication.setupMultiplayer(id);
+				
 				gameApplication.setGameState(GameApplication.SINGLEPLAYER);
 			}
 		};
@@ -55,15 +78,23 @@ public class SingleplayerWidget extends NestedWidget {
     	int y = startY;
     	
     	saveLabel.adjustSize();
+    	idLabel.adjustSize();
     	
-    	x += Math.max(saveLabel.getWidth(), saveLabel.getWidth());
+    	x += Math.max(saveLabel.getWidth(), idLabel.getWidth());
 
     	saveLabel.setPosition(x - saveLabel.getWidth(), y);
     	
     	saveField.setPosition(x + SPACING, y - 2);
     	saveField.setSize(200, 20);
     	
-    	y += saveLabel.getHeight() + SPACING * 2;
+    	y += saveField.getHeight() + SPACING;
+    	
+    	idLabel.setPosition(x - idLabel.getWidth(), y);
+    	
+    	idField.setPosition(x + SPACING, y - 2);
+    	idField.setSize(200, 20);
+    	
+    	y += idLabel.getHeight() + SPACING * 2;
     	x += SPACING;
     	
     	submitButton.adjustSize();

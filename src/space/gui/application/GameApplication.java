@@ -360,6 +360,16 @@ public class GameApplication implements ClientListener{
 	public void setupMultiplayer(String address, int id) {
 		serverAddress = address;
 	}
+	
+	/**
+	 * Sets up the multi-player environment for connecting to a game.
+	 *
+	 * @param id your given player to load in the remote game
+	 */
+	public void setupMultiplayer(int id) {
+		setupMultiplayer(Client.DEFAULT_HOST, id);
+	}
+
 
 	/**
 	 * Gets the game client
