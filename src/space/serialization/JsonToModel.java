@@ -1,7 +1,6 @@
 package space.serialization;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,7 +81,8 @@ public class JsonToModel implements WorldLoader {
 			MyJsonObject d = doorJsonObjects.getMyJsonObject(i);
 			entities.add(loadDoor(d));
 		}
-
+		
+		
 		for(int i=0;i<bulletsJsonObjects.getSize();i++){
 			MyJsonObject b = bulletsJsonObjects.getMyJsonObject(i);
 			loadBullet(b);
