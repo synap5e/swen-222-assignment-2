@@ -142,27 +142,7 @@ public class MyJsonList implements Iterable<JSONObject> {
 		return new MyJsonObject((JSONObject) list.get(i));
 	}
 	
-	/**
-	 * returns string from specified index
-	 * 
-	 * @param i
-	 *            index
-	 * @return string from list
-	 */
-	public String getString(int i) {
-		return (String) list.get(i);
-	}
-	
-	/**
-	 * returns boolean from specified index
-	 * 
-	 * @param i
-	 *            index
-	 * @return boolean from list
-	 */
-	public boolean getBoolean(int i) {
-		return (Boolean) list.get(i);
-	}
+
 
 
 }
