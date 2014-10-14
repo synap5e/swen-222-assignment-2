@@ -63,6 +63,8 @@ public class GameDisplay implements DisplayListener {
 		renderer = new LWJGLRenderer();
 		gui = new GUI(renderer);
 		
+		mainMenu = null;
+		
 		// Setup Key Bindings
 		keyBinding = new KeyBinding();
 		
@@ -130,7 +132,9 @@ public class GameDisplay implements DisplayListener {
 	 * @throws IOException
 	 */
 	protected void displayMenu(GameApplication gameApplication) throws LWJGLException, IOException{
-		mainMenu = new MainMenu(gameApplication, this);
+		if(mainMenu == null){
+			mainMenu = new MainMenu(gameApplication, this);
+		}
 		gui.setRootPane(mainMenu);
 
 		ThemeManager theme = ThemeManager.createThemeManager(Bootstrap.class.getResource("resources/gameui.xml"), renderer);
