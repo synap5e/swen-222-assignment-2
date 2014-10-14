@@ -51,7 +51,7 @@ public class Connection {
 	}
 	
 	public boolean hasMessage() throws IOException{
-			return incoming.available() > 0;
+			return incoming.available() > 5;
 	}
 	
 	public boolean isClosed(){
