@@ -145,8 +145,8 @@ public class RoomModel {
 		wallMaterial.apply();
 		glBindTexture(GL_TEXTURE_2D, models.getWallTexture());
 
+		// draw the walls
 		glBegin(GL_QUADS);
-
 		for (ViewableWall wall : room.getWalls()) {
 
 			List<? extends ViewableDoor> doors = wall.getDoors();
@@ -172,6 +172,7 @@ public class RoomModel {
 		}
 		glEnd();
 
+		// draw the floow
 		glBindTexture(GL_TEXTURE_2D, models.getFloorTexture());
 		ceilingMaterial.apply();
 		glNormal3f(0,1,0);
@@ -179,6 +180,7 @@ public class RoomModel {
 		renderYPlane(room, 0, true);
 		glEnd();
 
+		// draw the ceiling
 		glBindTexture(GL_TEXTURE_2D, models.getCeilingTexture());
 		ceilingMaterial.apply();
 		glNormal3f(0,-1,0);
@@ -187,6 +189,7 @@ public class RoomModel {
 		glEnd();
 
 
+		// draw each of the stationary models into the rooms display list
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_COLOR_MATERIAL);
 		for (ViewableObject viewableObject : room.getContainedObjects()){
@@ -195,12 +198,16 @@ public class RoomModel {
 			}
 		}
 
+		// draw ll of the doorframes into the rooms display list
 		for (Entry<ViewableDoor, Float> e : doorRotations.entrySet()) {
 			ViewableDoor door = e.getKey();
 			float angle = e.getValue();
 			glPushMatrix();
 			glTranslatef(door.getPosition().getX(), 0, door.getPosition().getY());
+
+			// rotate the door to the angle of the wall
 			glRotatef(angle, 0, -1, 0);
+
 			models.getDoorFrame().render();
 			glPopMatrix();
 		}
@@ -216,13 +223,24 @@ public class RoomModel {
 		glTranslatef(viewableObject.getPosition().getX(), viewableObject.getElevation(), viewableObject.getPosition().getY());
 
 		if (GameRenderer.DEBUG_MODELS){
+			// if we are drawing debug models then we need a
+			// cylinder for the collision and a sphere at the models
+			// origin
+
 			glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+			// we need to draw the inside and outside of the cylinder
 			glDisable(GL_CULL_FACE);
+
 			glDisable(GL_TEXTURE_2D);
 			glEnable(GL_COLOR_MATERIAL);
+
+			// draw the debug things semi-transparent red
 			glEnable(GL_BLEND);
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glColor4f(1,0,0, 0.5f);
+
+
 			glPushMatrix();
 			Cylinder d = new Cylinder();
 			glTranslated(0, 1, 0);
@@ -232,6 +250,7 @@ public class RoomModel {
 			glPopAttrib();
 		}
 
+		// rotate the mode by the object's rotation
 		glRotated(viewableObject.getAngle(), 0, -1, 0);
 		models.get(viewableObject).render();
 		glPopMatrix();
@@ -242,30 +261,41 @@ public class RoomModel {
 		// for the length of the wall the vector 'delta' is added to the start vector until
 		// we reach past the end of the wall. Once we are past the wall end is then clipped back
 		// to end
-		
+
 		float tex_step = 1/TEXTURE_TESSELLATION_MULTIPLE;
-		
+
+		// the direction of the wall
 		Vector2D wallVec = r.getEnd().sub(r.getStart());
+
+		// the vector from a door's centre to the edge of the door
 		Vector2D doorVec = wallVec.normalized().mul(DoorFrameModel.DOOR_WIDTH/2);
+
+		// the number of quads to put along the length of the wall
 		float lengthTesselations = wallVec.len() / TESSELLATION_SIZE;
+
+		// the vector for each quad on the wall
 		Vector2D delta = wallVec.div(lengthTesselations);
+
 		Vector2D start = r.getStart();
 
 		float left_tex = 1;
 		for (int l=0;l<Math.ceil(lengthTesselations);l++){
 			Vector2D end = start.add(delta);
-			
+
 			Vector2D drawStart = start;
 			Vector2D drawEnd = end;
-			
+
 			if (l+1>lengthTesselations){
 				end = r.getEnd();
 				drawEnd = r.getEnd();
 			}
+
+			// x texture step amount
 			float xtc = end.sub(start).len() / TEXTURE_TESSELLATION_MULTIPLE / TESSELLATION_SIZE;
 
-			
+			// record if quad is in the door then don't render it
 			boolean quadInDoor = false;
+
 			for (ViewableDoor door : doors){
 				Vector2D doorLoc = door.getPosition();
 				Vector2D doorLeft = doorLoc.sub(doorVec);
@@ -286,20 +316,27 @@ public class RoomModel {
 				}
 			}
 
-			
+
 			float yStep = TESSELLATION_SIZE;
 			float top_tex = 1;
 			float wallBottom = 0;
 			if (quadInDoor){
+				// clip the texture to the doorframe
 				wallBottom = DoorFrameModel.DOOR_HEIGHT;
 				top_tex -= tex_step * DoorFrameModel.DOOR_HEIGHT / TESSELLATION_SIZE;
 			}
+
+			// iterate over the height of the wall creating quads with height of the tesselation size
 			for (float y=wallBottom;y<WALL_HEIGHT;y+=TESSELLATION_SIZE){
+
+				// if we are in the door clip the texture
 				if (y+TESSELLATION_SIZE > WALL_HEIGHT) yStep = WALL_HEIGHT % TESSELLATION_SIZE;
+
+				// y texture step ammount
 				float ytc = yStep/TEXTURE_TESSELLATION_MULTIPLE;
-				
+
 				if (y >= DoorFrameModel.DOOR_HEIGHT){
-					// if we are above the door then we can 
+					// if we are above the door then we can
 					// ignore clamping the left and right textures
 					drawEnd = end;
 					drawStart = start;
@@ -323,7 +360,10 @@ public class RoomModel {
 				}
 			}
 
+			// move along the texture
 			left_tex -= tex_step;
+
+			// if we are at the end of the texture then repeat it
 			if (left_tex < tex_step/2){
 				left_tex = 1;
 			}
@@ -336,8 +376,13 @@ public class RoomModel {
 		float texStep = 1/TEXTURE_TESSELLATION_MULTIPLE;
 		Vector2D tl = room.getAABBTopLeft();
 		Vector2D br = room.getAABBBottomRight();
+
+		// iterate through quads of the size of the texture in the bounding box of the room
 		for (float xt = tl.getX();xt<br.getX();xt+=TEXTURE_TESSELLATION_MULTIPLE){
 			for (float yt = tl.getY();yt<br.getY();yt+=TEXTURE_TESSELLATION_MULTIPLE){
+
+				// for each quad in the bounding box split it up to the tesselation size and apply
+				// the texture for that sub-quad
 				for (float x=0;x<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;x++){
 					for (float y=0;y<TEXTURE_TESSELLATION_MULTIPLE/TESSELLATION_SIZE;y++){
 						// yo dawg, I heard you like for loops...
@@ -345,9 +390,12 @@ public class RoomModel {
 						if (!inRoom(room,
 									xt+TESSELLATION_SIZE*x, yt+TESSELLATION_SIZE*y,
 									TESSELLATION_SIZE, 		TESSELLATION_SIZE)){
+							// if the quad is not in the room (but in the AABB) then we don't need to
+							// craete it
 							continue;
 						}
 
+						// render the plane
 						renderYPlaneQuad(windClockwise, yVal, texStep, xt, yt, x, y);
 					}
 				}
