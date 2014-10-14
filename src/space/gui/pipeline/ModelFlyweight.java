@@ -9,7 +9,7 @@ import space.gui.pipeline.models.DoorFrameModel;
 import space.gui.pipeline.models.DoorSurfaceModel;
 import space.gui.pipeline.models.RenderModel;
 import space.gui.pipeline.models.WavefrontModel;
-import space.gui.pipeline.viewable.OpenableContainer;
+import space.gui.pipeline.viewable.ViewableOpenable;
 import space.gui.pipeline.viewable.ViewableObject;
 import space.math.Vector3D;
 import space.world.Key;
@@ -108,8 +108,8 @@ public class ModelFlyweight {
 	}
 
 	public RenderModel get(ViewableObject type) {
-		if (type.getType() == "Chest" && type instanceof OpenableContainer){
-			OpenableContainer cont = (OpenableContainer)type;
+		if (type.getType() == "Chest" && type instanceof ViewableOpenable){
+			ViewableOpenable cont = (ViewableOpenable)type;
 			if (cont.isOpen()){
 				return openChest;
 			} else {

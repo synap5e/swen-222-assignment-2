@@ -1,6 +1,6 @@
 package space.gui.application.widget;
 
-import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Widget;
 
@@ -12,14 +12,14 @@ import de.matthiasmann.twl.Widget;
  */
 public class NestedWidget extends Widget {
 	
-	protected GameApplication gameApplication;
+	protected GameDisplay gameDisplay;
 	
 	protected int startX;
 	protected int startY;
 	
-	public NestedWidget(GameApplication gameApplication){
-		this.gameApplication = gameApplication;
-		setSize(gameApplication.getWidth(), gameApplication.getHeight());
+	public NestedWidget(GameDisplay gameDisplay){
+		this.gameDisplay = gameDisplay;
+		setSize(gameDisplay.getWidth(), gameDisplay.getHeight());
 	}
 	
 	@Override

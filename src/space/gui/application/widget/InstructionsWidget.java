@@ -1,6 +1,6 @@
 package space.gui.application.widget;
 
-import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.Label;
 
@@ -19,7 +19,7 @@ public class InstructionsWidget extends NestedWidget {
 	private Label text;
 
 
-	public InstructionsWidget(GameApplication gameApplication) {
+	public InstructionsWidget(GameDisplay gameApplication) {
 		super(gameApplication);
 
 		setVisible(false);

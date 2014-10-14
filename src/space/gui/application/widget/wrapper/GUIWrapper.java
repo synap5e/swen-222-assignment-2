@@ -1,10 +1,10 @@
 package space.gui.application.widget.wrapper;
 
-import de.matthiasmann.twl.Event;
-import de.matthiasmann.twl.Label;
-import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.widget.NestedWidget;
 import space.gui.application.widget.label.KeyEntry;
+import de.matthiasmann.twl.Event;
+import de.matthiasmann.twl.Label;
 
 /**
  * GUIWrappers provide functionality for the user input to be intercepted,
@@ -21,7 +21,7 @@ public class GUIWrapper extends NestedWidget {
 
 	private KeyEntry keyEntry;
 
-	public GUIWrapper(GameApplication gameApplication) {
+	public GUIWrapper(GameDisplay gameApplication) {
 		super(gameApplication);
 
 		captureFlag = false;

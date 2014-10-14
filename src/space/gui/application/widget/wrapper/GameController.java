@@ -1,6 +1,7 @@
 package space.gui.application.widget.wrapper;
 
 import space.gui.application.GameApplication;
+import space.gui.application.GameDisplay;
 import space.gui.application.KeyBinding;
 import de.matthiasmann.twl.Event;
 
@@ -14,11 +15,14 @@ import de.matthiasmann.twl.Event;
 public class GameController extends GUIWrapper {
 
 	private KeyBinding keyBinding;
+	private GameApplication gameApplication;
 
-	public GameController(GameApplication gameApplication){
-		super(gameApplication);
+	public GameController(GameApplication gameApplication, GameDisplay gameDisplay){
+		super(gameDisplay);
+		
+		this.gameApplication = gameApplication;
 
-		this.keyBinding = gameApplication.getKeyBinding();
+		this.keyBinding = gameDisplay.getKeyBinding();
 	}
 
     @Override
@@ -33,23 +37,23 @@ public class GameController extends GUIWrapper {
     		
     		int keyCode = evt.getKeyCode();
             
-            if(gameApplication.isInventoryExchangeVisible()){
+            if(gameDisplay.isInventoryExchangeVisible()){
             	if(keyCode == Event.KEY_ESCAPE){
-    	        	gameApplication.setInventoryExchangeVisible(false);
+    	        	gameDisplay.setInventoryExchangeVisible(false);
             	}
             	return true;
             }
             
-            if(gameApplication.isInventoryVisible()){
+            if(gameDisplay.isInventoryVisible()){
             	if(keyCode == Event.KEY_ESCAPE){
-    	        	gameApplication.setInventoryVisible(false);
+    	        	gameDisplay.setInventoryVisible(false);
             	}
             	return true;
             }
             
-            if(gameApplication.isMenuVisible()){
+            if(gameDisplay.isMenuVisible()){
             	if(keyCode == Event.KEY_ESCAPE){
-    	        	gameApplication.setMenuVisible(false);
+    	        	gameDisplay.setMenuVisible(false);
             	}
             	return true;
             }
@@ -80,18 +84,18 @@ public class GameController extends GUIWrapper {
     private void fireAction(String action){
 	    switch (action) {
 	        case KeyBinding.ACTION_MENU:
-	            gameApplication.setMenuVisible(true);
+	            gameDisplay.setMenuVisible(true);
 	        	break;
 	        case KeyBinding.ACTION_INTERACT:
 	        	gameApplication.getClient().interactWith(gameApplication.getClient().getViewedEntity());
 	        	break;
 
 	        case KeyBinding.ACTION_RIFLE:
-	        	gameApplication.setInventoryExchangeVisible(true);
+	        	gameApplication.getClient().rifleContainer(gameApplication.getClient().getViewedEntity());
 	        	break;
 
 	        case KeyBinding.ACTION_INVENTORY:
-	        	gameApplication.setInventoryVisible(true);
+	        	gameDisplay.showInventory(gameApplication.getClient().getLocalPlayer().getInventory());
 	        	break;
 
 	        case KeyBinding.ACTION_TORCH:
