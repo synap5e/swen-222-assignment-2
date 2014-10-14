@@ -38,6 +38,8 @@ public class Connection {
 	private static final int DROP_PICKUP = 8;
 	private static final int TRANSFER = 9;
 	private static final int UNKNOWN = -1;
+	
+	private static final int BUFFER_SIZE = 8192;
 
 	/**
 	 * The socket to send and receive from.
@@ -101,10 +103,18 @@ public class Connection {
 		int length = ByteBuffer.wrap(rawLength).getInt();
 		byte[] data = new byte[length];
 		
-		//Wait until the entire message has been received
-		while (incoming.available() < length);
+		int recieved = 0;
 		
-		incoming.read(data);
+		//Wait until the entire message has been received
+		while (incoming.available() + recieved < length){
+			if(incoming.available() == BUFFER_SIZE){
+				int frameSize = incoming.available();
+				incoming.read(data, recieved, incoming.available());
+				recieved += frameSize;
+			}
+		}
+		
+		incoming.read(data, recieved, incoming.available());
 		switch (type){
 			case TEXT:
 				return new TextMessage(data);
