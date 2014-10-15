@@ -513,23 +513,16 @@ public class Server {
 
 						//Tell clients about new player. The new client will use the id given.
 						Message playerJoined = new PlayerJoiningMessage(id);
-						for (Connection con : connections.values()){
-							con.sendMessage(playerJoined);
-						}
+
+						sendMessageToAllExcept(-9001, playerJoined);
 
 						//Send the current state of the world to the player
 						String representation = saver.representWorldAsString(world);
 						newClient.sendMessage(new TextMessage(representation));
 
 						//Ensure the new player is in the correct spot for existing clients
-						for (Connection other : connections.values()){
-							if (other != newClient){
-								other.sendMessage(new EntityMovedMessage(id, p.getPosition()));
-								other.sendMessage(new EntityRotationMessage(id, p.getXRotation(), p.getYRotation()));
-							}
-						}
-
-
+						sendMessageToAllExcept(id, new EntityMovedMessage(id, p.getPosition()));
+						sendMessageToAllExcept(id, new EntityRotationMessage(id, p.getXRotation(), p.getYRotation()));
 					}
 				} catch (SocketException se){
 					//An error with a single client connecting does not affect the rest of the server so no need to take action

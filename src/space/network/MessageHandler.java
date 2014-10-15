@@ -135,17 +135,19 @@ class MessageHandler implements Runnable {
 	private void handleMove(EntityMovedMessage entityMoved, World world){
 		Entity e = world.getEntity(entityMoved.getEntityID());
 
-		//Move the room the entity is in if required
-		Room from = world.getRoomAt(e.getPosition());
-		Room to = world.getRoomAt(entityMoved.getNewPosition());
-		from.removeFromRoom(e);
-		to.putInRoom(e);
-		if (e instanceof Player){
-			((Player) e).setRoom(to);
-		}
+		if (e != null){
+			//Move the room the entity is in if required
+			Room from = world.getRoomAt(e.getPosition());
+			Room to = world.getRoomAt(entityMoved.getNewPosition());
+			from.removeFromRoom(e);
+			to.putInRoom(e);
+			if (e instanceof Player){
+				((Player) e).setRoom(to);
+			}
 
-		//Move the entity
-		e.setPosition(entityMoved.getNewPosition());
+			//Move the entity
+			e.setPosition(entityMoved.getNewPosition());
+		}
 	}
 
 	/**
