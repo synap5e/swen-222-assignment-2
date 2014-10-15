@@ -5,8 +5,8 @@ import space.math.Vector2D;
 import space.math.Vector3D;
 
 /**Represents a laser beam which has been shot out of a BeamShooter.
- * It shuts off a turret if the beam collides with the turret. 
- * 
+ * It shuts off a turret if the beam collides with the turret.
+ *
  * @author Maria Libunao
  */
 public class Beam extends NonStationary implements ViewableBeam {
@@ -15,9 +15,9 @@ public class Beam extends NonStationary implements ViewableBeam {
 	private Turret turret; //the turret this is trying to shut down
 	private boolean willHit; //whether or not the beam will hit the turret
 	private static final float LIFE_DURATION = 400;
-	
+
 	/**Constructs a new beam
-	 * @param position 
+	 * @param position
 	 * @param id
 	 * @param elevation
 	 * @param beamDirection
@@ -30,7 +30,7 @@ public class Beam extends NonStationary implements ViewableBeam {
 	}
 
 	/**Constructs a new beam
-	 * @param position 
+	 * @param position
 	 * @param id
 	 * @param elevation
 	 * @param beamDirection
@@ -43,7 +43,7 @@ public class Beam extends NonStationary implements ViewableBeam {
 		this.life = life;
 		willHit();
 	}
-	
+
 	@Override
 	public Vector3D getBeamDirection() {
 		return beamDir;
@@ -62,10 +62,10 @@ public class Beam extends NonStationary implements ViewableBeam {
 	@Override
 	public void update(int delta) {
 		life -= delta/LIFE_DURATION;
-		if(life == 0 && willHit){
+		if(willHit){
 			turret.shutDown();
 		}
-		
+
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class Beam extends NonStationary implements ViewableBeam {
 	public float getHeight() {
 		return 1;
 	}
-	
+
 	@Override
 	public String getType() {
 		return "Beam";
@@ -92,18 +92,16 @@ public class Beam extends NonStationary implements ViewableBeam {
 	public Turret getTurret() {
 		return turret;
 	}
-	
-	/**Initialises the willHit field. 
+
+	/**Initialises the willHit field.
 	 * willHit is whether or not the beam will hit the target turret.
 	 * It calculates this by checking if the direction collides with the turret's radius*/
 	private void willHit(){
-		Vector2D toTurret = getPosition().sub(turret.getPosition());
+		Vector2D toTurret = turret.getPosition().sub(getPosition());
 		Vector2D vector = new Vector2D(beamDir.getX(), beamDir.getZ());
-		float projectionLength = toTurret.dot(vector);
-		Vector2D projection = toTurret.mul(projectionLength);
-		willHit = toTurret.sub(projection).len()< turret.getCollisionRadius();
+		float angleDifference = vector.getPolarAngle() + toTurret.getPolarAngle();
+		float epsilon = 0.01f;
+		willHit = angleDifference <= epsilon && angleDifference >= -epsilon;
 	}
 
-	
-	
 }
