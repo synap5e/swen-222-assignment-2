@@ -255,7 +255,7 @@ public class GameDisplay implements DisplayListener {
 	/**
 	 * Sets the inventory visibility and handles the various input states.
 	 * 
-	 * @param flag
+	 * @param items the items to populate the interface with
 	 */
 	public void showInventory(List<Pickup> items){
 		inventoryWidget.update(items);

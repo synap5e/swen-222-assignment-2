@@ -212,7 +212,7 @@ public class GameApplication implements ClientListener{
 	 * Sets up the multi-player environment for connecting to a game.
 	 *
 	 * @param address the address of the server to connect
-	 * @param id your given player to load in the remote game
+	 * @param idString your given player to load in the remote game
 	 */
 	public void setupMultiplayer(String address, String idString) {
 		serverAddress = address;
@@ -228,7 +228,7 @@ public class GameApplication implements ClientListener{
 	/**
 	 * Sets up the multi-player environment for connecting to a game.
 	 *
-	 * @param id your given player to load in the remote game
+	 * @param idString your given player to load in the remote game
 	 */
 	public void setupMultiplayer(String idString) {
 		setupMultiplayer(Client.DEFAULT_HOST, idString);
