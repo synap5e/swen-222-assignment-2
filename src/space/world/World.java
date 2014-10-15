@@ -34,11 +34,13 @@ public class World implements ViewableWorld{
 	public void moveCharacter(Character c, Vector2D newPos){
 		Room room = c.getRoom();
 		boolean byOpenDoor = false;
+		Vector2D move = newPos.sub(c.getPosition());
+		Vector2D toCenter = room.getCentre().sub(c.getPosition());
 
 		for(Door door : room.getAllDoors()){
 			Room otherRoom = door.otherRoom(room);
 
-			if (door.getPosition().sub(newPos).sqLen() < door.getCollisionRadius() && door.canGoThrough()){
+			if ((door.getPosition().sub(newPos).sqLen() < door.getCollisionRadius() && door.canGoThrough()) || move.dot(toCenter) > 0){
 				byOpenDoor = true;
 			}
 
