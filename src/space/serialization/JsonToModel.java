@@ -34,7 +34,15 @@ import space.world.Turret;
 import space.world.TurretStrategyImpl;
 import space.world.Wallet;
 import space.world.World;
-
+/**
+ * Class that turns a json file or a string that represents the world into a World object that can be passed
+ * to the server-client package 
+ * 
+ * can either be the default world json file for starting a new game or a previously saved game
+ * 
+ * @author Shweta Barapatre (300287438)
+ *
+ */
 public class JsonToModel implements WorldLoader {
 
 	private World world;
@@ -287,6 +295,7 @@ public class JsonToModel implements WorldLoader {
 	 */
 	private Player loadPlayer(MyJsonObject o) {
 		Vector2D position = loadPoint(o.getMyJsonList("position"));
+		
 		int id = (int) o.getNumber("id");
 		String name = o.getString("name");
 		Player p = new Player(position, id, name);
