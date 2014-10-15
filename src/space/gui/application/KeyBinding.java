@@ -164,7 +164,7 @@ public class KeyBinding {
 	/**
 	 * Gets the character of the key.
 	 * 
-	 * @param action
+	 * @param key
 	 * @return the char of the key
 	 */
 	public String getKeyName(int key) {

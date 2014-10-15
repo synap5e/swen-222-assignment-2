@@ -165,8 +165,9 @@ public class InventoryExchangeWidget extends NestedWidget {
 
 	/**
 	 * Determines if the given container can have items exchanged with, and sets up the interface if so.
-	 *
-	 * @param entity
+
+	 * @param container the container interacted with
+	 * @param playerPickups the player's inventory
 	 * @return
 	 */
 	public boolean update(Container container, List<Pickup> playerPickups){

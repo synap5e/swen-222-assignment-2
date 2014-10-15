@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import space.math.Vector2D;
 import space.math.Vector3D;
+import space.world.Beam;
+import space.world.BeamShooter;
 import space.world.Chest;
 import space.world.Container;
 import space.world.Door;
@@ -27,7 +29,7 @@ public class StorageTests {
 	private static final int PLAYER_ID = 9001;
 
 	@Test
-	public void testSaveAndLoad() throws SaveFileNotAccessibleException,SaveFileNotValidException {
+	public void testSaveAndLoadRoomDoorPlayer() throws SaveFileNotAccessibleException,SaveFileNotValidException {
 		String savepath = "testSaveAndLoad";
 
 		World w = createTestWorldRoomsandDoorsandPlayer();
@@ -41,24 +43,21 @@ public class StorageTests {
 		assertEquals(PLAYER_ID, ps.get(0).getID());
 		match(w, loaded, false);
 	}
-
+	
 	@Test
-	public void testStringRepresentionSaveAndLoad()throws SaveFileNotValidException {
-		World w = createTestWorldRoomsandDoorsandPlayer();
+	public void testTurretsandStrategySaveAndLoad()throws SaveFileNotValidException {
+		World w = createTestWorldTurretsandStratandTeleporter();
 		String json = new ModelToJson().representWorldAsString(w);
 
 		WorldLoader loader = new JsonToModel();
 		loader.loadWorldFromString(json);
 		World loaded = loader.getWorld();
-		List<Player> ps = loader.getPlayers();
-		assertEquals(1, ps.size());
-		assertEquals(PLAYER_ID, ps.get(0).getID());
 		match(w, loaded, false);
 	}
 	
 	@Test
-	public void testTurretsandStrategy()throws SaveFileNotValidException {
-		World w = createTestWorldTurretsandStratandTeleporter();
+	public void testBeamsAndBeamShooterSaveAndLoad()throws SaveFileNotValidException {
+		World w = createTestWorldBeams();
 		String json = new ModelToJson().representWorldAsString(w);
 
 		WorldLoader loader = new JsonToModel();
@@ -81,7 +80,38 @@ public class StorageTests {
 		}
 
 	}
+	
+	@Test
+	public void testStringRepresentionSaveAndLoad()throws SaveFileNotValidException {
+		World w = createTestWorldRoomsandDoorsandPlayer();
+		String json = new ModelToJson().representWorldAsString(w);
 
+		WorldLoader loader = new JsonToModel();
+		loader.loadWorldFromString(json);
+		World loaded = loader.getWorld();
+		List<Player> ps = loader.getPlayers();
+		assertEquals(1, ps.size());
+		assertEquals(PLAYER_ID, ps.get(0).getID());
+		match(w, loaded, false);
+	}
+	
+	//HELPER METHODS FOR TESTS
+	
+	private World createTestWorldBeams() {
+		World world = new World();
+		Room r = new Room(new Vector3D(.2f, .4f, .7f), 1, "temp",Arrays.asList(new Vector2D(-20, 20), new Vector2D(20, 20),
+						new Vector2D(20, -20), new Vector2D(-20, -20)));
+		world.addRoom(r);
+		Turret tur = new Turret(new Vector2D(2,3), 2, (float) 0.1,"pew pew", "turret", r);
+		BeamShooter bs = new BeamShooter(new Vector2D(-10f,-10f), 5,0,"beamshooter", "beamshooter", r, tur, 0, false,10);
+		world.addEntity(bs);
+		Beam beam = new Beam(new Vector2D(-5f,-5f), 5, 5, new Vector3D(1,2,3),tur,3);
+		r.addBeam(beam);
+		world.addEntity(tur);
+		return world;
+	}
+	
+	
 	private World createTestWorldRoomsandDoorsandPlayer() {
 		World world = new World();
 		Room r = new Room(new Vector3D(.4f, .4f, .4f), 1, "temp",
@@ -108,7 +138,6 @@ public class StorageTests {
 		r.putInRoom(c);
 		c.interact(null, world); // close
 		Player p = new Player(new Vector2D(0, 0), PLAYER_ID, "Player");
-		System.out.println(world.getRoomAt(p.getPosition()));
 		p.setRoom(world.getRoomAt(p.getPosition()));
 		p.getRoom().putInRoom(p);
 		world.addEntity(p);
@@ -166,6 +195,18 @@ public class StorageTests {
 						Teleporter t = (Teleporter) e;
 						Teleporter ot = (Teleporter) oe;
 						assertEquals("the ids should be the same",t.getID(),ot.getID());
+						assertEquals(t.getTeleportsTo(),ot.getTeleportsTo());
+					}
+					if(e instanceof BeamShooter){
+						BeamShooter bs = (BeamShooter) e;
+						BeamShooter obs = (BeamShooter) oe;
+						assertEquals("the ids should be the same",bs.getID(),obs.getID());
+						assertFalse("the turret should be stopped",obs.isStopped());
+					}
+					if(e instanceof Beam){
+						Beam b = (Beam) e;
+						Beam ob = (Beam) oe;
+						assertEquals("the ids should be the same",b.getID(),ob.getID());
 					}
 				}
 			}

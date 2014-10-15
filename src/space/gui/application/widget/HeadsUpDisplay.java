@@ -26,6 +26,8 @@ public class HeadsUpDisplay extends NestedWidget {
     private Label viewDescription;
     
     private Label viewPrompt;
+    
+    private Label reticle;
 	
 	public HeadsUpDisplay(GameDisplay gameDisplay){
 		super(gameDisplay);
@@ -46,6 +48,11 @@ public class HeadsUpDisplay extends NestedWidget {
         viewPrompt.setTheme("infolabel");
         viewPrompt.setVisible(false);
         add(viewPrompt);
+        
+        reticle = new Label();
+        reticle.setSize(6, 6);
+        reticle.setTheme("reticle");
+        add(reticle);
     }
 
     @Override
@@ -65,6 +72,8 @@ public class HeadsUpDisplay extends NestedWidget {
         y += viewDescription.getHeight() + SPACING;
         viewPrompt.adjustSize();
         viewPrompt.setPosition((getWidth() - viewPrompt.getWidth()) / 2, y);
+        
+        reticle.setPosition((getWidth() - reticle.getWidth()) / 2, (getHeight() - reticle.getHeight()) / 2);
     }
 
 	/**
