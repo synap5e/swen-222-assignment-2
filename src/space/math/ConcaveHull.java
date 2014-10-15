@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
- * @author Simon Pinfold
+ * Represents a Concave hull object from a list of points in a clockwise direction
+ * @author Simon Pinfold (300280028)
  *
  */
 public class ConcaveHull implements Iterable<Segment2D>{
@@ -56,7 +56,11 @@ public class ConcaveHull implements Iterable<Segment2D>{
 		}
 		centre.divLocal(points.size());
 	}
-
+	/**
+	 * checks whether a 2D Vector point is contained within
+	 * @param point
+	 * @return
+	 */
 	public boolean contains(Vector2D point){
 		// crossing number algorithm
 
@@ -77,7 +81,11 @@ public class ConcaveHull implements Iterable<Segment2D>{
 		}
 		return intersections % 2 == 1;
 	}
-
+	/**
+	 * checks whether a line segment intersects with a point in the line of the hull
+	 * @param ray the line
+	 * @return
+	 */
 	private boolean intersectsPointOnHull(Segment2D ray) {
 		for (Vector2D pointOnHull : hullPoints){
 			if (ray.onLine(pointOnHull)) return true;
@@ -95,10 +103,6 @@ public class ConcaveHull implements Iterable<Segment2D>{
 		}
 		return it.iterator();
 	}
-	//TODO need to get centre of the shape
-	//either implement getBounds() method which returns a Rectangle
-	//then I'll call getCenter() on the rectangle
-	//or implement getCenter() directly
 
 	/** Gets the centre, defined by the average of all points on the hull
 	 *
@@ -108,23 +112,43 @@ public class ConcaveHull implements Iterable<Segment2D>{
 		return this.centre;
 	}
 
+	/**
+	 * Returns string representation
+	 * @return String
+	 */
 	public String toString(){
 		String s = this.hullPoints.toString();
 		return "Hull2(" + s.substring(1, s.length()-1) + ")";
 	}
-
+	/**
+	 * returns the top left axis aligned bounding box
+	 * @return
+	 */
 	public Vector2D getAABBTopLeft() {
 		return topLeft;
 	}
 
+	/**
+	 * returns the bottom right axis aligned bounding box
+	 * @return
+	 */
 	public Vector2D getAABBBottomRight() {
 		return bottomRight;
 	}
 
+	/**
+	 * return the amount of points in hull
+	 * @return
+	 */
 	public int size() {
 		return hullPoints.size();
 	}
 
+	/**
+	 * returns the 2D line segment connecting the point from point i and point i + 1
+	 * @param i index of first point in segment
+	 * @return
+	 */
 	public Segment2D get(int i) {
 		if (i == 0){
 			return new Segment2D(hullPoints.get(hullPoints.size()-1), hullPoints.get(i));
@@ -132,11 +156,21 @@ public class ConcaveHull implements Iterable<Segment2D>{
 			return new Segment2D(hullPoints.get(i-1), hullPoints.get(i));
 		}
 	}
-
+	/**
+	 * returns whether the circle with radius from point position is fully contained with hull
+	 * @param position centre of circle
+	 * @param radius radius of circle
+	 * @return
+	 */
 	public boolean contains(Vector2D position, float radius) {
 		return contains(position) && getClosestPointOnHull(position).sub(position).sqLen() > radius*radius;
 	}
-	
+
+	/**
+	 * returns closest point
+	 * @param p the position being compared
+	 * @return closest point
+	 */
 	public Vector2D getClosestPointOnHull(Vector2D p){
 		Vector2D closest = null;
 		for (Segment2D s : this){
@@ -161,7 +195,10 @@ public class ConcaveHull implements Iterable<Segment2D>{
 		}
 		return closest;
 	}
-
+	/**
+	 * gets list of points making up hull
+	 * @return
+	 */
 	public List<Vector2D> getDefiningPoints(){
 		return Collections.unmodifiableList(this.hullPoints);
 	}
