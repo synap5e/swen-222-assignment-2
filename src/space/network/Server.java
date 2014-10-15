@@ -140,8 +140,8 @@ public class Server {
 	 * @param loader the loader that will load save file
 	 * @param saver the saver that will save the world
 	 * @param savePath the path of the save file. If the default world location it will be changes to a different path.
-	 * @throws SaveFileNotValidException 
-	 * @throws SaveFileNotAccessibleException 
+	 * @throws SaveFileNotValidException
+	 * @throws SaveFileNotAccessibleException
 	 */
 	public Server(String host, int port, WorldLoader loader, WorldSaver saver, String savePath) throws SaveFileNotAccessibleException, SaveFileNotValidException{
 		//Create the list of client connections
@@ -342,13 +342,14 @@ public class Server {
 							//If an entity moved
 							} else if (message instanceof EntityMovedMessage){
 								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
-								Entity e = world.getEntity(entityMoved.getEntityID());
+								Player e = (Player) world.getEntity(entityMoved.getEntityID());
 
-								world.moveCharacter((Player) e, entityMoved.getNewPosition());
-								if (e.getPosition().equals(entityMoved.getNewPosition(), 0.1f)){
-									//Forward the message to all the other clients
-									sendMessageToAllExcept(id, message);
-								}
+								e.getRoom().removeFromRoom(e);
+								e.setPosition(entityMoved.getNewPosition());
+								e.setRoom(world.getRoomAt(e.getPosition()));
+								e.getRoom().putInRoom(e);
+
+								sendMessageToAllExcept(id, message);
 							//If an entity rotated
 							} else if (message instanceof EntityRotationMessage){
 								EntityRotationMessage playerRotated = (EntityRotationMessage) message;

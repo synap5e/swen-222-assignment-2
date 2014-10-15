@@ -3,14 +3,14 @@ package space.world;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
-/**Represents a Bullet. If it collides with a player in the room, it teleports the 
+/**Represents a Bullet. If it collides with a player in the room, it teleports the
  * player back to a specified place.*/
 public class Bullet extends NonStationary {
 	private Room room; //the room this has been fired out of
 	private Vector3D velocity;
 	private Vector2D teleportTo;
 	private Room roomTeleportTo; //the room it teleports the player to
-	
+
 	/**Constructs a new Bullet
 	 * @param position
 	 * @param id
@@ -37,7 +37,7 @@ public class Bullet extends NonStationary {
 		setElevation(getElevation() + addTo.getY());
 		checkCollidedWithPlayer();
 	}
-	
+
 	@Override
 	public float getCollisionRadius() {
 		return 0.5f;
@@ -47,7 +47,7 @@ public class Bullet extends NonStationary {
 	public float getHeight() {
 		return 0;
 	}
-	
+
 	@Override
 	public float getAngle() {
 		return (float) Math.toDegrees(new Vector2D(velocity.getX(), velocity.getZ()).getPolarAngle());
@@ -57,12 +57,12 @@ public class Bullet extends NonStationary {
 	public boolean canClip() {
 		return false;
 	}
-	
+
 	@Override
 	public String getType() {
 		return "Bullet";
 	}
-	
+
 	/**@return the room the bullet has been fired out of */
 	public Room getRoom() {
 		return room;
@@ -72,12 +72,12 @@ public class Bullet extends NonStationary {
 	public Vector3D getVelocity() {
 		return velocity;
 	}
-	
+
 	/**@return the position the player is teleported to if hit*/
 	public Vector2D getTeleportTo() {
 		return teleportTo;
 	}
-	
+
 	/**@return the room the player is teleported to if hit*/
 	public Room getRoomTeleportTo() {
 		return roomTeleportTo;
@@ -90,7 +90,8 @@ public class Bullet extends NonStationary {
 			p.setPosition(teleportTo); //change to in front of door
 			p.getRoom().removeFromRoom(p);
 			p.setRoom(roomTeleportTo);
-		
+			p.getRoom().putInRoom(p);
+
 		}
 	}
 
