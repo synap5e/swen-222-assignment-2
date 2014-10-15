@@ -254,15 +254,15 @@ public class Server {
 		//Keep track of the player allowing for reconnects
 		inactivePlayers.put(disconnectedID, p);
 
-		//Close the connection to the client
-		connections.get(disconnectedID).close();
-
 		synchronized (connections) {
+			//Close the connection to the client
+			connections.get(disconnectedID).close();
+
 			connections.remove(disconnectedID);
 		}
 
 		Map<Integer,Connection> connections = new HashMap<Integer, Connection>();
-		synchronized (connections) {
+		synchronized (this.connections) {
 			connections.putAll(this.connections);
 		}
 		//Tell the other clients that the player has disconnected

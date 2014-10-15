@@ -391,7 +391,6 @@ public class Client {
 	 */
 	public void transfer(Entity pickup, Container from, Player to){
 		if (from.getItemsContained().contains(pickup)){
-			System.out.println("test");
 			from.removeContainedItem(pickup);
 			to.pickup(pickup);
 

@@ -170,7 +170,7 @@ class MessageHandler implements Runnable {
 	 */
 	private void handlePlayerLook(EntityRotationMessage playerRotated, World world){
 		Entity e =  world.getEntity(playerRotated.getID());
-		if (e != null) return;
+		if (e == null) return;
 
 		e.setAngle(playerRotated.getYRotation());
 		if (e instanceof Player){
