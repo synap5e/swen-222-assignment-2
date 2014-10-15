@@ -22,8 +22,8 @@ Roles
 How to run
 ------
 The working directory must contain the folders/files:
-lib/
 assets/
+lib/
 default_world.json
 space-linux.jar
 
@@ -45,6 +45,7 @@ How to play
 The aim of the game is to open all the various doors and destroy the turret.
 Please check out the key bindings before playing to see the various available actions.
 Hint, containers held by the player must be dropped before their contents can be rifled.
+Objects are dropped by the aim of the player - and items must be dropped on the floor (so aim just in front of your feet)!
 
 Note: completing the game REQUIRES multiple players.
 
