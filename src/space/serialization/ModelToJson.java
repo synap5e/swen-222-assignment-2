@@ -68,8 +68,6 @@ public class ModelToJson implements WorldSaver {
 
 		try {
 			file.write(fileobject.toString());
-			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + fileobject);
 
 		} catch (IOException e) {
 			e.printStackTrace();
