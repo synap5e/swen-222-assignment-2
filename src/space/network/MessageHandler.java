@@ -20,24 +20,24 @@ import space.world.World;
 
 /**
  * MessageHandler handles incoming messages from the server and applies them to the world.
- * 
+ *
  * @author James Greenwood-Thessman (300289004)
  */
 class MessageHandler implements Runnable {
-	
+
 	/**
 	 * The client that is having it's messages handled
 	 */
 	private Client client;
-	
+
 	/**
 	 * The connection that receives the messages
 	 */
 	private Connection connection;
-	
+
 	/**
-	 * Creates a message handler for a client. 
-	 * 
+	 * Creates a message handler for a client.
+	 *
 	 * @param client the client to handle messages for
 	 * @param connection the connection to read messages from
 	 */
@@ -45,14 +45,14 @@ class MessageHandler implements Runnable {
 		this.client = client;
 		this.connection = connection;
 	}
-	
+
 	@Override
 	public void run() {
 		try {
 			while (client.isRunning()){
 				while (connection.hasMessage()){
 					Message message = connection.readMessage();
-					
+
 					World world = client.getWorld();
 					//Ensure the world is able to be modified
 					synchronized (world) {
@@ -87,7 +87,7 @@ class MessageHandler implements Runnable {
 						}
 					}
 				}
-				
+
 				//Sleep, iterating over the loop roughly 60 times a second
 				try {
 					Thread.sleep(17);
@@ -101,7 +101,7 @@ class MessageHandler implements Runnable {
 
 	/**
 	 * Handles a remote player joining the game.
-	 * 
+	 *
 	 * @param playerJoined the message containing the information about this player
 	 * @param world the world to apply any changes to
 	 */
@@ -111,45 +111,46 @@ class MessageHandler implements Runnable {
 		p.setRoom(world.getRoomAt(p.getPosition()));
 		p.getRoom().putInRoom(p);
 	}
-	
+
 	/**
 	 * Handles a remote player disconnecting from the game.
-	 * 
+	 *
 	 * @param playerDisconnected the message containing the information about this player
 	 * @param world the world to apply any changes to
 	 */
 	private void handlePlayerDisconnect(DisconnectMessage playerDisconnected, World world){
 		Entity e = world.getEntity(playerDisconnected.getPlayerID());
-		
+
 		//Remove from the room and world
 		world.getRoomAt(e.getPosition()).removeFromRoom(e);
 		//world.removeEntity(e);
 	}
-	
+
 	/**
 	 * Handles an entity moving.
-	 * 
+	 *
 	 * @param entityMoved the message containing the information about the moving entity
 	 * @param world the world to apply any changes to
 	 */
 	private void handleMove(EntityMovedMessage entityMoved, World world){
 		Entity e = world.getEntity(entityMoved.getEntityID());
-		
+
 		//Move the room the entity is in if required
 		Room from = world.getRoomAt(e.getPosition());
 		Room to = world.getRoomAt(entityMoved.getNewPosition());
-		if (to != from){
-			from.removeFromRoom(e);
-			to.putInRoom(e);
+		from.removeFromRoom(e);
+		to.putInRoom(e);
+		if (e instanceof Player){
+			((Player) e).setRoom(to);
 		}
-		
+
 		//Move the entity
 		e.setPosition(entityMoved.getNewPosition());
 	}
-	
+
 	/**
 	 * Handles dropping an entity from a remote player's inventory.
-	 * 
+	 *
 	 * @param drop the message containing information about the drop
 	 * @param world the world to apply any changes to
 	 */
@@ -158,10 +159,10 @@ class MessageHandler implements Runnable {
 		Entity e = world.getEntity(drop.getPickupId());
 		world.dropEntity(p, e, drop.getPosition());
 	}
-	
+
 	/**
 	 * Handles rotating a remote player's look direction.
-	 * 
+	 *
 	 * @param playerRotated the message containing the information about the rotation
 	 * @param world the world to apply any changes to
 	 */
@@ -170,25 +171,25 @@ class MessageHandler implements Runnable {
 		p.setXRotation(playerRotated.getXRotation());
 		p.setYRotation(playerRotated.getYRotation());
 	}
-	
+
 	/**
 	 * Handles a remote player interacting with an entity.
-	 * 
+	 *
 	 * @param interaction the message containing the information about the interaction
 	 * @param world the world to apply any changes to
 	 */
 	private void handleInteraction(InteractionMessage interaction, World world){
 		Entity e = world.getEntity(interaction.getEntityID());
 		Player p = (Player) world.getEntity(interaction.getPlayerID());
-		
+
 		if (e.canInteract()){
 			e.interact(p, world);
 		}
 	}
-	
+
 	/**
 	 * Handles a remote player jumping.
-	 * 
+	 *
 	 * @param jumpingPlayer the message containing the information about the jumping player
 	 * @param world the world to apply any changes to
 	 */
@@ -196,10 +197,10 @@ class MessageHandler implements Runnable {
 		Player p = (Player) world.getEntity(jumpingPlayer.getPlayerID());
 		p.jump();
 	}
-	
+
 	/**
 	 * Handles the transfer of an entity between a player and a container.
-	 * 
+	 *
 	 * @param transfer the message containing the information about the transfer
 	 * @param world the world to apply any changes to
 	 */
