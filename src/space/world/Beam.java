@@ -97,6 +97,10 @@ public class Beam extends NonStationary implements ViewableBeam {
 	 * willHit is whether or not the beam will hit the target turret.
 	 * It calculates this by checking if the direction collides with the turret's radius*/
 	private void willHit(){
+		if(turret == null){
+			return;
+		}
+
 		Vector2D toTurret = turret.getPosition().sub(getPosition());
 		Vector2D vector = new Vector2D(beamDir.getX(), beamDir.getZ());
 		float angleDifference = vector.getPolarAngle() + toTurret.getPolarAngle();
