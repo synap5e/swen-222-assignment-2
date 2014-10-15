@@ -1,0 +1,134 @@
+@startuml
+
+package "space.gui.pipeline" {
+
+	enum Type
+
+	class Map<Type, RenderModel>
+
+
+	package "space.gui.pipeline.viewable" #DDDDDD {
+		interface ViewableObject {
+			Vector2D getPosition()
+			float getAngle()
+			float getElevation()
+			float getCollisionRadius()
+		}
+		ViewableObject "*" *-- "1" Type : type
+
+		ViewableObject <|-- OpenableContainer
+		interface OpenableContainer {
+			boolean isOpen()
+		}
+
+		ViewableObject <|-- ViewableBeam
+		interface ViewableBeam {
+			Vector3D getBeamDirection()
+			float getRemainingLife()
+		}
+
+		ViewableObject <|-- ViewableDoor
+		interface ViewableDoor {
+			float getOpenPercent();
+		}
+		ViewableDoor "1..*" --> "*" ViewableRoom : room1
+		ViewableDoor "1..*" --> "*" ViewableRoom : room2
+
+
+		ViewableObject <|-- ViewablePlayer
+		interface ViewablePlayer {
+			Vector3D getLookDirection()
+			float getEyeHeight()
+			boolean isTorchOn()
+		}
+
+		interface ViewableNonStationary
+		interface ViewableStationary
+
+		interface ViewableRoom {
+			Vector2D getCentre()
+			List<? extends ViewableWall> getWalls()
+			List<? extends ViewableObject> getContainedObjects()
+			boolean contains(Vector2D point)
+			List<? extends ViewableDoor> getAllDoors()
+			Vector2D getAABBTopLeft()
+			Vector2D getAABBBottomRight()
+			List<? extends ViewableBeam> getBeams()
+			Vector3D getLight()
+		}
+
+		interface ViewableWall {
+			Vector2D getStart()
+			Vector2D getEnd()			
+			List<? extends ViewableDoor> getDoors()
+		}
+
+		interface ViewableWorld{
+			ViewableRoom getRoomAt(Vector2D pos)
+			List<? extends ViewableRoom> getViewableRooms()
+		}
+
+
+
+
+	}
+
+	package "space.gui.pipeline.models" #DDDDDD {
+
+		interface RenderModel{
+			void render()
+		}
+
+		RenderModel <|-- DoorFrameModel
+		class DoorFrameModel {
+			int displayList
+
+		}
+
+		RenderModel <|-- DoorSurfaceModel
+		class DoorSurfaceModel {
+			int displayList
+
+		}
+
+		RenderModel <|-- WavefrontModel
+		class WavefrontModel {
+			int displayList
+			Vector3D colour
+
+		}
+
+
+		RenderModel <|-- RoomModel
+		class RoomModel {
+			int displayList
+
+		}
+		RoomModel "1" --> "1" ViewableRoom : room
+		RoomModel "*" --> "1" DoorSurfaceModel : doorSurface
+		RoomModel "*" --> "1" DoorFrameModel : doorFrame
+	}
+
+	class GameRenderer {
+		int width
+		int height
+
+		float getHorizontalFOV()
+		void renderTick(float timestep, ViewablePlayer player, ViewableWorld world)
+	}
+	GameRenderer "1" --> "1" ModelFlyweight : models
+	GameRenderer "1" --> "*" RoomModel : roomModels
+
+	class ModelFlyweight {
+		
+	}
+	ModelFlyweight "1" --> "1" Map : models
+	Map "*" --> "*" Type : keys
+	Map "1" --> "*" RenderModel : values
+
+
+
+	
+
+
+}
