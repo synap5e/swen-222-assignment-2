@@ -13,7 +13,7 @@ public abstract class Entity implements ViewableObject {
 
 	/**
 	 * Constructs new entity
-	 * 
+	 *
 	 * @param position
 	 *            The entity's position
 	 * @param id
@@ -32,7 +32,7 @@ public abstract class Entity implements ViewableObject {
 
 	/**
 	 * Returns the entity's position
-	 * 
+	 *
 	 * @return
 	 */
 	public Vector2D getPosition() {
@@ -41,7 +41,7 @@ public abstract class Entity implements ViewableObject {
 
 	/**
 	 * Returns the entity's id
-	 * 
+	 *
 	 * @return
 	 */
 	public int getID() {
@@ -50,20 +50,20 @@ public abstract class Entity implements ViewableObject {
 
 	/**
 	 * Returns the entity's elevation, how far off the ground it is
-	 * 
+	 *
 	 * @return
 	 */
 	public float getElevation() {
 		return elevation;
 	}
-	
+
 	public void setElevation(float e){
 		elevation = e;
 	}
 
 	/**
 	 * Returns the entity's description
-	 * 
+	 *
 	 * @return
 	 */
 	public String getDescription() {
@@ -72,14 +72,14 @@ public abstract class Entity implements ViewableObject {
 
 	/**
 	 * Changes the position
-	 * 
+	 *
 	 * @param pos
 	 *            The position it will be changed to
 	 */
 	public void setPosition(Vector2D pos) {
 		position = pos;
 	}
-	
+
 	/**@return The entity's name*/
 	public String getName() {
 		return name;
@@ -91,28 +91,37 @@ public abstract class Entity implements ViewableObject {
 	public boolean interact(Character c, World w){
 		return false;
 	}
-	
+
 	/**Whether or not an entity can be interacted with
 	 * @return*/
 	public boolean canInteract(){
 		return false;
 	}
-	
+
 	@Override
 	public float getAngle() {
 		return 0;
 	}
 
 	/**
+	 * Set the angle in degrees.
+	 *
+	 * @param angle the angle the entity faces
+	 */
+	public void setAngle(float angle){
+
+	}
+
+	/**
 	 * Whether or not something can pass through the entity
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract boolean canClip();
 
 	/**
 	 * Updates the entity's status
-	 * 
+	 *
 	 * @param delta
 	 *            the amount of time since the previous update
 	 */
@@ -120,11 +129,11 @@ public abstract class Entity implements ViewableObject {
 
 	/**
 	 * Returns the radius of the entity's bounding circle
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract float getCollisionRadius();
-	
+
 	/**Returns the height of the entity, how tall it is
 	 * @return
 	 */

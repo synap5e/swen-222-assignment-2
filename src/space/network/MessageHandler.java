@@ -167,9 +167,11 @@ class MessageHandler implements Runnable {
 	 * @param world the world to apply any changes to
 	 */
 	private void handlePlayerLook(EntityRotationMessage playerRotated, World world){
-		Player p = (Player) world.getEntity(playerRotated.getID());
-		p.setXRotation(playerRotated.getXRotation());
-		p.setYRotation(playerRotated.getYRotation());
+		Entity e =  world.getEntity(playerRotated.getID());
+		e.setAngle(playerRotated.getYRotation());
+		if (e instanceof Player){
+			((Player) e).setXRotation(playerRotated.getXRotation());
+		}
 	}
 
 	/**

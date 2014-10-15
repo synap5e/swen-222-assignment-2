@@ -8,7 +8,7 @@ public class Turret extends NonStationary{
 	private boolean shutDown = false;
 	private Room room;
 	private TurretStrategy strategy;
-	
+
 	/**Constructs a new Turret
 	 * @param position
 	 * @param id
@@ -20,7 +20,7 @@ public class Turret extends NonStationary{
 		super(position, id, elevation, description, name);
 		this.room = room;
 	}
-	
+
 	/**Constructs a new Turret
 	 * @param position
 	 * @param id
@@ -39,7 +39,7 @@ public class Turret extends NonStationary{
 		shutDown = true;
 		room.removeFromRoom(this);
 	}
-	
+
 	@Override
 	public void update(int delta) {
 		if(shutDown){return;}
@@ -60,6 +60,10 @@ public class Turret extends NonStationary{
 	@Override
 	public float getAngle() {
 		return strategy.getAngle();
+	}
+
+	public void setAngle(float angle){
+		strategy.setAngle(angle);
 	}
 
 	@Override

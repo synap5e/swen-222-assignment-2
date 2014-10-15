@@ -3,7 +3,7 @@ package space.world;
 import space.math.Vector2D;
 import space.math.Vector3D;
 
-/**Represents a strategy used by turrets. This strategy looks for a player in the room. 
+/**Represents a strategy used by turrets. This strategy looks for a player in the room.
  * It adjusts where it is facing so that it can fire bullets at the closest player in the room
  * @author Maria Libunao
  */
@@ -14,7 +14,7 @@ public class TurretStrategyImpl implements TurretStrategy {
 	private Vector2D teleportTo; //position players teleport to when hit by a bullet
 	private float cooldown;
 	private Room roomTeleportTo;
-	
+
 	/**
 	 *  Average (deviates by up to 15%) velocity of bullets in units/second
 	 */
@@ -24,19 +24,19 @@ public class TurretStrategyImpl implements TurretStrategy {
 	 * n.b. in degrees/second
 	 */
 	private static final float ROTAION_SPEED = 30;
-	
+
 	/**
 	 * degrees
 	 */
 	private static final float FIRING_TOLERANCE = 45; //the amount the difference in rotation from player it will allow before shooting
-	
+
 	/**
 	 * seconds
 	 */
 	private static final float FIRING_COOLDOWN = 1;
-	
+
 	private static final int PELLET_COUNT = 10;
-	
+
 	/**Constructs a new TurretStrategyImpl
 	 * @param t the turret using this strategy
 	 * @param yRotation where the turret is facing
@@ -47,7 +47,7 @@ public class TurretStrategyImpl implements TurretStrategy {
 		this.teleportTo = teleportTo;
 		this.roomTeleportTo = roomTeleportTo;
 	}
-	
+
 	/**Constructs a new TurretStrategyImpl
 	 * @param t the turret using this strategy
 	 * @param yRotation where the turret is facing
@@ -60,8 +60,8 @@ public class TurretStrategyImpl implements TurretStrategy {
 		this.bulletsShot = bulletsShot;
 		this.roomTeleportTo = roomTeleportTo;
 	}
-	
-	/**Updates the turret. This is done by looking for the closest player in the room 
+
+	/**Updates the turret. This is done by looking for the closest player in the room
 	 * & if there is one, adjust where the turret is facing and shoot at the player*/
 	@Override
 	public void update(int delta) {
@@ -99,7 +99,7 @@ public class TurretStrategyImpl implements TurretStrategy {
 	public float getAngle() {
 		return yRotation;
 	}
-	
+
 	/**@return the room the player is teleported to if hit*/
 	public Room getRoomTeleportTo() {
 		return roomTeleportTo;
@@ -115,9 +115,14 @@ public class TurretStrategyImpl implements TurretStrategy {
 	private void shoot(){
 		Vector2D bulletVel2D = Vector2D.fromPolar((float) Math.toRadians(yRotation), 1);
 		Vector3D bulletVel3D = new Vector3D(
-								bulletVel2D.getX() + (float)(0.5 - Math.random())/10.f, 
-								(float)(0.5 - Math.random())/10.f, 
+								bulletVel2D.getX() + (float)(0.5 - Math.random())/10.f,
+								(float)(0.5 - Math.random())/10.f,
 								bulletVel2D.getY() + (float)(0.5 - Math.random())/10.f).mul(BULLETVELOCITY);
 		turret.getRoom().putInRoom(new Bullet(turret.getPosition(), turret.getID()+1000*bulletsShot++, turret.getHeight(), turret.getRoom(), bulletVel3D, teleportTo, roomTeleportTo));
+	}
+
+	@Override
+	public void setAngle(float angle) {
+		yRotation = angle;
 	}
 }
