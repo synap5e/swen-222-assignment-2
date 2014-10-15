@@ -83,7 +83,7 @@ public class WorldTest {
 		Player p = new Player(oldPos,1,"");
 		p.setRoom(r1);
 		r1.putInRoom(p);
-		world.moveCharacter(p,new Vector2D(70,40));
+		world.moveCharacter(p,new Vector2D(70,70));
 		assertTrue("Player should not have moved to other room when not going through door", p.getPosition().equals(oldPos));
 	}
 	
