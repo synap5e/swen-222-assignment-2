@@ -20,7 +20,7 @@ public class Player extends Character implements ViewablePlayer {
 
 	/**
 	 * Constructs a new player
-	 * 
+	 *
 	 * @param position
 	 *            The position
 	 * @param id
@@ -33,7 +33,7 @@ public class Player extends Character implements ViewablePlayer {
 
 	/**
 	 * Changes the player's look direction
-	 * 
+	 *
 	 * @param mouseDelta
 	 *            the difference in look direction
 	 */
@@ -84,7 +84,7 @@ public class Player extends Character implements ViewablePlayer {
 
 	/**
 	 * Returns the player's points
-	 * 
+	 *
 	 * @return
 	 */
 	public int getPoints() {
@@ -93,7 +93,7 @@ public class Player extends Character implements ViewablePlayer {
 
 	/**
 	 * Sets the player's points to the passed parameter
-	 * 
+	 *
 	 * @param points
 	 */
 	public void setPoints(int points) {
@@ -112,7 +112,7 @@ public class Player extends Character implements ViewablePlayer {
 
 	/**
 	 * Turns the torch on or off
-	 * 
+	 *
 	 * @param t
 	 *            whether the torch would be on or off
 	 */
@@ -122,7 +122,7 @@ public class Player extends Character implements ViewablePlayer {
 
 	/**
 	 * Sets the player's x rotation
-	 * 
+	 *
 	 * @param x
 	 *            the new x rotation
 	 */
@@ -132,21 +132,25 @@ public class Player extends Character implements ViewablePlayer {
 
 	/**
 	 * Sets the player's y rotation
-	 * 
+	 *
 	 * @param x
 	 *            the new y rotation
 	 */
 	public void setYRotation(float y) {
 		yRotation = y;
 	}
-	
+
+	public void setAngle(float angle) {
+		yRotation = angle;
+	}
+
 	/**Returns the player's x rotation
 	 * @return
 	 */
 	public float getXRotation(){
 		return xRotation;
 	}
-	
+
 	/**Returns the player's y rotation
 	 * @return
 	 */
@@ -164,7 +168,7 @@ public class Player extends Character implements ViewablePlayer {
 		return (float) ((EYE_HEIGHT + JUMP_HEIGHT) - JUMP_HEIGHT
 				* Math.pow(jumpTime * 2 - 1, 2));
 	}
-	
+
 	@Override
 	public Vector3D getLookDirection() {
 		float x_circ = (float) (Math.cos(DEGREES_TO_RADIANS(yRotation)) * Math.sin(DEGREES_TO_RADIANS(xRotation + 180)));
@@ -172,10 +176,10 @@ public class Player extends Character implements ViewablePlayer {
 		float z_circ = (float) (Math.sin(DEGREES_TO_RADIANS(yRotation)) * Math.sin(DEGREES_TO_RADIANS(xRotation + 180)));
 		return new Vector3D(x_circ, y_circ, z_circ);
 	}
-	
+
 	/**
 	 * Converts the angle from degrees to radians
-	 * 
+	 *
 	 * @param degrees
 	 *            The angle in degrees that will be converted
 	 * @return

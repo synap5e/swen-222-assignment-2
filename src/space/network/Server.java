@@ -312,133 +312,149 @@ public class Server {
 	 */
 	private class ServerGameLoop implements Runnable {
 
+		int timeSinceForce = 0;
+
 		@Override
 		public void run() {
 			long last = getTime();
 			while (stillAlive){
+
 				//Get the change in time
 				long now = getTime();
 				int delta = (int) (now - last);
+				timeSinceForce += delta;
 
 				//Create a map of connections that will not be updated
 				Map<Integer,Connection> connections = new HashMap<Integer, Connection>();
 				synchronized (connections) {
 					connections.putAll(Server.this.connections);
 				}
+				synchronized (world) {
+					//For each connection
+					for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
+						Connection con = cons.getValue();
+						int id = cons.getKey();
+						try {
+							//Try to read any available message
+							while (!con.isClosed() && con.hasMessage()){
+								Message message = con.readMessage();
 
-				//For each connection
-				for (Map.Entry<Integer, Connection> cons : connections.entrySet()){
-					Connection con = cons.getValue();
-					int id = cons.getKey();
-					try {
-						//Try to read any available message
-						while (!con.isClosed() && con.hasMessage()){
-							Message message = con.readMessage();
+								//Handle disconnected players
+								if (message instanceof DisconnectMessage){
+									DisconnectMessage playerDisconnected = (DisconnectMessage) message;
+									handleDisconnect(playerDisconnected.getPlayerID());
+								//If an entity moved
+								} else if (message instanceof EntityMovedMessage){
+									EntityMovedMessage entityMoved = (EntityMovedMessage) message;
+									Player e = (Player) world.getEntity(entityMoved.getEntityID());
 
-							//Handle disconnected players
-							if (message instanceof DisconnectMessage){
-								DisconnectMessage playerDisconnected = (DisconnectMessage) message;
-								handleDisconnect(playerDisconnected.getPlayerID());
-							//If an entity moved
-							} else if (message instanceof EntityMovedMessage){
-								EntityMovedMessage entityMoved = (EntityMovedMessage) message;
-								Player e = (Player) world.getEntity(entityMoved.getEntityID());
+									e.getRoom().removeFromRoom(e);
+									e.setPosition(entityMoved.getNewPosition());
+									e.setRoom(world.getRoomAt(e.getPosition()));
+									e.getRoom().putInRoom(e);
 
-								e.getRoom().removeFromRoom(e);
-								e.setPosition(entityMoved.getNewPosition());
-								e.setRoom(world.getRoomAt(e.getPosition()));
-								e.getRoom().putInRoom(e);
-
-								sendMessageToAllExcept(id, message);
-							//If an entity rotated
-							} else if (message instanceof EntityRotationMessage){
-								EntityRotationMessage playerRotated = (EntityRotationMessage) message;
-								Player p = (Player) world.getEntity(playerRotated.getID());
-
-								p.setXRotation(playerRotated.getXRotation());
-								p.setYRotation(playerRotated.getYRotation());
-
-								//Forward the message to all the other clients
-								sendMessageToAllExcept(id, message);
-							//If a player jumped
-							} else if (message instanceof JumpMessage){
-								JumpMessage thePlayerWhoJumps = (JumpMessage) message;
-
-								//Make the player jump
-								((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
-
-								//Forward the message to all the other clients
-								sendMessageToAllExcept(id, message);
-							//If a player dropped an entity
-							} else if (message instanceof DropPickupMessage){
-								DropPickupMessage drop = (DropPickupMessage) message;
-								Player p = (Player) world.getEntity(drop.getPlayerId());
-								Entity e = world.getEntity(drop.getPickupId());
-
-								world.dropEntity(p, e, drop.getPosition());
-
-								sendMessageToAllExcept(id, message);
-							//If a player interacted with an entity
-							} else if (message instanceof InteractionMessage){
-								InteractionMessage interaction = (InteractionMessage) message;
-
-								//Get the entities involved
-								Entity e = world.getEntity(interaction.getEntityID());
-								Player p = (Player) world.getEntity(interaction.getPlayerID());
-
-								//Make them interact
-								boolean succesful = e.interact(p, world);
-
-								//If the interaction succeeded, forward the message
-								if (succesful){
 									sendMessageToAllExcept(id, message);
-								}
-							} else if (message instanceof TransferMessage){
-								TransferMessage transfer = (TransferMessage) message;
+								//If an entity rotated
+								} else if (message instanceof EntityRotationMessage){
+									EntityRotationMessage playerRotated = (EntityRotationMessage) message;
+									Player p = (Player) world.getEntity(playerRotated.getID());
 
-								//Get the entities involved
-								Entity e = world.getEntity(transfer.getEntityID());
-								Player p = (Player) world.getEntity(transfer.getPlayerID());
-								Container c = (Container) world.getEntity(transfer.getContainerID());
+									p.setXRotation(playerRotated.getXRotation());
+									p.setYRotation(playerRotated.getYRotation());
 
-								//If from the player
-								if (transfer.fromPlayer()){
-									if (p.getInventory().contains(e) && c.canPutInside(e)){
-										//Transfer the entity to the container
-										p.getInventory().remove(e);
-										c.putInside(e);
+									//Forward the message to all the other clients
+									sendMessageToAllExcept(id, message);
+								//If a player jumped
+								} else if (message instanceof JumpMessage){
+									JumpMessage thePlayerWhoJumps = (JumpMessage) message;
 
-										//Forward the message to the other clients
+									//Make the player jump
+									((Player) world.getEntity(thePlayerWhoJumps.getPlayerID())).jump();
+
+									//Forward the message to all the other clients
+									sendMessageToAllExcept(id, message);
+								//If a player dropped an entity
+								} else if (message instanceof DropPickupMessage){
+									DropPickupMessage drop = (DropPickupMessage) message;
+									Player p = (Player) world.getEntity(drop.getPlayerId());
+									Entity e = world.getEntity(drop.getPickupId());
+
+									world.dropEntity(p, e, drop.getPosition());
+
+									sendMessageToAllExcept(id, message);
+								//If a player interacted with an entity
+								} else if (message instanceof InteractionMessage){
+									InteractionMessage interaction = (InteractionMessage) message;
+
+									//Get the entities involved
+									Entity e = world.getEntity(interaction.getEntityID());
+									Player p = (Player) world.getEntity(interaction.getPlayerID());
+
+									//Make them interact
+									boolean succesful = e.interact(p, world);
+
+									//If the interaction succeeded, forward the message
+									if (succesful){
 										sendMessageToAllExcept(id, message);
 									}
-								//Other from the container
-								} else {
-									if (c.getItemsContained().contains(e)){
-										//Transfer the entity to the player
-										c.removeContainedItem(e);
-										p.pickup(e);
+								} else if (message instanceof TransferMessage){
+									TransferMessage transfer = (TransferMessage) message;
 
-										//Forward the message to the other clients
-										sendMessageToAllExcept(id, message);
+									//Get the entities involved
+									Entity e = world.getEntity(transfer.getEntityID());
+									Player p = (Player) world.getEntity(transfer.getPlayerID());
+									Container c = (Container) world.getEntity(transfer.getContainerID());
+
+									//If from the player
+									if (transfer.fromPlayer()){
+										if (p.getInventory().contains(e) && c.canPutInside(e)){
+											//Transfer the entity to the container
+											p.getInventory().remove(e);
+											c.putInside(e);
+
+											//Forward the message to the other clients
+											sendMessageToAllExcept(id, message);
+										}
+									//Other from the container
+									} else {
+										if (c.getItemsContained().contains(e)){
+											//Transfer the entity to the player
+											c.removeContainedItem(e);
+											p.pickup(e);
+
+											//Forward the message to the other clients
+											sendMessageToAllExcept(id, message);
+										}
 									}
 								}
 							}
+						} catch (IOException e) {
+							handleDisconnect(cons.getKey());
 						}
-					} catch (IOException e) {
-						handleDisconnect(cons.getKey());
+					}
+
+					//Update world
+					world.update(delta);
+
+					last = now;
+
+					if (timeSinceForce > 200){
+						timeSinceForce = 0;
+						for (Room r : world.getRooms().values())
+						for (Entity e : r.getEntities()){
+							sendMessageToAllExcept(-9001, new EntityMovedMessage(e.getID(), e.getPosition()));
+							float xRot = (e instanceof Player) ? ((Player) e).getXRotation() : -1;
+							float yRot = e.getAngle();
+							sendMessageToAllExcept(-9001, new EntityRotationMessage(e.getID(), xRot, yRot));
+						}
 					}
 				}
-
-				//Update world
-				world.update(delta);
-
-				last = now;
-
 				//Sleep, iterating over the loop roughly 60 times a second
 				try {
 					Thread.sleep(17);
 				} catch (InterruptedException e) {
 				}
+
 			}
 		}
 	}
