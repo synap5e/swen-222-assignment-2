@@ -26,7 +26,7 @@ public class Room implements ViewableRoom{
 	private Set<Entity> entities = new HashSet<Entity>();
 	private Map<Integer, List<Door>> doors; //wall index to door. Maps which door belongs to which wall
 	private List<Beam> beams = new ArrayList<Beam>();
-	
+
 	/**Constructs a new room
 	 *@param light The lighting of the room
 	 *@param id The room's id
@@ -53,11 +53,11 @@ public class Room implements ViewableRoom{
 			}
 		}
 		return true;
-	} 
+	}
 
 	/**Whether or not something has collided with a Player in the room
-	 * @param collider the entity being checked 
-	 * @return the player which has been collided with. 
+	 * @param collider the entity being checked
+	 * @return the player which has been collided with.
 	 * null if hasnt collided with any players in the room*/
 	public Player collidedWithPlayer(Entity collider){
 		for(Entity e : entities){
@@ -67,7 +67,7 @@ public class Room implements ViewableRoom{
 		}
 		return null;
 	}
-	
+
 	/**Returns which player is the closest to a position
 	 * @param position the position that will be checked
 	 * @return the player closest to the position.
@@ -112,7 +112,7 @@ public class Room implements ViewableRoom{
 		return roomShape.contains(position);
 	}
 
-	/**@return whether or not the circle with the position as the centre 
+	/**@return whether or not the circle with the position as the centre
 	 * will be fully contained in the room*/
 	public boolean contains(Vector2D position, float radius) {
 		return roomShape.contains(position,radius);
@@ -127,13 +127,13 @@ public class Room implements ViewableRoom{
 
 	/**Adds the entity to the room
 	 * @param e the entity that will be put in the room*/
-	public void putInRoom(Entity e){
+	public synchronized void putInRoom(Entity e){
 		entities.add(e);
 	}
 
 	/**Removes the entity from the room
 	 * @param e the entity that will be removed from the room*/
-	public void removeFromRoom(Entity e){
+	public synchronized void removeFromRoom(Entity e){
 		entities.remove(e);
 	}
 
@@ -149,7 +149,7 @@ public class Room implements ViewableRoom{
 			doors.get(i).add(d);
 		}
 	}
-	
+
 	public void addBeam(Beam b){
 		beams.add(b);
 	}
@@ -205,7 +205,7 @@ public class Room implements ViewableRoom{
 	}
 
 	@Override
-	public List<Entity> getContainedObjects() {
+	public synchronized List<Entity> getContainedObjects() {
 		return new ArrayList<Entity>(entities);
 	}
 
