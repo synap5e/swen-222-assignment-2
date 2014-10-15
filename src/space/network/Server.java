@@ -438,7 +438,7 @@ public class Server {
 
 					last = now;
 
-					if (timeSinceForce > 200){
+					if (timeSinceForce > 2000){
 						timeSinceForce = 0;
 						for (Room r : world.getRooms().values())
 						for (Entity e : r.getEntities()){
