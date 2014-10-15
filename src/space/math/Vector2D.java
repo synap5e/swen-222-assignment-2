@@ -185,16 +185,16 @@ public class Vector2D {
 		return this.x * rhs.x + this.y * rhs.y;
 	}
 	/**
-	 * returns division with given vector
-	 * @param rhs
+	 * divides the vector by the given vector
+	 * @param rhs the given vector
 	 */
 	public void divLocal(float rhs) {
 		this.x /= rhs;
 		this.y /= rhs;
 	}
 	/**
-	 * returns angle in radian
-	 * @return
+	 * returns the angle of this vector in it's polar form
+	 * @return the angle in radians
 	 */
 	public float getPolarAngle(){
 		return (float) Math.atan2(y, x);

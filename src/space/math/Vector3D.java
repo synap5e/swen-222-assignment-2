@@ -158,7 +158,7 @@ public class Vector3D {
 		return new Vector3D(x + argVec.x, y + argVec.y, z + argVec.z);
 	}
 	/**
-	 * returns subtracts given vector from this
+	 * subtracts given vector from this
 	 * @param argVec
 	 * @return subtracted vector
 	 */
