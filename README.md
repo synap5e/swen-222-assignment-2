@@ -18,3 +18,33 @@ Roles
  - Assigned to: James
 5. Data storage. Covers loading and saving of game world files in an Json format.
  - Assigned to: Shweta
+
+How to run
+------
+The working directory must contain the folders/files:
+lib/
+assets/
+default_world.json
+space-linux.jar
+
+After setting this up run:
+java -jar space-linux.jar
+
+How to setup game
+------
+A single-player game will create both a server and a client, dropping you straight into a game.
+The save file defines which game state will be loaded - a non-existent file causes the default new-game to be loaded.
+
+A multi-player game asks for a server address to connect to as the server.
+
+Both game modes have the optional field of a player id. This is used for loading a previous character from the game state.
+Your current player id can be found in the in-game menu.
+
+How to play
+------
+The aim of the game is to open all the various doors and destroy the turret.
+Please check out the key bindings before playing to see the various available actions.
+Hint, containers held by the player must be dropped before their contents can be rifled.
+
+Note: completing the game REQUIRES multiple players.
+
