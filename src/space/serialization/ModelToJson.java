@@ -187,7 +187,9 @@ public class ModelToJson implements WorldSaver {
 			beam.put("id", b.getID());
 			beam.put("elevation", b.getElevation());
 			beam.put("beamDirection", construct3DVector(b.getBeamDir()));
-			beam.put("turret", b.getTurret().getID());
+			if(b.getTurret() != null){
+				beam.put("turret", b.getTurret().getID());
+			}
 			beam.put("roomBeamIsIn", room.getID());
 		}
 		return beamsInRoom;
@@ -326,7 +328,9 @@ public class ModelToJson implements WorldSaver {
 	 */
 	private void addFields(BeamShooter e, MyJsonObject object, Room room) {
 		object.put("room", e.getRoom().getID());
-		object.put("turretId", e.getTurret().getID());
+		if(e.getTurret() != null){
+			object.put("turretId", e.getTurret().getID());
+		}
 		object.put("yRotation", e.getAngle());
 		object.put("stopped", e.isStopped());
 		object.put("beamsShot", e.getBeamsShot());
