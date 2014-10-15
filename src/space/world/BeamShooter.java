@@ -90,7 +90,7 @@ public class BeamShooter extends NonStationary{
 	}
 	@Override
 	public float getHeight() {
-		return 1;
+		return 3.5f;
 	}
 
 	@Override

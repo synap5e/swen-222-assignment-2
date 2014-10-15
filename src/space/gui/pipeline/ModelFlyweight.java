@@ -72,17 +72,17 @@ public class ModelFlyweight {
 														new Vector3D(0.35f,0.35f,0.35f),
 														Material.bronze
 													));
-			models.put("Wallet", new WavefrontModel(new File("./assets/models/teapot.obj"),
+			models.put("Wallet", new WavefrontModel(new File("./assets/models/cube.obj"),
 					new Vector3D(0, 0, 0),
-					new Vector3D(0, 90, 0), 0.5f,
+					new Vector3D(0, 90, 0), 1.f,
 					new Vector3D(0.35f,0.35f,0.35f),
 					Material.bronze
 				));
 
-			models.put("BeamShooter", new WavefrontModel(new File("./assets/models/teapot.obj"),
+			models.put("BeamShooter", new WavefrontModel(new File("./assets/models/dalek.obj"),
 					new Vector3D(0, 0, 0),
-					new Vector3D(0, 0, 0), 0.5f,
-					new Vector3D(0.35f,0.35f,0.35f),
+					new Vector3D(0, 0, 0), 1.5f,
+					new Vector3D(0.75f,0.35f,0.15f),
 					Material.bronze
 				));
 
